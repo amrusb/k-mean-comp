@@ -1,9 +1,7 @@
 package pl.amrusb.util.img;
 
-import lombok.Getter;
-import lombok.Setter;
 import pl.amrusb.util.models.Pixel;
-import pl.amrusb.util.ui.BottomPanel;
+import pl.amrusb.util.ui.panels.BottomPanel;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

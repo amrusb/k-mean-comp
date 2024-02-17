@@ -3,7 +3,7 @@ package pl.amrusb.util.threads;
 import lombok.AllArgsConstructor;
 import pl.amrusb.algs.seg.imp.KMeansAlgorithm;
 import pl.amrusb.util.img.ImageRescaler;
-import pl.amrusb.util.ui.BottomPanel;
+import pl.amrusb.util.ui.panels.BottomPanel;
 import pl.amrusb.util.ui.MainFrame;
 import pl.amrusb.util.ui.MainMenuBar;
 

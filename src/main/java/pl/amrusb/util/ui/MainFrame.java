@@ -3,6 +3,7 @@ package pl.amrusb.util.ui;
 import lombok.Getter;
 import pl.amrusb.Main;
 import pl.amrusb.util.img.ImageRescaler;
+import pl.amrusb.util.ui.panels.BottomPanel;
 
 import javax.swing.*;
 import java.awt.*;

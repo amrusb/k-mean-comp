@@ -2,7 +2,7 @@ package pl.amrusb.util.img;
 
 
 import pl.amrusb.util.models.Pixel;
-import pl.amrusb.util.ui.BottomPanel;
+import pl.amrusb.util.ui.panels.BottomPanel;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;

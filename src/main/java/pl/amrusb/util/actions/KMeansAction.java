@@ -1,7 +1,7 @@
 package pl.amrusb.util.actions;
 
 import pl.amrusb.util.threads.KMeansThread;
-import pl.amrusb.util.ui.BottomPanel;
+import pl.amrusb.util.ui.panels.BottomPanel;
 import pl.amrusb.util.ui.ClusterInputDialog;
 import pl.amrusb.util.ui.MainFrame;
 import pl.amrusb.util.ui.MainMenuBar;
