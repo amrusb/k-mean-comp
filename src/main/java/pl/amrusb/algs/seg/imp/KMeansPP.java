@@ -4,7 +4,7 @@ import pl.amrusb.algs.rand.LCGenerator;
 import pl.amrusb.util.Calculations;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
-import pl.amrusb.util.ui.BottomPanel;
+import pl.amrusb.util.ui.panels.BottomPanel;
 
 import java.util.ArrayList;
 import java.util.Arrays;

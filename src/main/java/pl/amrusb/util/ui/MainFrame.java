@@ -2,126 +2,124 @@ package pl.amrusb.util.ui;
 
 import lombok.Getter;
 import pl.amrusb.Main;
-import pl.amrusb.util.img.ImageRescaler;
+import pl.amrusb.util.ui.panels.BottomPanel;
+import pl.amrusb.util.ui.panels.MainPanel;
+import pl.amrusb.util.ui.panels.ImagePanel;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.text.MessageFormat;
+import java.io.IOException;
+import java.util.ArrayList;
+
 
 public class MainFrame extends JFrame {
     private static final Double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     private static final Double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-    private static final Font HEADER_FONT = new Font("SansSerif", Font.BOLD, 16);
     private static final Font BASIC_FONT = new Font("SansSerif", Font.PLAIN, 14);
 
-    private static final JLabel imageLabel = new JLabel();
-    private static BufferedImage originalImage = null;
     @Getter
-    private static BufferedImage rescaledImage = null;
-    @Getter
-    private static BufferedImage segmentedImage = null;
+    private static final JTabbedPane tabbedPane = new JTabbedPane();
+    private static JPanel body = null;
+    private static CardLayout cardLayout = null;
+
+    private static final ArrayList<ImagePanel> imagePanels = new ArrayList<>();
 
     public MainFrame(){
         setTitle("Segmentacja obrazu");
-        Integer width = (int)(SCREEN_WIDTH * 4 / 5);
-        Integer height = (int)(SCREEN_HEIGHT * 4 / 5);
-        Integer x = (int)(SCREEN_WIDTH - width) / 2;
-        Integer y = (int)(SCREEN_HEIGHT - height) / 2;
+        int width = (int)(SCREEN_WIDTH * 4 / 5);
+        int height = (int)(SCREEN_HEIGHT * 4 / 5);
+        int x = (int)(SCREEN_WIDTH - width) / 2;
+        int y = (int)(SCREEN_HEIGHT - height) / 2;
 
         setBounds(x, y, width, height);
-        setLayout(new BorderLayout());
+        getContentPane().setLayout(new BorderLayout());
+        setJMenuBar(new MainMenuBar(this));
 
-        JScrollPane scrollPane = new JScrollPane(imageLabel);
-        imageLabel.setFont(HEADER_FONT);
-
-        String bodyPath = Main.getROOT_PATH() + Main.getProperties().getProperty("app.background.file");
-        String imagePath = Main.getROOT_PATH() + Main.getProperties().getProperty("app.background.logo");
-        File logo = new File(imagePath);
-
-        String bodyBackground = null;
+        cardLayout = new CardLayout();
+        body = new JPanel();
+        body.setLayout(cardLayout);
+        MainPanel mainPanel = new MainPanel();
+        JScrollPane scrollTabbedPane = new JScrollPane(tabbedPane);
+        JButton closeButton = new JButton();
+        Image closeIcon = null;
         try {
-            FileInputStream f = new FileInputStream(bodyPath);
-            bodyBackground = MessageFormat.format(new String(f.readAllBytes()), logo.toString());
-
+            closeIcon = ImageIO.read(new File(Main.getROOT_PATH() + "icons/xmark.png"));
+            closeButton.setIcon(new ImageIcon(closeIcon));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
-                    this,
+                    MainMenuBar.getOwner(),
                     e.getMessage(),
                     "Błąd",
                     JOptionPane.ERROR_MESSAGE
             );
         }
 
-        imageLabel.setText(bodyBackground);
-        imageLabel.setVerticalAlignment(SwingConstants.CENTER);
-        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        body.add(mainPanel, "mainPanel");
+        body.add(scrollTabbedPane, "tabbedPane");
 
-        getContentPane().add(scrollPane);
-
-        setJMenuBar(new MainMenuBar(this));
-
+        add(body, BorderLayout.CENTER);
+        changePanel();
         add(new BottomPanel(), BorderLayout.SOUTH);
     }
-
-    /**
-     * Ustawia obraz jako ikonę etykiety w scrollPane
-     * Jeżeli obraz jest zaduży, zostaje przeskalowany do odpowiednich wymiarów
-     * @param image obraz do ustawienia jako ikona etykiety
-     */
-    public static void setImageLabel(BufferedImage image) {
-        imageLabel.setText("");
-        int frameWidth = MainFrame.getFrameWidth();
-        int frameHeight = MainFrame.getFrameHeight();
-
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        if (width >= frameWidth || height >= frameHeight) {
-            double scale = Math.min((double) frameWidth / (width), (double) frameHeight / (height));
-            BufferedImage displayImage = ImageRescaler.rescaleImage(image, scale);
-            ImageIcon imageIcon = new ImageIcon(displayImage);
-            imageLabel.setIcon(imageIcon);
-            setRescaledImage(displayImage);
+    public static void changePanel(){
+        if(tabbedPane.getTabCount() == 0){
+            cardLayout.show(body, "mainPanel");
         }
         else{
-            ImageIcon imageIcon = new ImageIcon(image);
-            imageLabel.setIcon(imageIcon);
+            cardLayout.show(body, "tabbedPane");
         }
     }
-    public static void setImage(BufferedImage newImage){ originalImage = newImage;}
-    public static BufferedImage getImage(){
-        return originalImage;
-    }
+    public static void addTab(ImagePanel panel){
+        imagePanels.add(panel);
+        int panelIdx = imagePanels.indexOf(panel);
 
-    public static void setRescaledImage(BufferedImage newImage){
-        rescaledImage = newImage;
-    }
+        JPanel tabComponent = new JPanel(new BorderLayout());
+        String fileName = panel.getFileName();
+        JLabel tabLabel = new JLabel();
+        tabbedPane.setToolTipText("<html><i>" + fileName + "</i></html>");
+        if (fileName.length() > 10) {
+            fileName = fileName.substring(0, 10) + "...";
+        }
 
-    public static void setSegmentedImage(BufferedImage segmentedImage) {MainFrame.segmentedImage = segmentedImage;}
+        tabLabel.setText("<html><i>" + fileName + "</i></html>");
 
-    /**
-     * Zwraca informacje o przechowywaniu oryginalego obrazu
-     * @return (1) true jezeli obiekt image przechowuje obraz
-     *         (2) false w przeciwnym wypadku*/
-    public static boolean hasImage(){
-        return originalImage != null;
-    }
-    /**
-     * Zwraca informacje o przechowywaniu przeskalowanego obrazu
-     * @return (1) true jezeli obiekt image przechowuje przeskalowany
-     *         (2) false w przeciwnym wypadku*/
-    public static boolean hasRescaledImage(){
-        return rescaledImage != null;
-    }
-    /**
-     * Zwraca informację o przechowywaniu obrazu po zastosowaniu algorytmu segmentacji
-     * @return (1) true jezeli obiekt image po zastosowaniu algorytmu segmentacji
-     *         (2) false w przeciwnym wypadku*/
-    public static boolean hasSegmentedImage() {return segmentedImage != null; }
 
+
+        JButton closeButton = new JButton();
+        Image closeIcon = null;
+        try {
+            closeIcon = ImageIO.read(new File(Main.getROOT_PATH() + "icons/xmark.png"));
+            closeButton.setIcon(new ImageIcon(closeIcon));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    MainMenuBar.getOwner(),
+                    e.getMessage(),
+                    "Błąd",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+
+        tabLabel.setBackground(null);
+
+        closeButton.setBorderPainted(false);
+        closeButton.setContentAreaFilled(false);
+        closeButton.setFocusPainted(false);
+        closeButton.addActionListener(e -> {
+            int index = tabbedPane.indexOfComponent(imagePanels.get(panelIdx));
+            if (index != -1) {
+                tabbedPane.remove(index);
+                imagePanels.set(index, null);
+            }
+            MainFrame.changePanel();
+        });
+        tabComponent.add(tabLabel, BorderLayout.CENTER);
+        tabComponent.add(closeButton, BorderLayout.EAST);
+        tabbedPane.addTab(null, imagePanels.get(panelIdx));
+        tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, tabComponent);
+        tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
+    }
     /**
      * Zwraca domyślną szerokość okna programu
      * @return szerokość okna programu

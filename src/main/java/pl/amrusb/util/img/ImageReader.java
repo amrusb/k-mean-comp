@@ -1,9 +1,7 @@
 package pl.amrusb.util.img;
 
-import lombok.Getter;
-import lombok.Setter;
 import pl.amrusb.util.models.Pixel;
-import pl.amrusb.util.ui.BottomPanel;
+import pl.amrusb.util.ui.panels.BottomPanel;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -43,11 +41,7 @@ public class ImageReader {
         }
         return image;
     }
-    /**
-     * Zwraca ścieżkę do odczytanego pliku obrazu.
-     * @return ścieżka do pliku obrazu
-     */
-    public static String getFilePath(){ return filePath; }
+
     /**
      * Konwertuje obraz w postaci BufferedImage na ArrayListę obiektów Pixel.
      * @param image obiekt BufferedImage reprezentujący obraz
@@ -98,12 +92,5 @@ public class ImageReader {
         }
 
         return  output;
-    }
-    /**
-     * Zwraca nazwę odczytanego pliku obrazu.
-     * @return nazwa pliku obrazu
-     */
-    public static String getFileName() {
-        return fileName;
     }
 }

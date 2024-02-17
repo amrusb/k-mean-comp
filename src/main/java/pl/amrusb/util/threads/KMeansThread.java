@@ -3,9 +3,10 @@ package pl.amrusb.util.threads;
 import lombok.AllArgsConstructor;
 import pl.amrusb.algs.seg.imp.KMeansAlgorithm;
 import pl.amrusb.util.img.ImageRescaler;
-import pl.amrusb.util.ui.BottomPanel;
 import pl.amrusb.util.ui.MainFrame;
+import pl.amrusb.util.ui.panels.BottomPanel;
 import pl.amrusb.util.ui.MainMenuBar;
+import pl.amrusb.util.ui.panels.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +20,8 @@ public class KMeansThread extends Thread{
 
     @Override
     public void run(){
+        ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getSelectedComponent();
+
         MainMenuBar.getOwner().setCursor(
                 Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)
         );
@@ -27,9 +30,9 @@ public class KMeansThread extends Thread{
         KMeansAlgorithm segmentation;
         Long start = System.currentTimeMillis();
         if (original) {
-            segmentation = new KMeansAlgorithm(clusterNum, MainFrame.getImage());
+            segmentation = new KMeansAlgorithm(clusterNum, current.getOriginalImage());
         } else {
-            segmentation = new KMeansAlgorithm(clusterNum, MainFrame.getRescaledImage());
+            segmentation = new KMeansAlgorithm(clusterNum, current.getRescaledImage());
         }
 
         segmentation.execute();
@@ -41,12 +44,12 @@ public class KMeansThread extends Thread{
         action.setEnabled(true);
         BufferedImage output = segmentation.getOutputImage();
 
-        MainFrame.setImageLabel(output);
+        current.setImageLabel(output);
         if (!original) {
-            Double scale = (double) MainFrame.getImage().getWidth() /  output.getWidth();
+            Double scale = (double) current.getOriginalImage().getWidth() /  output.getWidth();
             output = ImageRescaler.rescaleImage(output, scale);
         }
-        MainFrame.setSegmentedImage(output);
+        current.setSegmentedImage(output);
 
         MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
 
