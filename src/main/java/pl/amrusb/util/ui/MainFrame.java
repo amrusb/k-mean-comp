@@ -1,26 +1,27 @@
 package pl.amrusb.util.ui;
 
 import lombok.Getter;
+import pl.amrusb.Main;
 import pl.amrusb.util.ui.panels.BottomPanel;
 import pl.amrusb.util.ui.panels.MainPanel;
 import pl.amrusb.util.ui.panels.ImagePanel;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
 public class MainFrame extends JFrame {
     private static final Double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     private static final Double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-    private static final Font HEADER_FONT = new Font("SansSerif", Font.BOLD, 16);
     private static final Font BASIC_FONT = new Font("SansSerif", Font.PLAIN, 14);
 
-    private static final JLabel imageLabel = new JLabel();
     @Getter
-    private static JTabbedPane tabbedPane = new JTabbedPane();
+    private static final JTabbedPane tabbedPane = new JTabbedPane();
     private static JPanel body = null;
-    private static MainPanel mainPanel = null;
     private static CardLayout cardLayout = null;
 
     private static final ArrayList<ImagePanel> imagePanels = new ArrayList<>();
@@ -39,13 +40,24 @@ public class MainFrame extends JFrame {
         cardLayout = new CardLayout();
         body = new JPanel();
         body.setLayout(cardLayout);
-        mainPanel = new MainPanel();
+        MainPanel mainPanel = new MainPanel();
         JScrollPane scrollTabbedPane = new JScrollPane(tabbedPane);
+        JButton closeButton = new JButton();
+        Image closeIcon = null;
+        try {
+            closeIcon = ImageIO.read(new File(Main.getROOT_PATH() + "icons/xmark.png"));
+            closeButton.setIcon(new ImageIcon(closeIcon));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    MainMenuBar.getOwner(),
+                    e.getMessage(),
+                    "Błąd",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
 
         body.add(mainPanel, "mainPanel");
         body.add(scrollTabbedPane, "tabbedPane");
-
-
 
         add(body, BorderLayout.CENTER);
         changePanel();
@@ -65,11 +77,30 @@ public class MainFrame extends JFrame {
 
         JPanel tabComponent = new JPanel(new BorderLayout());
         String fileName = panel.getFileName();
+        JLabel tabLabel = new JLabel();
+        tabbedPane.setToolTipText("<html><i>" + fileName + "</i></html>");
         if (fileName.length() > 10) {
             fileName = fileName.substring(0, 10) + "...";
         }
-        JLabel tabLabel = new JLabel("<html><i>" + fileName + "</i></html>");
-        JButton closeButton = new JButton("x");
+
+        tabLabel.setText("<html><i>" + fileName + "</i></html>");
+
+
+
+        JButton closeButton = new JButton();
+        Image closeIcon = null;
+        try {
+            closeIcon = ImageIO.read(new File(Main.getROOT_PATH() + "icons/xmark.png"));
+            closeButton.setIcon(new ImageIcon(closeIcon));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    MainMenuBar.getOwner(),
+                    e.getMessage(),
+                    "Błąd",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+
         tabLabel.setBackground(null);
 
         closeButton.setBorderPainted(false);
@@ -79,7 +110,7 @@ public class MainFrame extends JFrame {
             int index = tabbedPane.indexOfComponent(imagePanels.get(panelIdx));
             if (index != -1) {
                 tabbedPane.remove(index);
-                imagePanels.remove(index);
+                imagePanels.set(index, null);
             }
             MainFrame.changePanel();
         });
