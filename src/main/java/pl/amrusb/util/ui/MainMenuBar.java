@@ -3,6 +3,7 @@ package pl.amrusb.util.ui;
 
 import lombok.Getter;
 import pl.amrusb.util.actions.*;
+import pl.amrusb.util.ui.panels.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +21,7 @@ public class MainMenuBar extends JMenuBar {
     private static final JMenu segmentationMenu = new JMenu("Segmentacja");
     private static final JMenuItem kmeanItem = new JMenuItem("K-means");
     private static final JMenuItem undo = new JMenuItem("Cofnij");
-
+    private static final JMenuItem test = new JMenuItem("TEST");
     @Getter
     private static JFrame owner;
 
@@ -56,7 +57,13 @@ public class MainMenuBar extends JMenuBar {
         undo.setAccelerator(KeyStroke.getKeyStroke("ctrl Z"));
         undo.setEnabled(false);
         undo.addActionListener(new UndoAction());
-
+        segmentationMenu.add(test);
+        test.addActionListener(e -> {
+            int index = MainFrame.getTabbedPane().getSelectedIndex();
+            System.out.println(index);
+            ImagePanel test = (ImagePanel) MainFrame.getTabbedPane().getComponentAt(index);
+            System.out.println(test.getFileName());
+        });
         add(segmentationMenu);
 
         programMenu.setFont(MainFrame.getBasicFont());
@@ -72,7 +79,7 @@ public class MainMenuBar extends JMenuBar {
      * Metoda ustawia dostepnosc elementow paska menu w zależności od tego czy użytkownik wybrał plik
      * */
     public static void reload(){
-        if(MainFrame.hasImage()){
+        if(MainFrame.getTabbedPane().getTabCount() > 0){
             saveItem.setEnabled(true);
             saveAsItem.setEnabled(true);
             segmentationMenu.setEnabled(true);

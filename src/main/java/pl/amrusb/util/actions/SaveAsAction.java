@@ -4,6 +4,7 @@ import pl.amrusb.Main;
 import pl.amrusb.util.ImageFilter;
 import pl.amrusb.util.ui.MainFrame;
 import pl.amrusb.util.ui.MainMenuBar;
+import pl.amrusb.util.ui.panels.ImagePanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,9 +17,9 @@ import java.io.IOException;
 
 public class SaveAsAction implements ActionListener {
 
-
     @Override
     public void actionPerformed(ActionEvent e) {
+        ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getSelectedComponent();
         JFileChooser imageChooser = new JFileChooser();
         final String defaultExtension = Main.getProperties().getProperty("image.default.extension");
         String currentDirPath = Main.getProperties().getProperty("image.current.dir");
@@ -42,8 +43,8 @@ public class SaveAsAction implements ActionListener {
             File output = new File(filePath);
             try{
                 BufferedImage image;
-                if(MainFrame.hasSegmentedImage()) image = MainFrame.getSegmentedImage();
-                else image = MainFrame.getImage();
+                if(current.hasSegmentedImage()) image = current.getSegmentedImage();
+                else image = current.getOriginalImage();
 
                 ImageIO.write(image, formatName, output);
             }

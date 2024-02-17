@@ -3,6 +3,7 @@ package pl.amrusb.util.actions;
 import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.util.ui.MainFrame;
 import pl.amrusb.util.ui.MainMenuBar;
+import pl.amrusb.util.ui.panels.ImagePanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,18 +17,19 @@ import java.io.IOException;
 public class SaveAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
+        ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getSelectedComponent();
         MainMenuBar.getOwner().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        String filePath = ImageReader.getFilePath();
+        String filePath = current.getFilePath();
         File output = new File(filePath);
-        String fileName = ImageReader.getFileName();
+        String fileName = current.getFileName();
         String formatName = fileName.substring(fileName.indexOf('.') + 1 );
         try{
             BufferedImage image;
-            if(MainFrame.hasSegmentedImage()) {
-                image = MainFrame.getSegmentedImage();
+            if(current.hasSegmentedImage()) {
+                image = current.getSegmentedImage();
             }
             else{
-                image = MainFrame.getImage();
+                image = current.getOriginalImage();
             }
 
             ImageIO.write(image, formatName, output);
@@ -39,7 +41,6 @@ public class SaveAction implements ActionListener {
                     "Błąd zapisu obrazu",
                     JOptionPane.ERROR_MESSAGE
             );
-            System.out.println(ex.getMessage());
         }
         MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
     }

@@ -41,11 +41,7 @@ public class ImageReader {
         }
         return image;
     }
-    /**
-     * Zwraca ścieżkę do odczytanego pliku obrazu.
-     * @return ścieżka do pliku obrazu
-     */
-    public static String getFilePath(){ return filePath; }
+
     /**
      * Konwertuje obraz w postaci BufferedImage na ArrayListę obiektów Pixel.
      * @param image obiekt BufferedImage reprezentujący obraz
@@ -96,12 +92,5 @@ public class ImageReader {
         }
 
         return  output;
-    }
-    /**
-     * Zwraca nazwę odczytanego pliku obrazu.
-     * @return nazwa pliku obrazu
-     */
-    public static String getFileName() {
-        return fileName;
     }
 }
