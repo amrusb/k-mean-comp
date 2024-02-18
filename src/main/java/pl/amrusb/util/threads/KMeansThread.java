@@ -1,6 +1,7 @@
 package pl.amrusb.util.threads;
 
 import lombok.AllArgsConstructor;
+import pl.amrusb.algs.seg.IKMeans;
 import pl.amrusb.algs.seg.imp.KMeans;
 import pl.amrusb.util.img.ImageRescaler;
 import pl.amrusb.util.ui.MainFrame;
@@ -27,7 +28,7 @@ public class KMeansThread extends Thread{
         );
         BottomPanel.setProgressBarVisible(true);
 
-        KMeans segmentation;
+        IKMeans segmentation;
         Long start = System.currentTimeMillis();
         if (original) {
             segmentation = new KMeans(clusterNum, current.getOriginalImage());

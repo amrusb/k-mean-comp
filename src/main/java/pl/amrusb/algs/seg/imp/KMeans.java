@@ -1,5 +1,6 @@
 package pl.amrusb.algs.seg.imp;
 
+import pl.amrusb.algs.seg.IKMeans;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
 import pl.amrusb.util.img.ImageReader;
@@ -9,7 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 
-public class KMeans {
+public class KMeans implements IKMeans {
     private Integer clusterNum;
     private ArrayList<Cluster> clusters;
     private ArrayList<Pixel> pixelArray;
