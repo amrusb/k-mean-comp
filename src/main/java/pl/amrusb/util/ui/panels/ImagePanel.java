@@ -15,6 +15,9 @@ import java.awt.image.BufferedImage;
 @Getter
 @Setter
 public class ImagePanel extends JPanel {
+    public static final String BASIC_PANEL = "basicPanel";
+    public static final String COMPARE_PANEL = "comparePanel";
+
     private final JLabel imageLabel = new JLabel();
     private BufferedImage originalImage = null;
     private BufferedImage rescaledImage = null;
@@ -22,14 +25,32 @@ public class ImagePanel extends JPanel {
     private String fileName;
     private String filePath;
 
+    private JPanel basicPanel;
+    private ComparePanel comparePanel;
+    private static CardLayout cardLayout = null;
+
     public ImagePanel(){
-        setLayout(new BorderLayout());
-        imageLabel.setVerticalAlignment(SwingConstants.CENTER);
-        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        this.add(imageLabel, BorderLayout.CENTER);
+        cardLayout = new CardLayout();
+        this.setLayout(cardLayout);
+
+        createBasicPanel();
+        comparePanel = new ComparePanel();
+
+        this.add(basicPanel, BASIC_PANEL);
+        this.add(comparePanel, COMPARE_PANEL);
     }
 
+    private void createBasicPanel(){
+        basicPanel  = new JPanel();
+        basicPanel.setLayout(new BorderLayout());
+        imageLabel.setVerticalAlignment(SwingConstants.CENTER);
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        basicPanel.add(imageLabel, BorderLayout.CENTER);
+    }
 
+    public void changePanel(String panel){
+        cardLayout.show(this, panel);
+    }
     /**
      * Ustawia obraz jako ikonę etykiety w scrollPane
      * Jeżeli obraz jest za duży, zostaje przeskalowany do odpowiednich wymiarów
