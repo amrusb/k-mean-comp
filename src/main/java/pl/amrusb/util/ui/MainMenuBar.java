@@ -3,6 +3,7 @@ package pl.amrusb.util.ui;
 
 import lombok.Getter;
 import pl.amrusb.util.actions.*;
+import pl.amrusb.util.charts.RGBHistogram;
 import pl.amrusb.util.ui.panels.ImagePanel;
 
 import javax.swing.*;
@@ -20,8 +21,10 @@ public class MainMenuBar extends JMenuBar {
     private static final JMenuItem saveAsItem = new JMenuItem("Zapisz jako");
     private static final JMenu segmentationMenu = new JMenu("Segmentacja");
     private static final JMenuItem kmeanItem = new JMenuItem("K-means");
+    private static final JMenuItem wekaItem = new JMenuItem("<html>K-means <small>Weka</small></html>");
+    private static final JMenuItem compItem = new JMenuItem("Porównanie");
     private static final JMenuItem undo = new JMenuItem("Cofnij");
-    private static final JMenuItem test = new JMenuItem("TEST");
+    private static final JMenuItem chart = new JMenuItem("Generuj histogram");
     @Getter
     private static JFrame owner;
 
@@ -29,47 +32,46 @@ public class MainMenuBar extends JMenuBar {
     public MainMenuBar(JFrame frame){
         owner = frame;
         imageMenu.add(openItem);
-        imageMenu.setFont(MainFrame.getBasicFont());
-        openItem.setFont(MainFrame.getBasicFont());
+
         openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         openItem.addActionListener(new OpenAction());
 
         imageMenu.add(saveItem);
-        saveItem.setFont(MainFrame.getBasicFont());
         saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         saveItem.addActionListener(new SaveAction());
 
         imageMenu.add(saveAsItem);
-        saveAsItem.setFont(MainFrame.getBasicFont());
-        saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_MASK));
+        saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_DOWN_MASK));
         saveAsItem.addActionListener(new SaveAsAction());
         add(imageMenu);
 
         segmentationMenu.add(kmeanItem);
         kmeanItem.addActionListener(new KMeansAction());
-        segmentationMenu.setFont(MainFrame.getBasicFont());
-        kmeanItem.setFont(MainFrame.getBasicFont());
+
+        segmentationMenu.add(wekaItem);
 
         segmentationMenu.addSeparator();
 
+        segmentationMenu.add(compItem);
+        compItem.addActionListener(new CompareAction());
+
+        segmentationMenu.addSeparator();
+        segmentationMenu.add(chart);
+        chart.addActionListener(e -> {
+            int index = MainFrame.getTabbedPane().getSelectedIndex();
+            ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getComponentAt(index);
+
+            RGBHistogram.createImage(current.getOriginalImage(), current.getFileName());
+        });
         segmentationMenu.add(undo);
-        undo.setFont(MainFrame.getBasicFont());
         undo.setAccelerator(KeyStroke.getKeyStroke("ctrl Z"));
         undo.setEnabled(false);
         undo.addActionListener(new UndoAction());
-        segmentationMenu.add(test);
-        test.addActionListener(e -> {
-            int index = MainFrame.getTabbedPane().getSelectedIndex();
-            System.out.println(index);
-            ImagePanel test = (ImagePanel) MainFrame.getTabbedPane().getComponentAt(index);
-            System.out.println(test.getFileName());
-        });
+
         add(segmentationMenu);
 
-        programMenu.setFont(MainFrame.getBasicFont());
         programMenu.add(exitItem);
         exitItem.addActionListener(e-> System.exit(0));
-        exitItem.setFont(MainFrame.getBasicFont());
         add(programMenu);
 
         reload();
