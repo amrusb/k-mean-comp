@@ -49,6 +49,7 @@ public class MainMenuBar extends JMenuBar {
         kmeanItem.addActionListener(new KMeansAction());
 
         segmentationMenu.add(wekaItem);
+        wekaItem.addActionListener(new WekaKMeansAction());
 
         segmentationMenu.addSeparator();
 
