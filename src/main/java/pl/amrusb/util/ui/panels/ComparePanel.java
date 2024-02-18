@@ -140,7 +140,7 @@ public class ComparePanel extends JPanel {
         rightBottomPanel.add(new JLabel("<html><b>Liczba klastrów:</b></html>"), c);
         c.gridx = 2;
         c.anchor = GridBagConstraints.WEST;
-        lClusterNum = new JLabel("X");
+        lClusterNum = new JLabel();
         rightBottomPanel.add(lClusterNum, c);
         c.gridx = 0;
         c.gridy = 2;
@@ -227,6 +227,19 @@ public class ComparePanel extends JPanel {
     public void setImageChart(JFreeChart chart){
         imageChart = chart;
         leftBottomPanel.setChart(chart);
+    }
+
+    public void setRSME(String value){
+        lRsme.setText(value);
+    }
+    public void setJackard(String value){
+        lJackard.setText(value);
+    }
+    public void setClusterNum(Integer value){
+        lClusterNum.setText(value.toString());
+    }
+    public void setDice(String value){
+        lDice.setText(value);
     }
 
     public enum Position{ LEFT, RIGHT }
