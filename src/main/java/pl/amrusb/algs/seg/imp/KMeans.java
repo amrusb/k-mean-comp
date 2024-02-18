@@ -9,14 +9,14 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 
-public class KMeansAlgorithm {
+public class KMeans {
     private Integer clusterNum;
     private ArrayList<Cluster> clusters;
     private ArrayList<Pixel> pixelArray;
 
     private final int width;
     private final int height;
-    public KMeansAlgorithm(int k, BufferedImage image){
+    public KMeans(int k, BufferedImage image){
         clusterNum = k;
         this.pixelArray = ImageReader.getPixelArray(image);
         width = image.getWidth();
