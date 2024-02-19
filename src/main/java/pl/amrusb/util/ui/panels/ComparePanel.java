@@ -242,5 +242,14 @@ public class ComparePanel extends JPanel {
         lDice.setText(value);
     }
 
+    public void setWekaTime(Float time){
+        lWekaTime.setText(time.toString() + " sec");
+    }
+
+    public void setOwnTime(Float time){
+        lOwnTime.setText(time.toString() + " sec");
+    }
+
+
     public enum Position{ LEFT, RIGHT }
 }
