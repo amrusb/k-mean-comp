@@ -8,6 +8,7 @@ import java.awt.*;
 import java.text.NumberFormat;
 
 public class ClusterInputDialog extends JDialog {
+    private final JLabel errorLabel = new JLabel();
     private final JFormattedTextField clusterCountField;
     private final JSlider slider = new JSlider(2, 30, 6);
     private final JCheckBox imageSource = new JCheckBox("Segmentuj obraz w oryginalnych wymiarach");
@@ -68,7 +69,12 @@ public class ClusterInputDialog extends JDialog {
         });
         add(slider, constr);
 
+
         constr.gridy = 3;
+        errorLabel.setVisible(false);
+        add(errorLabel, constr);
+
+        constr.gridy = 4;
         constr.gridheight = 1;
         constr.gridwidth = 1;
         constr.insets.set(5,20,5, 20);
@@ -81,7 +87,9 @@ public class ClusterInputDialog extends JDialog {
         submitButton.addActionListener(e -> {
             if (e.getSource() == submitButton) {
                 clusterCount =  Integer.parseInt(clusterCountField.getText());
-                dispose();
+                if(validation()){
+                    dispose();
+                }
             }
         });
         buttonPanel.add(submitButton);
@@ -89,14 +97,25 @@ public class ClusterInputDialog extends JDialog {
         JButton cancelButton = new JButton("Anuluj");
         buttonPanel.add(cancelButton);
         cancelButton.addActionListener(e -> {
-            clusterCount = -1;
+            clusterCount = null;
             dispose();
         });
-        constr.gridy = 4;
+        constr.gridy = 5;
         constr.insets.set(5,20,10, 20);
         add(buttonPanel, constr);
     }
 
+    private boolean validation(){
+        if(clusterCount < 2){
+            errorLabel.setText("<html><font color='red'>Liczba klastrów musi być większa od 1!</font></html>");
+            errorLabel.setVisible(true);
+            return false;
+        }
+        else {
+            errorLabel.setVisible(false);
+            return true;
+        }
+    }
     public Boolean checkImageSource() {return imageSource.isSelected(); }
 
 }

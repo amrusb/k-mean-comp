@@ -29,7 +29,7 @@ public class WekaKMeansAction implements ActionListener {
         Integer clusterNum = dialog.getClusterCount();
         Boolean original = dialog.checkImageSource();
 
-        if (clusterNum > 0) {
+        if (clusterNum != null) {
             new WekaKMeansThread(
                     original,
                     clusterNum,

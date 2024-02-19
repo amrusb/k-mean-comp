@@ -28,7 +28,7 @@ public class KMeansAction implements ActionListener {
         Integer clusterNum = dialog.getClusterCount();
         Boolean original = dialog.checkImageSource();
 
-        if (clusterNum > 0) {
+        if (clusterNum != null) {
             new KMeansThread(
                     original,
                     clusterNum,
