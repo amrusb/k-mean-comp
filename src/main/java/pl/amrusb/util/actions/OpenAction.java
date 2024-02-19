@@ -28,11 +28,9 @@ public class OpenAction implements ActionListener {
 
         if(result == JFileChooser.APPROVE_OPTION){
             BottomPanel.setDurationInfoVisible(false);
-            BottomPanel.setFileNameVisible(true);
             BottomPanel.clear();
 
             String fileName = imageChooser.getSelectedFile().getName();
-            BottomPanel.setFileName(fileName);
             panel.setFileName(fileName);
 
             String filePath = imageChooser.getSelectedFile().getAbsolutePath();
