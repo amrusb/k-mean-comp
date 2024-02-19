@@ -41,12 +41,11 @@ public class OpenAction implements ActionListener {
             panel.setOriginalImage(ImageReader.readImage());
 
             panel.setImageLabel(ImageReader.readImage());
-
+            MainFrame.addTab(panel);
+            MainFrame.changePanel();
+            MainMenuBar.reload();
         }
 
-        MainFrame.addTab(panel);
-        MainFrame.changePanel();
-        MainMenuBar.reload();
         MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
     }
 }
