@@ -21,4 +21,14 @@ public class Point3D {
     public String toString() {
         return X+"/"+Y+"/"+Z;
     }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        Point3D clone = (Point3D)super.clone();
+        clone.X = X;
+        clone.Y = Y;
+        clone.Z = Z;
+
+        return new Point3D(X,Y,Z);
+    }
 }
