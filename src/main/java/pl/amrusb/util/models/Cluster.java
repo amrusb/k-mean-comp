@@ -52,7 +52,7 @@ public class Cluster extends Point3D {
 
     @Override
     public String toString() {
-        return "{" + super.toString() + "} #" + size;
+        return super.toString();
     }
 
     public Cluster clone() {

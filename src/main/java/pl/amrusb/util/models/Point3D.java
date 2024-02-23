@@ -19,7 +19,11 @@ public class Point3D {
     }
     @Override
     public String toString() {
-        return X+"/"+Y+"/"+Z;
+        return "(" + X+", "+Y+", "+Z +")";
+    }
+
+    public String toHex(){
+        return String.format("#%02X%02X%02X", X, Y, Z);
     }
 
     @Override
