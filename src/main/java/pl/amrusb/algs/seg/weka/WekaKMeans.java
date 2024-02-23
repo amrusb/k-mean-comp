@@ -2,8 +2,9 @@ package pl.amrusb.algs.seg.weka;
 
 import pl.amrusb.algs.seg.AKMeans;
 import pl.amrusb.util.img.ImageReader;
-import pl.amrusb.util.img.ImageSaver;
+import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
+import pl.amrusb.util.models.Point3D;
 import pl.amrusb.util.ui.panels.BottomPanel;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Instance;
@@ -15,6 +16,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WekaKMeans extends AKMeans {
     private static final int MAX_ITERATIONS = 100;
@@ -36,6 +39,7 @@ public class WekaKMeans extends AKMeans {
                             SimpleKMeans.TAGS_SELECTION
                     )
             );
+            algorithm.setDebug(true);
             algorithm.setPreserveInstancesOrder(true);
             algorithm.setNumClusters(getClusterNum());
 
@@ -46,7 +50,7 @@ public class WekaKMeans extends AKMeans {
             algorithm.buildClusterer(data);
             BottomPanel.setProgress(1);
 
-            algorithm.getOptions();
+            createStats(algorithm);
 
             setPixelToClusterVal(algorithm.getAssignments(), algorithm.getClusterCentroids());
         }
@@ -60,6 +64,65 @@ public class WekaKMeans extends AKMeans {
         }
 
     }
+
+    private void createStats(SimpleKMeans algorithm){
+        try{
+            Map<KMeansStats, Object> stats = new HashMap<>();
+            ArrayList<Cluster> clusters = new ArrayList<>();
+            Instances centroids = algorithm.getClusterCentroids();
+            double[] sizes = algorithm.getClusterSizes();
+            Integer iterations = null;
+            ArrayList<Point3D> initialClusters = new ArrayList<>();
+
+            for (int i = 0; i < centroids.size(); i++) {
+                Instance centroid = centroids.get(i);
+                double[] val = centroid.toDoubleArray();
+                Cluster cluster = new Cluster(
+                        (int) val[0],
+                        (int) val[1],
+                        (int) val[2],
+                        (int) sizes[i]
+                );
+
+                clusters.add(cluster);
+            }
+
+
+            String[] info = algorithm.toString().split("\n");
+
+            for (String line : info) {
+                if (line.contains("Number of iterations")) {
+                    String[] parts = line.split(":");
+                    iterations = Integer.parseInt(parts[1].trim());
+                } else if (line.startsWith("Cluster")) {
+                    String[] clusterParts = line.split(":");
+                    String[] clusterCoordinates = clusterParts[1].split(",");
+                    int x = Integer.parseInt(clusterCoordinates[0].trim());
+                    int y = Integer.parseInt(clusterCoordinates[1].trim());
+                    int z = Integer.parseInt(clusterCoordinates[2].trim());
+
+                    Point3D cluster = new Point3D(x,y,z);
+                    initialClusters.add(cluster);
+                }
+            }
+
+            stats.put(KMeansStats.INITIAL_START_POINTS, initialClusters);
+            stats.put(KMeansStats.ITERATIONS, iterations);
+            stats.put(KMeansStats.CLUSTER_CENTROIDS, clusters);
+            stats.put(KMeansStats.ASSIGNMENTS, algorithm.getAssignments());
+
+            this.setStatistics(stats);
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(
+                    null,
+                    e.getMessage(),
+                    "Błąd",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
     private void setPixelToClusterVal(int[] assignments, Instances centroids){
         int index = 0;
         for(Pixel pixel: getPixelArray()){
