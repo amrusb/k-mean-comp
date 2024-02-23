@@ -8,6 +8,7 @@ import pl.amrusb.util.ui.panels.BottomPanel;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.SelectedTag;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -29,7 +30,12 @@ public class WekaKMeans extends AKMeans {
             Instances data = createDataSet();
             SimpleKMeans algorithm = new SimpleKMeans();
             algorithm.setMaxIterations(MAX_ITERATIONS);
-            algorithm.setSeed(1232);
+            algorithm.setInitializationMethod(
+                    new SelectedTag(
+                            SimpleKMeans.KMEANS_PLUS_PLUS,
+                            SimpleKMeans.TAGS_SELECTION
+                    )
+            );
             algorithm.setPreserveInstancesOrder(true);
             algorithm.setNumClusters(getClusterNum());
 
@@ -51,7 +57,6 @@ public class WekaKMeans extends AKMeans {
                     "Błąd",
                     JOptionPane.ERROR_MESSAGE
             );
-            e.printStackTrace();
         }
 
     }
