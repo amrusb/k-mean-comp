@@ -1,13 +1,19 @@
 package pl.amrusb.util.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class Cluster extends Point3D {
     private int size = 0;
 
     public Cluster(Pixel pixel){
         super(pixel.getR(),pixel.getG(),pixel.getB());
+    }
+    public Cluster(int X, int Y, int Z, int size){
+        super(X,Y,Z);
+        this.size = size;
     }
 
     /**
@@ -47,5 +53,14 @@ public class Cluster extends Point3D {
     @Override
     public String toString() {
         return super.toString();
+    }
+
+    public Cluster clone() {
+        return new Cluster(
+                this.getX(),
+                this.getY(),
+                this.getZ(),
+                getSize()
+        );
     }
 }

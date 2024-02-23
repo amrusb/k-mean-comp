@@ -28,11 +28,9 @@ public class OpenAction implements ActionListener {
 
         if(result == JFileChooser.APPROVE_OPTION){
             BottomPanel.setDurationInfoVisible(false);
-            BottomPanel.setFileNameVisible(true);
             BottomPanel.clear();
 
             String fileName = imageChooser.getSelectedFile().getName();
-            BottomPanel.setFileName(fileName);
             panel.setFileName(fileName);
 
             String filePath = imageChooser.getSelectedFile().getAbsolutePath();
@@ -41,12 +39,11 @@ public class OpenAction implements ActionListener {
             panel.setOriginalImage(ImageReader.readImage());
 
             panel.setImageLabel(ImageReader.readImage());
-
+            MainFrame.addTab(panel);
+            MainFrame.changePanel();
+            MainMenuBar.reload();
         }
 
-        MainFrame.addTab(panel);
-        MainFrame.changePanel();
-        MainMenuBar.reload();
         MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
     }
 }

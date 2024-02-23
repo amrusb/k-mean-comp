@@ -1,5 +1,6 @@
 package pl.amrusb.algs.seg.imp;
 
+import lombok.Getter;
 import pl.amrusb.util.Calculations;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
@@ -11,13 +12,17 @@ import java.util.Arrays;
 class HamerlySegmentation {
     private static final int MAX_ITERATIONS = 100;
     private final Integer clusterNum;
+    @Getter
     private final ArrayList<Cluster> clusters;
     private final ArrayList<Pixel> image;
     private final Integer size;
     private final double[] upperBounds;
     private final double[] lowerBounds;
     private final double[] moves;
+    @Getter
     private final int[] assignments;
+    @Getter
+    private Integer iteration;
 
     public HamerlySegmentation(
             Integer clusterNum,
@@ -39,8 +44,6 @@ class HamerlySegmentation {
         Arrays.fill(upperBounds, Double.MAX_VALUE);
         Arrays.fill(lowerBounds, 0.0);
         Arrays.fill(assignments, -1);
-
-        Integer iteration;
 
         BottomPanel.setProgress(0);
         BottomPanel.setProgressMaximum(MAX_ITERATIONS - 1);

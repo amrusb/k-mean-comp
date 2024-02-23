@@ -1,43 +1,60 @@
 package pl.amrusb.algs.seg.imp;
 
-import pl.amrusb.algs.seg.IKMeans;
+import pl.amrusb.algs.seg.AKMeans;
 import pl.amrusb.util.models.Cluster;
-import pl.amrusb.util.models.Pixel;
 import pl.amrusb.util.img.ImageReader;
-import pl.amrusb.util.img.ImageSaver;
+import pl.amrusb.util.timer.Timer;
 
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
-public class KMeans implements IKMeans {
-    private Integer clusterNum;
-    private ArrayList<Cluster> clusters;
-    private ArrayList<Pixel> pixelArray;
+public class KMeans extends AKMeans {
 
-    private final int width;
-    private final int height;
     public KMeans(int k, BufferedImage image){
-        clusterNum = k;
-        this.pixelArray = ImageReader.getPixelArray(image);
-        width = image.getWidth();
-        height = image.getHeight();
+        super(null,k,ImageReader.getPixelArray(image),image.getWidth(), image.getHeight());
     }
 
     public void execute(){
-        KMeansPP init = new KMeansPP(clusterNum, pixelArray);
-        clusters = init.execute();
-        clusterNum = clusters.size();
+        try {
+            Timer.start();
 
-        HamerlySegmentation alg = new HamerlySegmentation(clusterNum, pixelArray, clusters);
-        pixelArray = alg.execute();
-    }
+            Map<KMeansStats, Object> stats = new HashMap<>();
+            KMeansPP init = new KMeansPP(getClusterNum(), getPixelArray());
+            ArrayList<Cluster> clusters = init.execute();
+            setClusterNum(clusters.size());
+            ArrayList<Cluster> initialClusters = new ArrayList<>(clusters.size());
+            clusters.forEach(e -> {
+                initialClusters.add(e.clone());
+            });
 
-    /**
-     * Zwraca obraz wyjściowy po segmentowaniu obrazu algorytmem k-means.
-     * @return obraz wyjściowy po segmentacji
-     */
-    public BufferedImage getOutputImage(){
-        return ImageSaver.convertToBufferedImage(pixelArray, width, height);
+            stats.put(KMeansStats.INITIAL_START_POINTS, initialClusters);
+
+            HamerlySegmentation alg = new HamerlySegmentation(
+                    getClusterNum(),
+                    getPixelArray(),
+                    clusters);
+            setPixelArray(alg.execute());
+
+            Float time = Timer.stop();
+
+            stats.put(KMeansStats.TIME, time);
+            stats.put(KMeansStats.CLUSTER_CENTROIDS, clusters);
+            stats.put(KMeansStats.ASSIGNMENTS, alg.getAssignments());
+            stats.put(KMeansStats.ITERATIONS, alg.getIteration());
+
+            this.setStatistics(stats);
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    e.getMessage(),
+                    "Błąd",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 }

@@ -2,7 +2,6 @@ package pl.amrusb.util.threads;
 
 import lombok.AllArgsConstructor;
 import pl.amrusb.algs.seg.IKMeans;
-import pl.amrusb.algs.seg.imp.KMeans;
 import pl.amrusb.algs.seg.weka.WekaKMeans;
 import pl.amrusb.util.img.ImageRescaler;
 import pl.amrusb.util.ui.MainFrame;
@@ -30,7 +29,6 @@ public class WekaKMeansThread extends Thread{
         BottomPanel.setProgressBarVisible(true);
 
         IKMeans segmentation;
-        Long start = System.currentTimeMillis();
 
         if (original) {
             segmentation = new WekaKMeans(clusterNum, current.getOriginalImage());
@@ -39,10 +37,6 @@ public class WekaKMeansThread extends Thread{
         }
 
         segmentation.execute();
-
-        Long elapsedTimeMillis = System.currentTimeMillis() - start;
-        Float elapsedTimeSec = elapsedTimeMillis / 1000F;
-        BottomPanel.setDurationTime(elapsedTimeSec);
 
         action.setEnabled(true);
         BufferedImage output = segmentation.getOutputImage();
