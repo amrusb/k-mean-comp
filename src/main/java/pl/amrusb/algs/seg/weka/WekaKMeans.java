@@ -18,6 +18,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import pl.amrusb.util.timer.Timer;
 
 public class WekaKMeans extends AKMeans {
     private static final int MAX_ITERATIONS = 100;
@@ -47,7 +48,13 @@ public class WekaKMeans extends AKMeans {
             //TODO
             BottomPanel.setProgressMaximum(1);
             BottomPanel.setProgressLabel("K-means...");
+
+            Timer.start();
+
             algorithm.buildClusterer(data);
+
+            Timer.stop();
+
             BottomPanel.setProgress(1);
 
             createStats(algorithm);
@@ -106,6 +113,7 @@ public class WekaKMeans extends AKMeans {
                 }
             }
 
+            stats.put(KMeansStats.TIME, Timer.getResult());
             stats.put(KMeansStats.INITIAL_START_POINTS, initialClusters);
             stats.put(KMeansStats.ITERATIONS, iterations);
             stats.put(KMeansStats.CLUSTER_CENTROIDS, clusters);

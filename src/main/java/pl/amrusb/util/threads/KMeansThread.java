@@ -29,7 +29,7 @@ public class KMeansThread extends Thread{
         BottomPanel.setProgressBarVisible(true);
 
         IKMeans segmentation;
-        Long start = System.currentTimeMillis();
+
         if (original) {
             segmentation = new KMeans(clusterNum, current.getOriginalImage());
         } else {
@@ -37,10 +37,6 @@ public class KMeansThread extends Thread{
         }
 
         segmentation.execute();
-
-        Long elapsedTimeMillis = System.currentTimeMillis() - start;
-        Float elapsedTimeSec = elapsedTimeMillis / 1000F;
-        BottomPanel.setDurationTime(elapsedTimeSec);
 
         action.setEnabled(true);
         BufferedImage output = segmentation.getOutputImage();
@@ -56,5 +52,7 @@ public class KMeansThread extends Thread{
 
         BottomPanel.setProgressBarVisible(false);
         BottomPanel.setDurationInfoVisible(true);
+
+
     }
 }

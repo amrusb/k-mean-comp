@@ -25,30 +25,21 @@ public class CompareThread extends Thread{
         ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getSelectedComponent();
         BufferedImage leftImage, rightImage;
         IKMeans segmentation;
-        Long start, elapsedTimeMillis;
-        Float elapsedTimeSec;
 
         BottomPanel.setProgressBarVisible(true);
         MainMenuBar.getOwner().setCursor(
                 Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)
         );
 
-        start = System.currentTimeMillis();
         segmentation = new KMeans(clusterNum, current.getOriginalImage());
         segmentation.execute();
-        elapsedTimeMillis = System.currentTimeMillis() - start;
-        elapsedTimeSec = elapsedTimeMillis / 1000F;
-        current.getComparePanel().setOwnTime(elapsedTimeSec);
 
         leftImage = segmentation.getOutputImage();
 
 
-        start = System.currentTimeMillis();
+
         segmentation = new WekaKMeans(clusterNum, current.getOriginalImage());
         segmentation.execute();
-        elapsedTimeMillis = System.currentTimeMillis() - start;
-        elapsedTimeSec = elapsedTimeMillis / 1000F;
-        current.getComparePanel().setWekaTime(elapsedTimeSec);
 
         rightImage = segmentation.getOutputImage();
 
