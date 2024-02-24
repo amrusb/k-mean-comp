@@ -1,6 +1,7 @@
 package pl.amrusb.algs.seg.weka;
 
 import pl.amrusb.algs.seg.AKMeans;
+import pl.amrusb.util.ClusterComparator;
 import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
@@ -88,7 +89,8 @@ public class WekaKMeans extends AKMeans {
                         (int) val[0],
                         (int) val[1],
                         (int) val[2],
-                        (int) sizes[i]
+                        (int) sizes[i],
+                        i
                 );
 
                 clusters.add(cluster);
@@ -112,12 +114,14 @@ public class WekaKMeans extends AKMeans {
                     initialClusters.add(cluster);
                 }
             }
+            clusters.sort(new ClusterComparator());
+            int[] assignments = reassignment(algorithm.getAssignments(), clusters);
 
             stats.put(KMeansStats.TIME, Timer.getResult());
             stats.put(KMeansStats.INITIAL_START_POINTS, initialClusters);
             stats.put(KMeansStats.ITERATIONS, iterations);
             stats.put(KMeansStats.CLUSTER_CENTROIDS, clusters);
-            stats.put(KMeansStats.ASSIGNMENTS, algorithm.getAssignments());
+            stats.put(KMeansStats.ASSIGNMENTS, assignments);
 
             this.setStatistics(stats);
         }

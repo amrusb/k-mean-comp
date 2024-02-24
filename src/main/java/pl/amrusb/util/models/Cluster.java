@@ -2,18 +2,31 @@ package pl.amrusb.util.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
 public class Cluster extends Point3D {
     private int size = 0;
+    private final Integer ordinal;
 
     public Cluster(Pixel pixel){
         super(pixel.getR(),pixel.getG(),pixel.getB());
+        ordinal = null;
+    }
+    public Cluster(Pixel pixel, int ordinal){
+        super(pixel.getR(),pixel.getG(),pixel.getB());
+        this.ordinal = ordinal;
     }
     public Cluster(int X, int Y, int Z, int size){
         super(X,Y,Z);
         this.size = size;
+        this.ordinal = null;
+    }
+    public Cluster(int X, int Y, int Z, int size, int ordinal){
+        super(X,Y,Z);
+        this.size = size;
+        this.ordinal = ordinal;
     }
 
     /**
