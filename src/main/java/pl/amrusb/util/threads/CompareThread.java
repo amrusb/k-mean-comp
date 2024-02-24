@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import pl.amrusb.algs.seg.*;
 import pl.amrusb.algs.seg.imp.KMeans;
 import pl.amrusb.algs.seg.weka.WekaKMeans;
+import pl.amrusb.util.Calculations;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Point3D;
 import pl.amrusb.util.ui.MainFrame;
@@ -59,12 +60,19 @@ public class CompareThread extends Thread{
                 ComparePanel.Position.RIGHT
         );
 
+        Double jaccardIdx = Calculations.JaccardIndex((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
+        Double sorenDiceCoef = Calculations.SorensenDiceCoefficient((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
+        Double mse = Calculations.MeanSquareError((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
+        Double rmse = Math.sqrt(mse);
         action.setEnabled(true);
         MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
         BottomPanel.setProgressBarVisible(false);
-        current.getComparePanel().addPropTableRow("<html><b>Indeks Jaccard'a</b></html>", "TBD", "TBD");
-        current.getComparePanel().addPropTableRow("<html><b>Współczynnik Dice’a</b></html>", "TBD", "TBD");
 
+
+        current.getComparePanel().addPropTableRow("<html><b>Indeks Jaccard'a</b></html>", jaccardIdx, jaccardIdx);
+        current.getComparePanel().addPropTableRow("<html><b>Współczynnik Dice’a</b></html>", sorenDiceCoef, sorenDiceCoef);
+        current.getComparePanel().addPropTableRow("<html><b>MSE</b></html>", mse, mse);
+        current.getComparePanel().addPropTableRow("<html><b>RMSE</b></html>", rmse, rmse);
         current.getComparePanel().addPropTableRow(
                 "<html><b>Liczba iteracji</b></html>",
                 ownStats.get(AKMeans.KMeansStats.ITERATIONS),
