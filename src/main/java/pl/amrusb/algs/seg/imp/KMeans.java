@@ -1,15 +1,14 @@
 package pl.amrusb.algs.seg.imp;
 
 import pl.amrusb.algs.seg.AKMeans;
+import pl.amrusb.util.ClusterComparator;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.util.timer.Timer;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 public class KMeans extends AKMeans {
@@ -41,9 +40,12 @@ public class KMeans extends AKMeans {
 
             Float time = Timer.stop();
 
+            clusters.sort(new ClusterComparator());
+            int[] assignments = reassignment(alg.getAssignments(), clusters);
+
             stats.put(KMeansStats.TIME, time);
             stats.put(KMeansStats.CLUSTER_CENTROIDS, clusters);
-            stats.put(KMeansStats.ASSIGNMENTS, alg.getAssignments());
+            stats.put(KMeansStats.ASSIGNMENTS, assignments);
             stats.put(KMeansStats.ITERATIONS, alg.getIteration());
 
             this.setStatistics(stats);

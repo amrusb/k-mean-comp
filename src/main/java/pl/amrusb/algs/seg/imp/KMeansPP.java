@@ -25,10 +25,10 @@ class KMeansPP {
         int pixelArraySize = image.size();
         LCGenerator random = new LCGenerator(System.nanoTime());
         int x = (int)(random.nextDouble() * 255);
-        var temp_pixel = image.get(x);
+        Pixel temp_pixel = image.get(x);
 
         //Pierwszy centroid randomowy
-        clusters.add(new Cluster(temp_pixel));
+        clusters.add(new Cluster(temp_pixel, 0));
 
 
         double[] distances = new double[pixelArraySize];
@@ -63,7 +63,7 @@ class KMeansPP {
 
             }
             temp_pixel = image.get(cluster_index);
-            clusters.add(new Cluster(temp_pixel));
+            clusters.add(new Cluster(temp_pixel,i));
         }
 
         return clusters;

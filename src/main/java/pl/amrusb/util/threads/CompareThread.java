@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import pl.amrusb.algs.seg.*;
 import pl.amrusb.algs.seg.imp.KMeans;
 import pl.amrusb.algs.seg.weka.WekaKMeans;
+import pl.amrusb.util.Calculations;
+import pl.amrusb.util.Metrics;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Point3D;
 import pl.amrusb.util.ui.MainFrame;
@@ -59,12 +61,41 @@ public class CompareThread extends Thread{
                 ComparePanel.Position.RIGHT
         );
 
+        Double jaccardIdx = Metrics.JaccardIndex(
+                (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
+        );
+        jaccardIdx = Calculations.round(jaccardIdx, 4);
+
+        double[] jaccardIdxs = Metrics.JaccardIndex(
+                (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                clusterNum
+        );
+        Double sorenDiceCoef = Metrics.SorensenDiceCoefficient(
+                (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
+        );
+        sorenDiceCoef = Calculations.round(sorenDiceCoef, 4);
+        double[] sorenDiceCoefs = Metrics.SorensenDiceCoefficient(
+                (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                clusterNum
+        );
+        Double mse = Metrics.MeanSquareError((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
+        Double rmse = Math.sqrt(mse);
+        mse = Calculations.round(mse, 4);
+        rmse = Calculations.round(rmse, 4);
         action.setEnabled(true);
+
         MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
         BottomPanel.setProgressBarVisible(false);
-        current.getComparePanel().addPropTableRow("<html><b>Indeks Jaccard'a</b></html>", "TBD", "TBD");
-        current.getComparePanel().addPropTableRow("<html><b>Współczynnik Dice’a</b></html>", "TBD", "TBD");
 
+
+        current.getComparePanel().addPropTableRow("<html><b>Indeks Jaccard'a</b></html>", jaccardIdx, jaccardIdx);
+        current.getComparePanel().addPropTableRow("<html><b>Współczynnik Dice’a</b></html>", sorenDiceCoef, sorenDiceCoef);
+        current.getComparePanel().addPropTableRow("<html><b>MSE</b></html>", mse, mse);
+        current.getComparePanel().addPropTableRow("<html><b>RMSE</b></html>", rmse, rmse);
         current.getComparePanel().addPropTableRow(
                 "<html><b>Liczba iteracji</b></html>",
                 ownStats.get(AKMeans.KMeansStats.ITERATIONS),
@@ -77,10 +108,10 @@ public class CompareThread extends Thread{
                 (ArrayList<Cluster>) ownStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS),
                 (ArrayList<Cluster>)wekaStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS)
         );
-
         current.getComparePanel().fillInitialsTable(
                 (ArrayList<Point3D>) ownStats.get(AKMeans.KMeansStats.INITIAL_START_POINTS),
                 (ArrayList<Point3D>) wekaStats.get(AKMeans.KMeansStats.INITIAL_START_POINTS)
         );
+        current.getComparePanel().fillClustersMetricsTable(jaccardIdxs, sorenDiceCoefs);
     }
 }

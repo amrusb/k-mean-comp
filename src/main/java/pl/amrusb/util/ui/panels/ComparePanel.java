@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import pl.amrusb.util.Calculations;
 import pl.amrusb.util.img.ImageRescaler;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Point3D;
@@ -12,7 +13,6 @@ import pl.amrusb.util.ui.MainFrame;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -55,6 +55,8 @@ public class ComparePanel extends JPanel {
     private JTable ownITable;
     private DefaultTableModel wekaIModel;
     private JTable wekaITable;
+    private DefaultTableModel metricsModel;
+    private JTable metricsTable;
 
     private JLabel lImageName;
     private JLabel lClusterNum;
@@ -168,9 +170,7 @@ public class ComparePanel extends JPanel {
         c.anchor = GridBagConstraints.WEST;
         c.fill = GridBagConstraints.HORIZONTAL;
         JComboBox<String> comboBox =  StatsComboBox.getJComboBox();
-        comboBox.addItemListener(e->{
-            cardLayout.show(statsPanel, e.getItem().toString());
-        });
+        comboBox.addItemListener(e->cardLayout.show(statsPanel, e.getItem().toString()));
         rightBottomPanel.add(comboBox, c);
 
         c.gridx = 0;
@@ -226,8 +226,14 @@ public class ComparePanel extends JPanel {
         wekaCModel.addColumn("Współrzędne");
         wekaCModel.addColumn("Rozmiar");
         wekaCModel.addColumn("Kolor");
+        metricsModel = new DefaultTableModel();
+        metricsTable = new JTable(metricsModel);
+        metricsModel.addColumn("Lp.");
+        metricsModel.addColumn("Indeks Jaccard'a");
+        metricsModel.addColumn("Współczynnik Dice'a");
 
         clustersPanel.add(new JScrollPane(ownCTable), BorderLayout.WEST);
+        clustersPanel.add(new JScrollPane(metricsTable), BorderLayout.CENTER);
         clustersPanel.add(new JScrollPane(wekaCTable), BorderLayout.EAST);
 
 
@@ -249,8 +255,11 @@ public class ComparePanel extends JPanel {
         wekaIModel.addColumn("Współrzędne");
         wekaIModel.addColumn("Kolor");
 
+
+
         initialsPanel.add(new JScrollPane(ownITable), BorderLayout.WEST);
         initialsPanel.add(new JScrollPane(wekaITable), BorderLayout.EAST);
+
 
         statsPanel.add(metricsPanel, StatsComboBox.PROPERTIES.value);
         statsPanel.add(new JScrollPane(clustersPanel), StatsComboBox.CLUSTERS.value);
@@ -340,13 +349,24 @@ public class ComparePanel extends JPanel {
                 });            }
         }
     }
+    public void fillClustersMetricsTable(double[] jaccardIndexes, double[] diceCoefs){
+        int size = jaccardIndexes.length;
 
+        for(int i = 0; i < size; i++){
+            metricsModel.addRow(new Object[]{
+                    i + 1,
+                    Calculations.round(jaccardIndexes[i], 4),
+                    Calculations.round(diceCoefs[i], 4)
+            });
+        }
+
+    }
     public void addPropTableRow(Object val1, Object val2, Object val3){
         propModel.addRow(new Object[]{val1, val2, val3});
     }
 
     public void setImageLabel(BufferedImage image, Position position){
-        ImageIcon imageIcon = null;
+        ImageIcon imageIcon;
         double frameWidth = MainFrame.getFrameWidth() / 2.0;
         double frameHeight = MainFrame.getFrameHeight() * 2.0 / 3;
 
@@ -354,7 +374,7 @@ public class ComparePanel extends JPanel {
         int height = image.getHeight();
 
         if (width >= frameWidth || height >= frameHeight) {
-            double scale = Math.min((double) frameWidth / (width), (double) frameHeight / (height));
+            double scale = Math.min(frameWidth / (width), frameHeight / (height));
             BufferedImage displayImage = ImageRescaler.rescaleImage(image, scale);
             imageIcon = new ImageIcon(displayImage);
         }
@@ -394,7 +414,7 @@ public class ComparePanel extends JPanel {
 
         final String value;
 
-        private StatsComboBox(String value){
+        StatsComboBox(String value){
             this.value = value;
         }
 
