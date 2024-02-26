@@ -13,10 +13,8 @@ import pl.amrusb.util.ui.MainFrame;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 @Getter
@@ -172,9 +170,7 @@ public class ComparePanel extends JPanel {
         c.anchor = GridBagConstraints.WEST;
         c.fill = GridBagConstraints.HORIZONTAL;
         JComboBox<String> comboBox =  StatsComboBox.getJComboBox();
-        comboBox.addItemListener(e->{
-            cardLayout.show(statsPanel, e.getItem().toString());
-        });
+        comboBox.addItemListener(e->cardLayout.show(statsPanel, e.getItem().toString()));
         rightBottomPanel.add(comboBox, c);
 
         c.gridx = 0;
@@ -370,7 +366,7 @@ public class ComparePanel extends JPanel {
     }
 
     public void setImageLabel(BufferedImage image, Position position){
-        ImageIcon imageIcon = null;
+        ImageIcon imageIcon;
         double frameWidth = MainFrame.getFrameWidth() / 2.0;
         double frameHeight = MainFrame.getFrameHeight() * 2.0 / 3;
 
@@ -378,7 +374,7 @@ public class ComparePanel extends JPanel {
         int height = image.getHeight();
 
         if (width >= frameWidth || height >= frameHeight) {
-            double scale = Math.min((double) frameWidth / (width), (double) frameHeight / (height));
+            double scale = Math.min(frameWidth / (width), frameHeight / (height));
             BufferedImage displayImage = ImageRescaler.rescaleImage(image, scale);
             imageIcon = new ImageIcon(displayImage);
         }
@@ -418,7 +414,7 @@ public class ComparePanel extends JPanel {
 
         final String value;
 
-        private StatsComboBox(String value){
+        StatsComboBox(String value){
             this.value = value;
         }
 
