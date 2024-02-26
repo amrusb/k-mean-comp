@@ -5,6 +5,7 @@ import pl.amrusb.algs.seg.*;
 import pl.amrusb.algs.seg.imp.KMeans;
 import pl.amrusb.algs.seg.weka.WekaKMeans;
 import pl.amrusb.util.Calculations;
+import pl.amrusb.util.Metrics;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Point3D;
 import pl.amrusb.util.ui.MainFrame;
@@ -60,9 +61,9 @@ public class CompareThread extends Thread{
                 ComparePanel.Position.RIGHT
         );
 
-        Double jaccardIdx = Calculations.JaccardIndex((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
-        Double sorenDiceCoef = Calculations.SorensenDiceCoefficient((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
-        Double mse = Calculations.MeanSquareError((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
+        Double jaccardIdx = Metrics.JaccardIndex((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
+        Double sorenDiceCoef = Metrics.SorensenDiceCoefficient((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
+        Double mse = Metrics.MeanSquareError((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
         Double rmse = Math.sqrt(mse);
         action.setEnabled(true);
         MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
