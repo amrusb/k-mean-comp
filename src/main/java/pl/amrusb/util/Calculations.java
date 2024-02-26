@@ -2,6 +2,9 @@ package pl.amrusb.util;
 
 import pl.amrusb.util.models.Point3D;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class Calculations {
     /**
      * Oblicza kwadrat odległości euklidesowej między dwoma punktami w trójwymiarowej przestrzeni.
@@ -32,5 +35,10 @@ public class Calculations {
         return Math.sqrt(d_x*d_x+d_y*d_y+d_z*d_z);
     }
 
+    public static double round(double value, int position){
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(position, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
 
 }

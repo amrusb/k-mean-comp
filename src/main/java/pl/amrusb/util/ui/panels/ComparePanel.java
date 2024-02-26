@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import pl.amrusb.util.Calculations;
 import pl.amrusb.util.img.ImageRescaler;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Point3D;
@@ -15,6 +16,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 @Getter
@@ -355,7 +357,11 @@ public class ComparePanel extends JPanel {
         int size = jaccardIndexes.length;
 
         for(int i = 0; i < size; i++){
-            metricsModel.addRow(new Object[]{i + 1, jaccardIndexes[i], diceCoefs[i]});
+            metricsModel.addRow(new Object[]{
+                    i + 1,
+                    Calculations.round(jaccardIndexes[i], 4),
+                    Calculations.round(diceCoefs[i], 4)
+            });
         }
 
     }

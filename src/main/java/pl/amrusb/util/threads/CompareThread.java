@@ -65,6 +65,8 @@ public class CompareThread extends Thread{
                 (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
                 (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
         );
+        jaccardIdx = Calculations.round(jaccardIdx, 4);
+
         double[] jaccardIdxs = Metrics.JaccardIndex(
                 (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
                 (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
@@ -74,6 +76,7 @@ public class CompareThread extends Thread{
                 (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
                 (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
         );
+        sorenDiceCoef = Calculations.round(sorenDiceCoef, 4);
         double[] sorenDiceCoefs = Metrics.SorensenDiceCoefficient(
                 (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
                 (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
@@ -81,7 +84,8 @@ public class CompareThread extends Thread{
         );
         Double mse = Metrics.MeanSquareError((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
         Double rmse = Math.sqrt(mse);
-
+        mse = Calculations.round(mse, 4);
+        rmse = Calculations.round(rmse, 4);
         action.setEnabled(true);
 
         MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
