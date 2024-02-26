@@ -55,6 +55,8 @@ public class ComparePanel extends JPanel {
     private JTable ownITable;
     private DefaultTableModel wekaIModel;
     private JTable wekaITable;
+    private DefaultTableModel metricsModel;
+    private JTable metricsTable;
 
     private JLabel lImageName;
     private JLabel lClusterNum;
@@ -226,8 +228,14 @@ public class ComparePanel extends JPanel {
         wekaCModel.addColumn("Współrzędne");
         wekaCModel.addColumn("Rozmiar");
         wekaCModel.addColumn("Kolor");
+        metricsModel = new DefaultTableModel();
+        metricsTable = new JTable(metricsModel);
+        metricsModel.addColumn("Lp.");
+        metricsModel.addColumn("Indeks Jaccard'a");
+        metricsModel.addColumn("Współczynnik Dice'a");
 
         clustersPanel.add(new JScrollPane(ownCTable), BorderLayout.WEST);
+        clustersPanel.add(new JScrollPane(metricsTable), BorderLayout.CENTER);
         clustersPanel.add(new JScrollPane(wekaCTable), BorderLayout.EAST);
 
 
@@ -249,8 +257,11 @@ public class ComparePanel extends JPanel {
         wekaIModel.addColumn("Współrzędne");
         wekaIModel.addColumn("Kolor");
 
+
+
         initialsPanel.add(new JScrollPane(ownITable), BorderLayout.WEST);
         initialsPanel.add(new JScrollPane(wekaITable), BorderLayout.EAST);
+
 
         statsPanel.add(metricsPanel, StatsComboBox.PROPERTIES.value);
         statsPanel.add(new JScrollPane(clustersPanel), StatsComboBox.CLUSTERS.value);
@@ -340,7 +351,14 @@ public class ComparePanel extends JPanel {
                 });            }
         }
     }
+    public void fillClustersMetricsTable(double[] jaccardIndexes, double[] diceCoefs){
+        int size = jaccardIndexes.length;
 
+        for(int i = 0; i < size; i++){
+            metricsModel.addRow(new Object[]{i + 1, jaccardIndexes[i], diceCoefs[i]});
+        }
+
+    }
     public void addPropTableRow(Object val1, Object val2, Object val3){
         propModel.addRow(new Object[]{val1, val2, val3});
     }

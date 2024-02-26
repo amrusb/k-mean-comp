@@ -61,11 +61,29 @@ public class CompareThread extends Thread{
                 ComparePanel.Position.RIGHT
         );
 
-        Double jaccardIdx = Metrics.JaccardIndex((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
-        Double sorenDiceCoef = Metrics.SorensenDiceCoefficient((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
+        Double jaccardIdx = Metrics.JaccardIndex(
+                (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
+        );
+        double[] jaccardIdxs = Metrics.JaccardIndex(
+                (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                clusterNum
+        );
+        Double sorenDiceCoef = Metrics.SorensenDiceCoefficient(
+                (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
+        );
+        double[] sorenDiceCoefs = Metrics.SorensenDiceCoefficient(
+                (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                clusterNum
+        );
         Double mse = Metrics.MeanSquareError((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
         Double rmse = Math.sqrt(mse);
+
         action.setEnabled(true);
+
         MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
         BottomPanel.setProgressBarVisible(false);
 
@@ -86,10 +104,10 @@ public class CompareThread extends Thread{
                 (ArrayList<Cluster>) ownStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS),
                 (ArrayList<Cluster>)wekaStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS)
         );
-
         current.getComparePanel().fillInitialsTable(
                 (ArrayList<Point3D>) ownStats.get(AKMeans.KMeansStats.INITIAL_START_POINTS),
                 (ArrayList<Point3D>) wekaStats.get(AKMeans.KMeansStats.INITIAL_START_POINTS)
         );
+        current.getComparePanel().fillClustersMetricsTable(jaccardIdxs, sorenDiceCoefs);
     }
 }
