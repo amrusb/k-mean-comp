@@ -60,9 +60,10 @@ public class RGBHistogram {
         XYPlot plot = chart.getXYPlot();
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, false);
 
-        renderer.setSeriesPaint(0, Color.getColor("DA000A"));
-        renderer.setSeriesPaint(1, Color.getColor("1DA03E"));
-        renderer.setSeriesPaint(2, Color.getColor("0030A1"));
+        renderer.setSeriesPaint(0,new Color(218,0,10));
+        renderer.setSeriesPaint(1,new Color(29,160,62));
+        renderer.setSeriesPaint(2, new Color(0,48,161));
+
 
         renderer.setSeriesStroke(0, new BasicStroke(2.5f));
         renderer.setSeriesStroke(1, new BasicStroke(2.5f));
