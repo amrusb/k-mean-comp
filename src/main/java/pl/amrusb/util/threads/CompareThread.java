@@ -1,11 +1,14 @@
 package pl.amrusb.util.threads;
 
 import lombok.AllArgsConstructor;
+import org.jfree.chart.JFreeChart;
 import pl.amrusb.algs.seg.*;
 import pl.amrusb.algs.seg.imp.KMeans;
 import pl.amrusb.algs.seg.weka.WekaKMeans;
 import pl.amrusb.util.Calculations;
 import pl.amrusb.util.Metrics;
+import pl.amrusb.util.charts.ClusterSizesBarChart;
+import pl.amrusb.util.charts.MetricsBarChart;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Point3D;
 import pl.amrusb.util.ui.MainFrame;
@@ -104,14 +107,28 @@ public class CompareThread extends Thread{
                 "<html><b>Czas trwania</b></html>",
                 ownStats.get(AKMeans.KMeansStats.TIME),
                 wekaStats.get(AKMeans.KMeansStats.TIME));
+
+        ArrayList<Cluster> impClusters  = (ArrayList<Cluster>) ownStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS);
+        ArrayList<Cluster> wekaClusters = (ArrayList<Cluster>)wekaStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS);
         current.getComparePanel().fillClustersTable(
-                (ArrayList<Cluster>) ownStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS),
-                (ArrayList<Cluster>)wekaStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS)
+                impClusters,
+                wekaClusters
         );
         current.getComparePanel().fillInitialsTable(
                 (ArrayList<Point3D>) ownStats.get(AKMeans.KMeansStats.INITIAL_START_POINTS),
                 (ArrayList<Point3D>) wekaStats.get(AKMeans.KMeansStats.INITIAL_START_POINTS)
         );
         current.getComparePanel().fillClustersMetricsTable(jaccardIdxs, sorenDiceCoefs);
+
+        JFreeChart metricsChart = MetricsBarChart.create(
+                jaccardIdxs,
+                sorenDiceCoefs,
+                impClusters,
+                wekaClusters
+                );
+        current.getComparePanel().setMetricsChart(metricsChart);
+
+        JFreeChart sizesChart = ClusterSizesBarChart.create(impClusters, wekaClusters);
+        current.getComparePanel().setSizesChart(sizesChart);
     }
 }
