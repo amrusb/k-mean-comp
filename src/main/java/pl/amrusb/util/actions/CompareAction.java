@@ -30,8 +30,9 @@ public class CompareAction implements ActionListener {
 
         new CompareThread(clusterNum, (JMenuItem) e.getSource() ).start();
 
-        JFreeChart chart = RGBHistogram.create(current.getOriginalImage());
-        current.getComparePanel().setImageChart(chart);
+        JFreeChart histogram = RGBHistogram.create(current.getOriginalImage());
+        current.getComparePanel().setHistogram(histogram);
+
 
         current.getComparePanel().setImageName(current.getFileName());
         current.changePanel(ImagePanel.COMPARE_PANEL);

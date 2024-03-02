@@ -38,11 +38,18 @@ public class ComparePanel extends JPanel {
     private BufferedImage rightImage;
     private JLabel rightImageLabel;
 
-    private JFreeChart imageChart;
-    private ChartPanel leftBottomPanel;
+    private JPanel chartsPanel;
+    private CardLayout chartsCardLayout;
+    private ChartPanel histogramPanel;
+    private JFreeChart histogramChart;
+    private ChartPanel metricsChartPanel;
+    private JFreeChart metricsChart;
+    private ChartPanel sizesChartPanel;
+    private JFreeChart sizesChart;
+
 
     private JPanel statsPanel;
-    private CardLayout cardLayout;
+    private CardLayout statsCardLayout;
     private JTable propTable;
     private DefaultTableModel propModel;
 
@@ -141,7 +148,7 @@ public class ComparePanel extends JPanel {
                 )
         );
         bottomPanel.setLayout(new GridLayout(1,2));
-        leftBottomPanel = new ChartPanel(imageChart);
+        createLeftBottomPanel();
 
 
         JPanel rightBottomPanel = new JPanel();
@@ -170,7 +177,10 @@ public class ComparePanel extends JPanel {
         c.anchor = GridBagConstraints.WEST;
         c.fill = GridBagConstraints.HORIZONTAL;
         JComboBox<String> comboBox =  StatsComboBox.getJComboBox();
-        comboBox.addItemListener(e->cardLayout.show(statsPanel, e.getItem().toString()));
+        comboBox.addItemListener(e-> {
+            statsCardLayout.show(statsPanel, e.getItem().toString());
+            chartsCardLayout.show(chartsPanel, e.getItem().toString());
+        });
         rightBottomPanel.add(comboBox, c);
 
         c.gridx = 0;
@@ -183,14 +193,35 @@ public class ComparePanel extends JPanel {
         rightBottomPanel.add(statsPanel, c);
 
 
-        bottomPanel.add(leftBottomPanel);
+        bottomPanel.add(chartsPanel);
         bottomPanel.add(rightBottomPanel);
     }
 
+    private void createLeftBottomPanel(){
+        chartsCardLayout = new CardLayout();
+        chartsPanel = new JPanel();
+        chartsPanel.setLayout(chartsCardLayout);
+
+
+        histogramPanel = new ChartPanel(histogramChart);
+
+        JPanel clustersPanel = new JPanel();
+        clustersPanel.setLayout(new GridLayout(0,2));
+
+        metricsChartPanel = new ChartPanel(metricsChart);
+        sizesChartPanel = new ChartPanel(sizesChart);
+
+        clustersPanel.add(sizesChartPanel);
+        clustersPanel.add(metricsChartPanel);
+
+        chartsPanel.add(histogramPanel, StatsComboBox.PROPERTIES.value);
+        chartsPanel.add(clustersPanel, StatsComboBox.CLUSTERS.value);
+
+    }
     private void createStatsPanel(){
-        cardLayout = new CardLayout();
+        statsCardLayout = new CardLayout();
         statsPanel = new JPanel();
-        statsPanel.setLayout(cardLayout);
+        statsPanel.setLayout(statsCardLayout);
 
         JPanel metricsPanel = new JPanel();
         metricsPanel.setLayout(new BorderLayout());
@@ -394,9 +425,18 @@ public class ComparePanel extends JPanel {
         this.lImageName.setText(imageName);
     }
 
-    public void setImageChart(JFreeChart chart){
-        imageChart = chart;
-        leftBottomPanel.setChart(chart);
+    public void setHistogram(JFreeChart chart){
+        histogramChart = chart;
+        histogramPanel.setChart(chart);
+    }
+    public void setMetricsChart(JFreeChart chart){
+        metricsChart = chart;
+        metricsChartPanel.setChart(chart);
+    }
+
+    public void setSizesChart(JFreeChart chart){
+        sizesChart = chart;
+        sizesChartPanel.setChart(chart);
     }
 
     public void setClusterNum(Integer value){
