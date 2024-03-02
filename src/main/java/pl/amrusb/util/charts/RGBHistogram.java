@@ -6,6 +6,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class RGBHistogram {
+    private static final String TITLE = "Histogram RGB";
 
     private static XYDataset createDataset(ArrayList<Pixel> pixels){
         XYSeriesCollection dataset = new XYSeriesCollection();
@@ -70,6 +72,9 @@ public class RGBHistogram {
         renderer.setSeriesStroke(2, new BasicStroke(2.5f));
 
         plot.setRenderer(renderer);
+
+        TextTitle title = new TextTitle(TITLE, new Font("Verdana", Font.BOLD, 14));
+        chart.setTitle(title);
     }
 
     public static JFreeChart create(BufferedImage image){

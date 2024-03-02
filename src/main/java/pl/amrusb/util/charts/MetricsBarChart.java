@@ -5,6 +5,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import pl.amrusb.util.models.Cluster;
 
@@ -39,6 +40,9 @@ public class MetricsBarChart {
 
             plot.getRenderer().setSeriesPaint(i, new Color(r,g,b));
         }
+
+        TextTitle title = new TextTitle(TITLE, new Font("Verdana", Font.BOLD, 14));
+        chart.setTitle(title);
     }
 
     public static JFreeChart create(double[] jaccard, double[] dice, ArrayList<Cluster> c1, ArrayList<Cluster> c2){
