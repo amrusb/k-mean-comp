@@ -22,7 +22,7 @@ public class Metrics {
             }
         }
 
-        result = intercept / sum;
+        result = intercept / (sum - intercept);
 
         return  result;
     }
@@ -49,7 +49,7 @@ public class Metrics {
         }
 
         for (int i = 0; i < results.length; i++) {
-            results[i] = intercepts[i] / sums[i];
+            results[i] = intercepts[i] / (sums[i] - intercepts[i]);
         }
 
         return  results;
