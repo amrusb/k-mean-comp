@@ -6,15 +6,18 @@ import lombok.Setter;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import pl.amrusb.util.Calculations;
-import pl.amrusb.util.img.ImageRescaler;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Point3D;
 import pl.amrusb.util.ui.MainFrame;
 import pl.amrusb.util.ui.table.CTable;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 @Getter
@@ -363,29 +366,37 @@ public class ComparePanel extends JPanel {
     ){
         pMetrics.setValues(jaccard, dice, mse, rmse);
     }
+
     public void setImageLabel(BufferedImage image, Position position){
-        ImageIcon imageIcon;
         double frameWidth = MainFrame.getFrameWidth() / 2.0;
         double frameHeight = MainFrame.getFrameHeight() * 2.0 / 3;
 
         int width = image.getWidth();
         int height = image.getHeight();
+        String htmlString = "<html><img src=\"file:%s\" width=\"%s\" height=\"%s\"></html>";
 
         if (width >= frameWidth || height >= frameHeight) {
             double scale = Math.min(frameWidth / (width), frameHeight / (height));
-            BufferedImage displayImage = ImageRescaler.rescaleImage(image, scale);
-            imageIcon = new ImageIcon(displayImage);
+            width = (int)(width * scale);
+            height = (int)(height * scale);
         }
-        else{
-            imageIcon = new ImageIcon(image);
+
+        File stream = null;
+        try {
+            stream = File.createTempFile("show-img", ".jpg");
+            ImageIO.write(image, "jpg", stream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
+        htmlString = String.format(htmlString, stream.toString() , width, height);
 
         switch(position){
-            case LEFT -> leftImageLabel.setIcon(imageIcon);
-            case RIGHT -> rightImageLabel.setIcon(imageIcon);
+            case LEFT -> leftImageLabel.setText(htmlString);
+            case RIGHT -> rightImageLabel.setText(htmlString);
         }
-
     }
+
 
 
     public void setHistogram(JFreeChart chart){

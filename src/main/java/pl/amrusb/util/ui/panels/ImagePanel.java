@@ -5,9 +5,17 @@ import lombok.Setter;
 import pl.amrusb.util.img.ImageRescaler;
 import pl.amrusb.util.ui.MainFrame;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Panel sluzyacy do wyswietlania obrazka
@@ -56,33 +64,48 @@ public class ImagePanel extends JPanel {
      * Jeżeli obraz jest za duży, zostaje przeskalowany do odpowiednich wymiarów
      * @param image obraz do ustawienia jako ikona etykiety
      */
-    public void setImageLabel(BufferedImage image) {
+    public void setImageLabel(BufferedImage image){
         int frameWidth = MainFrame.getFrameWidth();
         int frameHeight = MainFrame.getFrameHeight();
 
         int width = image.getWidth();
         int height = image.getHeight();
+        String htmlString = "<html><img src=\"file:%s\" width=\"%s\" height=\"%s\"></html>";
 
         if (width >= frameWidth || height >= frameHeight) {
             double scale = Math.min((double) frameWidth / (width), (double) frameHeight / (height));
-            BufferedImage displayImage = ImageRescaler.rescaleImage(image, scale);
-            ImageIcon imageIcon = new ImageIcon(displayImage);
-            imageLabel.setIcon(imageIcon);
-            setRescaledImage(displayImage);
+            width = (int)(width * scale);
+            height = (int)(height * scale);
+
+            AtomicReference<BufferedImage> displayImage = new AtomicReference<BufferedImage>();
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Future<?> future = executor.submit(() -> {
+                displayImage.set(ImageRescaler.rescaleImage(image, scale));
+            });
+
+
+            executor.shutdown();
+
+            try {
+                future.get();
+                rescaledImage = displayImage.get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
         }
-        else{
-            ImageIcon imageIcon = new ImageIcon(image);
-            imageLabel.setIcon(imageIcon);
+
+        File stream = null;
+        try {
+            stream = File.createTempFile("show-img", ".jpg");
+            ImageIO.write(image, "jpg", stream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
+        htmlString = String.format(htmlString, stream.toString() , width, height);
+        imageLabel.setText(htmlString);
     }
 
-    /**
-     * Zwraca informacje o przechowywaniu oryginalego obrazu
-     * @return (1) true jezeli obiekt image przechowuje obraz
-     *         (2) false w przeciwnym wypadku*/
-    public boolean hasImage(){
-        return originalImage != null;
-    }
     /**
      * Zwraca informacje o przechowywaniu przeskalowanego obrazu
      * @return (1) true jezeli obiekt image przechowuje przeskalowany
