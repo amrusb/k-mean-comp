@@ -13,7 +13,6 @@ public class MainPanel extends JPanel {
 
     public MainPanel(){
         final JLabel background = new JLabel();
-        final JLabel logoLabel = new JLabel();
         this.setLayout(new BorderLayout());
 
         String bodyPath = Main.getROOT_PATH() + Main.getProperties().getProperty("app.background.file");
@@ -22,8 +21,7 @@ public class MainPanel extends JPanel {
         String bodyBackground = null;
         try {
             FileInputStream f = new FileInputStream(bodyPath);
-            bodyBackground = new String(f.readAllBytes());
-            logoLabel.setText("<html><img src=\"file:" + logo.toString() + "\" width=\"350\" height=\"350\"</html>");
+            bodyBackground = String.format(new String(f.readAllBytes()), logo.toString());
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
@@ -33,14 +31,11 @@ public class MainPanel extends JPanel {
                     JOptionPane.ERROR_MESSAGE
             );
         }
+        CHtmlEditorPane ep = new CHtmlEditorPane(bodyBackground);
 
         background.setPreferredSize(new Dimension(MainFrame.getFrameWidth(), MainFrame.getFrameHeight()));
         background.setText(bodyBackground);
-        background.setVerticalAlignment(SwingConstants.CENTER);
-        background.setHorizontalAlignment(SwingConstants.CENTER);
-        logoLabel.setVerticalAlignment(SwingConstants.CENTER);
-        logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        this.add(logoLabel, BorderLayout.NORTH);
-        this.add(background, BorderLayout.CENTER);
+
+        this.add(ep, BorderLayout.CENTER);
     }
 }
