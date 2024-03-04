@@ -25,9 +25,11 @@ public class WekaKMeans extends AKMeans {
     private static final int MAX_ITERATIONS = 100;
     private static final String PREFIX = "pixel_data";
     private static final String SUFFIX = ".arff";
+    private final Timer timer;
 
     public  WekaKMeans(int k, BufferedImage image){
         super(null,k,ImageReader.getPixelArray(image),image.getWidth(), image.getHeight());
+        timer = new Timer();
     }
 
     public void execute() {
@@ -50,11 +52,11 @@ public class WekaKMeans extends AKMeans {
             BottomPanel.setProgressMaximum(1);
             BottomPanel.setProgressLabel("K-means...");
 
-            Timer.start();
+            timer.start();
 
             algorithm.buildClusterer(data);
 
-            Timer.stop();
+            timer.stop();
 
             BottomPanel.setProgress(1);
 
@@ -117,7 +119,7 @@ public class WekaKMeans extends AKMeans {
             clusters.sort(new ClusterComparator());
             int[] assignments = reassignment(algorithm.getAssignments(), clusters);
 
-            stats.put(KMeansStats.TIME, Timer.getResult());
+            stats.put(KMeansStats.TIME, timer.getResult());
             stats.put(KMeansStats.INITIAL_START_POINTS, initialClusters);
             stats.put(KMeansStats.ITERATIONS, iterations);
             stats.put(KMeansStats.CLUSTER_CENTROIDS, clusters);
