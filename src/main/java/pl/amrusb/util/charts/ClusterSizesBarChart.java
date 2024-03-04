@@ -33,7 +33,7 @@ public class ClusterSizesBarChart {
         plot.getRenderer().setSeriesPaint(0, new Color(255, 209, 102));
         plot.getRenderer().setSeriesPaint(1, new Color(0,48,161));
 
-        TextTitle title = new TextTitle(TITLE, new Font("Verdana", Font.BOLD, 14));
+        TextTitle title = new TextTitle(TITLE, new Font("SansSerif", Font.BOLD, 14));
         chart.setTitle(title);
     }
 

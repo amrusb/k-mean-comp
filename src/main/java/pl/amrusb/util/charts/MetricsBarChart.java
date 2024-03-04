@@ -41,7 +41,7 @@ public class MetricsBarChart {
             plot.getRenderer().setSeriesPaint(i, new Color(r,g,b));
         }
 
-        TextTitle title = new TextTitle(TITLE, new Font("Verdana", Font.BOLD, 14));
+        TextTitle title = new TextTitle(TITLE, new Font("SansSerif", Font.BOLD, 14));
         chart.setTitle(title);
     }
 

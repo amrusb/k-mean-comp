@@ -73,7 +73,7 @@ public class RGBHistogram {
 
         plot.setRenderer(renderer);
 
-        TextTitle title = new TextTitle(TITLE, new Font("Verdana", Font.BOLD, 14));
+        TextTitle title = new TextTitle(TITLE, new Font("SansSerif", Font.BOLD, 14));
         chart.setTitle(title);
     }
 
