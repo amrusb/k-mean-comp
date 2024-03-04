@@ -19,7 +19,8 @@ public class KMeans extends AKMeans {
 
     public void execute(){
         try {
-            Timer.start();
+            Timer timer = new Timer();
+            timer.start();
 
             Map<KMeansStats, Object> stats = new HashMap<>();
             KMeansPP init = new KMeansPP(getClusterNum(), getPixelArray());
@@ -38,7 +39,7 @@ public class KMeans extends AKMeans {
                     clusters);
             setPixelArray(alg.execute());
 
-            Float time = Timer.stop();
+            Float time = timer.stop();
 
             clusters.sort(new ClusterComparator());
             int[] assignments = reassignment(alg.getAssignments(), clusters);
