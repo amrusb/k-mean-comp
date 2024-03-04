@@ -94,19 +94,17 @@ public class CompareThread extends Thread{
         MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
         BottomPanel.setProgressBarVisible(false);
 
+        current.getComparePanel().setPropertiesValues(
+                current.getFileName(),
+                current.getWidth() * current.getHeight(),
+                clusterNum,
+                (Integer)ownStats.get(AKMeans.KMeansStats.ITERATIONS),
+                (Integer) wekaStats.get(AKMeans.KMeansStats.ITERATIONS),
+                (Float) ownStats.get(AKMeans.KMeansStats.TIME),
+                (Float) wekaStats.get(AKMeans.KMeansStats.TIME)
+        );
 
-        current.getComparePanel().addPropTableRow("<html><b>Indeks Jaccard'a</b></html>", jaccardIdx, jaccardIdx);
-        current.getComparePanel().addPropTableRow("<html><b>Współczynnik Dice’a</b></html>", sorenDiceCoef, sorenDiceCoef);
-        current.getComparePanel().addPropTableRow("<html><b>MSE</b></html>", mse, mse);
-        current.getComparePanel().addPropTableRow("<html><b>RMSE</b></html>", rmse, rmse);
-        current.getComparePanel().addPropTableRow(
-                "<html><b>Liczba iteracji</b></html>",
-                ownStats.get(AKMeans.KMeansStats.ITERATIONS),
-                wekaStats.get(AKMeans.KMeansStats.ITERATIONS));
-        current.getComparePanel().addPropTableRow(
-                "<html><b>Czas trwania</b></html>",
-                ownStats.get(AKMeans.KMeansStats.TIME),
-                wekaStats.get(AKMeans.KMeansStats.TIME));
+        current.getComparePanel().setMetricsValues(jaccardIdx,sorenDiceCoef,mse,rmse);
 
         ArrayList<Cluster> impClusters  = (ArrayList<Cluster>) ownStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS);
         ArrayList<Cluster> wekaClusters = (ArrayList<Cluster>)wekaStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS);
