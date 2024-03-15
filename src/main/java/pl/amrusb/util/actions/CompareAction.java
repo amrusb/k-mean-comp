@@ -19,6 +19,7 @@ import pl.amrusb.util.ui.panels.BottomPanel;
 import pl.amrusb.util.ui.panels.ComparePanel;
 import pl.amrusb.util.ui.panels.ImagePanel;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -143,12 +144,21 @@ public class CompareAction implements ActionListener {
 
                 JFreeChart sizesChart = ClusterSizesBarChart.create(impClusters, wekaClusters);
                 current.getComparePanel().setSizesChart(sizesChart);
+
+                JFreeChart mainMetrics = MetricsBarChart.create(jaccardIdx, sorenDiceCoef, mse, rmse);
+                current.getComparePanel().setMainMetriscChart(mainMetrics);
             }
             catch (InterruptedException | ExecutionException ex) {
-                throw new RuntimeException(ex);
+                JOptionPane.showMessageDialog(
+                        null,
+                        ex.getMessage(),
+                        "Błąd",
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
 
             segmentationExecutor.shutdown();
+
 
             JFreeChart histogram = RGBHistogram.create(current.getOriginalImage());
             current.getComparePanel().setHistogram(histogram);

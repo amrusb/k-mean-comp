@@ -43,6 +43,8 @@ public class ComparePanel extends JPanel {
     private CardLayout chartsCardLayout;
     private ChartPanel histogramPanel;
     private JFreeChart histogramChart;
+    private ChartPanel mainMetricsPanel;
+    private JFreeChart mainMetricsChart;
     private ChartPanel metricsChartPanel;
     private JFreeChart metricsChart;
     private ChartPanel sizesChartPanel;
@@ -161,8 +163,13 @@ public class ComparePanel extends JPanel {
         chartsPanel = new JPanel();
         chartsPanel.setLayout(chartsCardLayout);
 
-
+        JPanel propertiesPanel = new JPanel();
+        propertiesPanel.setLayout(new GridLayout(0,2));
+        mainMetricsPanel = new ChartPanel(mainMetricsChart);
         histogramPanel = new ChartPanel(histogramChart);
+
+        propertiesPanel.add(histogramPanel);
+        propertiesPanel.add(mainMetricsPanel);
 
         JPanel clustersPanel = new JPanel();
         clustersPanel.setLayout(new GridLayout(0,2));
@@ -173,7 +180,7 @@ public class ComparePanel extends JPanel {
         clustersPanel.add(sizesChartPanel);
         clustersPanel.add(metricsChartPanel);
 
-        chartsPanel.add(histogramPanel, StatsComboBox.PROPERTIES.value);
+        chartsPanel.add(propertiesPanel, StatsComboBox.PROPERTIES.value);
         chartsPanel.add(clustersPanel, StatsComboBox.CLUSTERS.value);
 
     }
@@ -398,7 +405,10 @@ public class ComparePanel extends JPanel {
     }
 
 
-
+    public void setMainMetriscChart(JFreeChart chart){
+        mainMetricsChart = chart;
+        mainMetricsPanel.setChart(chart);
+    }
     public void setHistogram(JFreeChart chart){
         histogramChart = chart;
         histogramPanel.setChart(chart);
