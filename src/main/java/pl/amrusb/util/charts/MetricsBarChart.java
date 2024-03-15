@@ -30,6 +30,16 @@ public class MetricsBarChart {
         return dataset;
     }
 
+    private static DefaultCategoryDataset createDataset(double jaccard, double dice, double mse, double rmse){
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        dataset.addValue(jaccard, JACCARD_LBL, "");
+        dataset.addValue(dice, DICE_LBL, "");
+        dataset.addValue(mse, MSELabel, "");
+        dataset.addValue(rmse, RMSELabel, "");
+
+        return dataset;
+    }
+
     private static void customizeChart(JFreeChart chart, ArrayList<Cluster> c1, ArrayList<Cluster> c2){
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
         int k = c1.size();
@@ -40,6 +50,18 @@ public class MetricsBarChart {
 
             plot.getRenderer().setSeriesPaint(i, new Color(r,g,b));
         }
+
+        TextTitle title = new TextTitle(TITLE, new Font("SansSerif", Font.BOLD, 14));
+        chart.setTitle(title);
+    }
+
+    private static void customizeChart(JFreeChart chart){
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+
+        plot.getRenderer().setSeriesPaint(0, new Color(245, 213, 71));
+        plot.getRenderer().setSeriesPaint(1, new Color(119, 51,68));
+        plot.getRenderer().setSeriesPaint(3, new Color(175, 203, 255));
+        plot.getRenderer().setSeriesPaint(4, new Color(222,143,110));
 
         TextTitle title = new TextTitle(TITLE, new Font("SansSerif", Font.BOLD, 14));
         chart.setTitle(title);
@@ -59,6 +81,25 @@ public class MetricsBarChart {
                 false
         );
         customizeChart(chart, c1, c2);
+        return chart;
+    }
+
+    public static JFreeChart create(double jaccard, double dice, double mse, double rmse){
+        DefaultCategoryDataset dataset = createDataset(jaccard,dice,mse,rmse);
+
+        JFreeChart chart = ChartFactory.createBarChart(
+                TITLE,
+                null,
+                null,
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false
+        );
+
+        customizeChart(chart);
+
         return chart;
     }
 
