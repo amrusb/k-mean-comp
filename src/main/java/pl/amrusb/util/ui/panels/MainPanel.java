@@ -21,7 +21,8 @@ public class MainPanel extends JPanel {
         String bodyBackground = null;
         try {
             FileInputStream f = new FileInputStream(bodyPath);
-            bodyBackground = String.format(new String(f.readAllBytes()), logo.toString());
+            int width = MainFrame.getFrameWidth() / 4;
+            bodyBackground = String.format(new String(f.readAllBytes()), logo.toString(), width, width);
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
