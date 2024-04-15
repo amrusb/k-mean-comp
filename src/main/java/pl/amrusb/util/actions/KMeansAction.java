@@ -1,11 +1,14 @@
 package pl.amrusb.util.actions;
 
+import pl.amrusb.algs.seg.AKMeans;
 import pl.amrusb.algs.seg.IKMeans;
+import pl.amrusb.algs.seg.imp.AdaptiveKMeans;
 import pl.amrusb.algs.seg.imp.KMeans;
-import pl.amrusb.util.ui.MainFrame;
-import pl.amrusb.util.ui.panels.BottomPanel;
+import pl.amrusb.algs.seg.weka.WekaKMeans;
 import pl.amrusb.util.ui.ClusterInputDialog;
+import pl.amrusb.util.ui.MainFrame;
 import pl.amrusb.util.ui.MainMenuBar;
+import pl.amrusb.util.ui.panels.BottomPanel;
 import pl.amrusb.util.ui.panels.ImagePanel;
 
 import java.awt.*;
@@ -19,6 +22,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class KMeansAction implements ActionListener {
+    private  KMeansAction.Types type;
+
+    public KMeansAction(KMeansAction.Types type){
+        this.type = type;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -44,10 +53,10 @@ public class KMeansAction implements ActionListener {
             AtomicReference<IKMeans> segmentation = new AtomicReference<>();
             Future<?> segmenationExec = executor.submit(()->{
                 if(original){
-                    segmentation.set(new KMeans(clusterNum, current.getOriginalImage()));
+                    segmentation.set(getAlgorithm(clusterNum, current.getOriginalImage(), type));
                 }
                 else{
-                    segmentation.set(new KMeans(clusterNum, current.getRescaledImage()));
+                    segmentation.set(getAlgorithm(clusterNum, current.getRescaledImage(), type));
                 }
                 segmentation.get().execute();
             });
@@ -65,5 +74,25 @@ public class KMeansAction implements ActionListener {
                 throw new RuntimeException(ex);
             }
         }
+    }
+
+    private AKMeans getAlgorithm(int k, BufferedImage image, KMeansAction.Types type){
+        switch (type){
+            case K_MEANS -> {
+                return new KMeans(k, image);
+            }
+            case WEKA -> {
+                return new WekaKMeans(k, image);
+            }
+            case ADAPTIVE -> {
+                return new AdaptiveKMeans(k, image);
+            }
+        }
+        return null;
+    }
+    public enum Types{
+        K_MEANS,
+        WEKA,
+        ADAPTIVE;
     }
 }
