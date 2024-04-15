@@ -22,6 +22,7 @@ public class MainMenuBar extends JMenuBar {
     private static final JMenu segmentationMenu = new JMenu("Segmentacja");
     private static final JMenuItem kmeanItem = new JMenuItem("K-means");
     private static final JMenuItem wekaItem = new JMenuItem("<html>K-means <small>Weka</small></html>");
+    private static final JMenuItem adaptiveItem = new JMenuItem("<html>Adaptive k-means</html>");
     private static final JMenuItem compItem = new JMenuItem("Porównanie");
     private static final JMenuItem undo = new JMenuItem("Cofnij");
     private static final JMenuItem chart = new JMenuItem("Generuj histogram");
@@ -46,10 +47,14 @@ public class MainMenuBar extends JMenuBar {
         add(imageMenu);
 
         segmentationMenu.add(kmeanItem);
-        kmeanItem.addActionListener(new KMeansAction());
+        //kmeanItem.addActionListener(new KMeansAction());
+        kmeanItem.addActionListener(new KMeansAction(KMeansAction.Types.K_MEANS));
 
         segmentationMenu.add(wekaItem);
-        wekaItem.addActionListener(new WekaKMeansAction());
+        wekaItem.addActionListener(new KMeansAction(KMeansAction.Types.WEKA));
+
+        segmentationMenu.add(adaptiveItem);
+        adaptiveItem.addActionListener(new KMeansAction(KMeansAction.Types.ADAPTIVE));
 
         segmentationMenu.addSeparator();
 
