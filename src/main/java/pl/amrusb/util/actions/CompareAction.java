@@ -3,6 +3,7 @@ package pl.amrusb.util.actions;
 import org.jfree.chart.JFreeChart;
 import pl.amrusb.algs.seg.AKMeans;
 import pl.amrusb.algs.seg.IKMeans;
+import pl.amrusb.algs.seg.imp.AdaptiveKMeans;
 import pl.amrusb.algs.seg.imp.KMeans;
 import pl.amrusb.algs.seg.weka.WekaKMeans;
 import pl.amrusb.util.Calculations;
@@ -33,7 +34,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CompareAction implements ActionListener {
-    private BufferedImage leftImage, rightImage;
     @Override
     public void actionPerformed(ActionEvent e) {
         ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getSelectedComponent();
@@ -45,15 +45,22 @@ public class CompareAction implements ActionListener {
         Integer clusterNum = dialog.getClusterCount();
 
 
-        ExecutorService segmentationExecutor = Executors.newFixedThreadPool(2);
+        ExecutorService segmentationExecutor = Executors.newFixedThreadPool(3);
         if (clusterNum != null) {
             current.setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
             AtomicReference<IKMeans> impKMeansAlg = new AtomicReference<>();
             AtomicReference<IKMeans> wekaKMeansAlg = new AtomicReference<>();
+            AtomicReference<IKMeans> adaptKMeansAlg = new AtomicReference<>();
+
             Future<?> impKMeans = segmentationExecutor.submit(() -> {
                 impKMeansAlg.set(new KMeans(clusterNum, current.getOriginalImage()));
                 impKMeansAlg.get().execute();
+            });
+
+            Future<?> adaptKMeans = segmentationExecutor.submit(()->{
+                adaptKMeansAlg.set(new AdaptiveKMeans(clusterNum, current.getOriginalImage()));
+                adaptKMeansAlg.get().execute();
             });
 
             Future<?> wekaKMeans = segmentationExecutor.submit(() -> {
@@ -65,13 +72,19 @@ public class CompareAction implements ActionListener {
             try{
                 impKMeans.get();
                 wekaKMeans.get();
+                adaptKMeans.get();
 
-                leftImage = impKMeansAlg.get().getOutputImage();
-                rightImage = wekaKMeansAlg.get().getOutputImage();
+                BufferedImage leftImage = impKMeansAlg.get().getOutputImage();
+                BufferedImage centerImage = adaptKMeansAlg.get().getOutputImage();
+                BufferedImage rightImage = wekaKMeansAlg.get().getOutputImage();
 
                 current.getComparePanel().setImageLabel(
                         leftImage,
                         ComparePanel.Position.LEFT
+                );
+                current.getComparePanel().setImageLabel(
+                        centerImage,
+                        ComparePanel.Position.CENTER
                 );
                 current.getComparePanel().setImageLabel(
                         rightImage,
@@ -80,56 +93,51 @@ public class CompareAction implements ActionListener {
 
                 Map<AKMeans.KMeansStats, Object> ownStats = impKMeansAlg.get().getStatistics();
                 Map<AKMeans.KMeansStats, Object> wekaStats = wekaKMeansAlg.get().getStatistics();
+                Map<AKMeans.KMeansStats, Object> adaptStats = adaptKMeansAlg.get().getStatistics();
 
-                Double jaccardIdx = Metrics.JaccardIndex(
-                        (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
-                        (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
-                );
-                jaccardIdx = Calculations.round(jaccardIdx, 4);
+                ArrayList<Double> jaccardIdx = calculateJaccardIndex(ownStats, adaptStats, wekaStats);
+                ArrayList<Double> sorenDiceCoef = calculateDice(ownStats, adaptStats, wekaStats);
+
+                current.getComparePanel().setJaccardValues(jaccardIdx);
+                current.getComparePanel().setDiceValues(sorenDiceCoef);
 
                 double[] jaccardIdxs = Metrics.JaccardIndex(
                         (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
                         (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
                         clusterNum
                 );
-                Double sorenDiceCoef = Metrics.SorensenDiceCoefficient(
-                        (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
-                        (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
-                );
-                sorenDiceCoef = Calculations.round(sorenDiceCoef, 4);
                 double[] sorenDiceCoefs = Metrics.SorensenDiceCoefficient(
                         (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
                         (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
                         clusterNum
                 );
-                Double mse = Metrics.MeanSquareError((int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),(int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS));
-                Double rmse = Math.sqrt(mse);
-                mse = Calculations.round(mse, 4);
-                rmse = Calculations.round(rmse, 4);
 
-                MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
                 BottomPanel.setProgressBarVisible(false);
 
                 current.getComparePanel().setPropertiesValues(
                         current.getFileName(),
                         current.getWidth() * current.getHeight(),
                         clusterNum,
-                        (Integer)ownStats.get(AKMeans.KMeansStats.ITERATIONS),
+                        (Integer) ownStats.get(AKMeans.KMeansStats.ITERATIONS),
+                        (Integer) adaptStats.get(AKMeans.KMeansStats.ITERATIONS),
                         (Integer) wekaStats.get(AKMeans.KMeansStats.ITERATIONS),
                         (Float) ownStats.get(AKMeans.KMeansStats.TIME),
+                        (Float) adaptStats.get(AKMeans.KMeansStats.TIME),
                         (Float) wekaStats.get(AKMeans.KMeansStats.TIME)
                 );
 
-                current.getComparePanel().setMetricsValues(jaccardIdx,sorenDiceCoef,mse,rmse);
 
                 ArrayList<Cluster> impClusters  = (ArrayList<Cluster>) ownStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS);
                 ArrayList<Cluster> wekaClusters = (ArrayList<Cluster>)wekaStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS);
+                ArrayList<Cluster> adaptClusters = (ArrayList<Cluster>) adaptStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS);
                 current.getComparePanel().fillClustersTable(
                         impClusters,
+                        adaptClusters,
                         wekaClusters
                 );
                 current.getComparePanel().fillInitialsTable(
                         (ArrayList<Point3D>) ownStats.get(AKMeans.KMeansStats.INITIAL_START_POINTS),
+                        (ArrayList<Point3D>) adaptStats.get(AKMeans.KMeansStats.INITIAL_START_POINTS),
                         (ArrayList<Point3D>) wekaStats.get(AKMeans.KMeansStats.INITIAL_START_POINTS)
                 );
                 current.getComparePanel().fillClustersMetricsTable(jaccardIdxs, sorenDiceCoefs);
@@ -142,11 +150,11 @@ public class CompareAction implements ActionListener {
                 );
                 current.getComparePanel().setMetricsChart(metricsChart);
 
-                JFreeChart sizesChart = ClusterSizesBarChart.create(impClusters, wekaClusters);
+                JFreeChart sizesChart = ClusterSizesBarChart.create(impClusters, adaptClusters, wekaClusters);
                 current.getComparePanel().setSizesChart(sizesChart);
 
-                JFreeChart mainMetrics = MetricsBarChart.create(jaccardIdx, sorenDiceCoef, mse, rmse);
-                current.getComparePanel().setMainMetriscChart(mainMetrics);
+                JFreeChart chMertrics = MetricsBarChart.create(jaccardIdx, sorenDiceCoef);
+                current.getComparePanel().setChMetrics(chMertrics);
             }
             catch (InterruptedException | ExecutionException ex) {
                 JOptionPane.showMessageDialog(
@@ -167,4 +175,61 @@ public class CompareAction implements ActionListener {
             current.setCursor(Cursor.getDefaultCursor());
         }
     }
+    private ArrayList<Double> calculateJaccardIndex(
+            Map<AKMeans.KMeansStats, Object> impStats,
+            Map<AKMeans.KMeansStats, Object> adaptStats,
+            Map<AKMeans.KMeansStats, Object> wekaStats
+    ){
+        Double jaccardIdx = null;
+        ArrayList<Double> jaccardIndex = new ArrayList<>();
+        jaccardIdx = Metrics.JaccardIndex(
+                (int[]) impStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                (int[])  adaptStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
+        );
+        jaccardIdx = Calculations.round(jaccardIdx, 4);
+        jaccardIndex.add(jaccardIdx);
+        jaccardIdx = Metrics.JaccardIndex(
+                (int[]) impStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
+        );
+        jaccardIdx = Calculations.round(jaccardIdx, 4);
+        jaccardIndex.add(jaccardIdx);
+        jaccardIdx = Metrics.JaccardIndex(
+                (int[]) adaptStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                (int[]) wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
+        );
+        jaccardIdx = Calculations.round(jaccardIdx, 4);
+        jaccardIndex.add(jaccardIdx);
+
+        return jaccardIndex;
+    }
+    private ArrayList<Double> calculateDice(
+            Map<AKMeans.KMeansStats, Object> impStats,
+            Map<AKMeans.KMeansStats, Object> adaptStats,
+            Map<AKMeans.KMeansStats, Object> wekaStats
+    ){
+        Double dice = null;
+        ArrayList<Double> diceCoefs = new ArrayList<>();
+        dice = Metrics.SorensenDiceCoefficient(
+                (int[]) impStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                (int[])  adaptStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
+        );
+        dice = Calculations.round(dice, 4);
+        diceCoefs.add(dice);
+        dice = Metrics.SorensenDiceCoefficient(
+                (int[]) impStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                (int[])  wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
+        );
+        dice = Calculations.round(dice, 4);
+        diceCoefs.add(dice);
+        dice = Metrics.SorensenDiceCoefficient(
+                (int[]) adaptStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
+                (int[]) wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
+        );
+        dice = Calculations.round(dice, 4);
+        diceCoefs.add(dice);
+
+        return diceCoefs;
+    }
+
 }

@@ -69,6 +69,7 @@ public class AdaptiveKMeans extends AKMeans {
             stats.put(KMeansStats.ASSIGNMENTS, newAssignments);
             stats.put(KMeansStats.ITERATIONS, iteration);
 
+            super.setStatistics(stats);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
                     null,

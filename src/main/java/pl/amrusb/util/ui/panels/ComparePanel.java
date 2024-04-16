@@ -31,10 +31,16 @@ public class ComparePanel extends JPanel {
     private JPanel rightPanel;
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
+    private JPanel centerPanel;
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private JPanel bottomPanel;
 
     private BufferedImage leftImage;
     private JLabel leftImageLabel;
+
+    private BufferedImage centerImage;
+    private JLabel centerImageLabel;
 
     private BufferedImage rightImage;
     private JLabel rightImageLabel;
@@ -49,7 +55,10 @@ public class ComparePanel extends JPanel {
     private JFreeChart metricsChart;
     private ChartPanel sizesChartPanel;
     private JFreeChart sizesChart;
-
+    private ChartPanel chpSilhouette;
+    private JFreeChart chSilhouette;
+    private ChartPanel chpMetrics;
+    private JFreeChart chMetrics;
 
     private JPanel statsPanel;
     private CardLayout statsCardLayout;
@@ -57,9 +66,11 @@ public class ComparePanel extends JPanel {
     private PropertiesPanel pProperties;
 
     private CTable ownCTable;
+    private CTable adaptCTable;
     private CTable wekaCTable;
 
     private CTable ownITable;
+    private CTable adaptITable;
     private CTable wekaITable;
     private CTable metricsTable;
 
@@ -69,7 +80,7 @@ public class ComparePanel extends JPanel {
 
         createComponents();
         JPanel imagePanel = new JPanel();
-        imagePanel.setLayout(new GridLayout(1,2));
+        imagePanel.setLayout(new GridLayout(1,3));
         imagePanel.setPreferredSize(
                 new Dimension(
                         MainFrame.getFrameWidth(),
@@ -78,9 +89,11 @@ public class ComparePanel extends JPanel {
         );
 
         JScrollPane leftSP = new JScrollPane(leftPanel);
+        JScrollPane centerSP = new JScrollPane(centerPanel);
         JScrollPane rightSP = new JScrollPane(rightPanel);
 
         imagePanel.add(leftSP);
+        imagePanel.add(centerSP);
         imagePanel.add(rightSP);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, imagePanel, bottomPanel);
@@ -92,6 +105,7 @@ public class ComparePanel extends JPanel {
 
     private void createComponents(){
         createLeftPanel();
+        createCenterPanel();
         createRightPanel();
         createBottomPanel();
     }
@@ -109,6 +123,21 @@ public class ComparePanel extends JPanel {
 
         leftPanel.add(leftImageLabel, BorderLayout.CENTER);
         leftPanel.add(leftLabel, BorderLayout.SOUTH);
+    }
+
+    private void createCenterPanel(){
+        centerPanel = new JPanel();
+
+        centerPanel.setLayout(new BorderLayout());
+
+        centerImageLabel = new JLabel();
+        centerImageLabel.setVerticalAlignment(SwingConstants.CENTER);
+        centerImageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JLabel centerLabel = new JLabel("Adaptive");
+
+        centerPanel.add(centerImageLabel, BorderLayout.CENTER);
+        centerPanel.add(centerLabel, BorderLayout.SOUTH);
     }
 
     private void createRightPanel(){
@@ -180,8 +209,17 @@ public class ComparePanel extends JPanel {
         clustersPanel.add(sizesChartPanel);
         clustersPanel.add(metricsChartPanel);
 
+        JPanel metricsPanel = new JPanel();
+        metricsPanel.setLayout(new GridLayout(0,2));
+
+        chpSilhouette = new ChartPanel(chSilhouette);
+        chpMetrics = new ChartPanel(chMetrics);
+        metricsPanel.add(chpSilhouette);
+        metricsPanel.add(chpMetrics);
+
         chartsPanel.add(propertiesPanel, StatsComboBox.PROPERTIES.value);
         chartsPanel.add(clustersPanel, StatsComboBox.CLUSTERS.value);
+        chartsPanel.add(metricsPanel, StatsComboBox.METRICS.value);
 
     }
     private void createStatsPanel(){
@@ -189,16 +227,8 @@ public class ComparePanel extends JPanel {
         statsPanel = new JPanel();
         statsPanel.setLayout(statsCardLayout);
 
-        JPanel metricsPanel = new JPanel();
-        BorderLayout borderLayout = new BorderLayout();
-        borderLayout.setHgap(10);
-        metricsPanel.setLayout(borderLayout);
-
-
         pMetrics = new MetricsPanel();
-        metricsPanel.add(pMetrics, BorderLayout.WEST);
         pProperties = new PropertiesPanel();
-        metricsPanel.add(pProperties, BorderLayout.CENTER);
 
         /* PANEL KLASTRÓW */
         JPanel clustersPanel  = new JPanel();
@@ -208,6 +238,10 @@ public class ComparePanel extends JPanel {
 
         ownCTable.addColumn("Lp.", "Współrzędne","Rozmiar","Kolor");
         ownCTable.setColumnWidth("30,100,100,50");
+
+        adaptCTable = new CTable();
+        adaptCTable.addColumn("Lp.", "Współrzędne","Rozmiar","Kolor");
+        adaptCTable.setColumnWidth("30,100,100,50");
 
         wekaCTable = new CTable();
 
@@ -219,10 +253,12 @@ public class ComparePanel extends JPanel {
         metricsTable.setColumnWidth("30,100,100");
 
         TablePane tpOwnC = new TablePane("Implementajca", ownCTable);
+        TablePane tpAcaptC = new TablePane("Adaptive", adaptCTable);
         TablePane tpWekaC = new TablePane("Weka", wekaCTable);
         TablePane tpMetrics = new TablePane("Metryki", metricsTable);
 
         clustersPanel.add(tpOwnC);
+        clustersPanel.add(tpAcaptC);
         clustersPanel.add(tpWekaC);
         clustersPanel.add(tpMetrics);
 
@@ -233,39 +269,52 @@ public class ComparePanel extends JPanel {
 
         ownITable.addColumn("Lp.","Współrzędne","Kolor");
         ownITable.setColumnWidth("30,100,50");
-        wekaITable = new CTable();
 
+        adaptITable = new CTable();
+        adaptITable.addColumn("Lp.","Współrzędne","Kolor");
+        adaptITable.setColumnWidth("30,100,50");
+
+        wekaITable = new CTable();
         wekaITable.addColumn("Lp.","Współrzędne","Kolor");
         wekaITable.setColumnWidth("30,100,50");
 
         TablePane tpOwnI = new TablePane("Implementacja", ownITable);
+        TablePane tpAdaptI = new TablePane("Adaptive", adaptITable);
         TablePane tpWekaI = new TablePane("Weka", wekaITable);
 
         initialsPanel.add(tpOwnI);
+        initialsPanel.add(tpAdaptI);
         initialsPanel.add(tpWekaI);
 
         /* */
 
-        statsPanel.add(metricsPanel, StatsComboBox.PROPERTIES.value);
+        statsPanel.add(pProperties, StatsComboBox.PROPERTIES.value);
         statsPanel.add(new JScrollPane(clustersPanel), StatsComboBox.CLUSTERS.value);
+        statsPanel.add(pMetrics, StatsComboBox.METRICS.value);
         statsPanel.add(new JScrollPane(initialsPanel), StatsComboBox.INITIAL.value);
 
     }
-    public void fillInitialsTable(ArrayList<Point3D> dataSet1, ArrayList<Point3D> dataSet2){
+    public void fillInitialsTable(ArrayList<Point3D> dataSet1, ArrayList<Point3D> dataSet2, ArrayList<Point3D> dataSet3){
         if(dataSet1.size() == dataSet2.size()){
             for (int i = 0; i < dataSet1.size();i++) {
                 Point3D ds1C = dataSet1.get(i);
                 Point3D ds2C = dataSet2.get(i);
+                Point3D ds3C = dataSet3.get(i);
 
                 ownITable.addRow(new Object[]{
                         i + 1,
                         ds1C.toString(),
                         new Color(ds1C.getX(), ds1C.getY(), ds1C.getZ())
                 });
-                wekaITable.addRow(new Object[]{
+                adaptITable.addRow(new Object[]{
                         i + 1,
                         ds2C.toString(),
                         new Color(ds2C.getX(), ds2C.getY(), ds2C.getZ())
+                });
+                wekaITable.addRow(new Object[]{
+                        i + 1,
+                        ds3C.toString(),
+                        new Color(ds3C.getX(), ds3C.getY(), ds3C.getZ())
                 });
 
             }
@@ -292,13 +341,15 @@ public class ComparePanel extends JPanel {
         }
 
         ownITable.setRenderer();
+        adaptITable.setRenderer();
         wekaITable.setRenderer();
     }
-    public void fillClustersTable(ArrayList<Cluster> dataSet1, ArrayList<Cluster> dataSet2){
+    public void fillClustersTable(ArrayList<Cluster> dataSet1, ArrayList<Cluster> dataSet2, ArrayList<Cluster> dataSet3){
         if(dataSet1.size() == dataSet2.size()){
             for (int i = 0; i < dataSet1.size();i++) {
                 Cluster ds1C = dataSet1.get(i);
                 Cluster ds2C = dataSet2.get(i);
+                Cluster ds3C = dataSet3.get(i);
 
                 ownCTable.addRow(new Object[]{
                         i + 1,
@@ -306,11 +357,17 @@ public class ComparePanel extends JPanel {
                         ds1C.getSize(),
                         new Color(ds1C.getX(), ds1C.getY(), ds1C.getZ())
                 });
-                wekaCTable.addRow(new Object[]{
+                adaptCTable.addRow(new Object[]{
                         i + 1,
                         ds2C.toString(),
                         ds2C.getSize(),
                         new Color(ds2C.getX(), ds2C.getY(), ds2C.getZ())
+                });
+                wekaCTable.addRow(new Object[]{
+                        i + 1,
+                        ds3C.toString(),
+                        ds3C.getSize(),
+                        new Color(ds3C.getX(), ds3C.getY(), ds3C.getZ())
                 });
             }
         }
@@ -338,6 +395,7 @@ public class ComparePanel extends JPanel {
         }
 
         ownCTable.setRenderer();
+        adaptCTable.setRenderer();
         wekaCTable.setRenderer();
     }
     public void fillClustersMetricsTable(double[] jaccardIndexes, double[] diceCoefs){
@@ -358,24 +416,27 @@ public class ComparePanel extends JPanel {
             Integer pixelCount,
             Integer clusterCount,
             Integer impIterCount,
+            Integer adaptIterCount,
             Integer wekaIterCount,
             Float impTime,
+            Float adaptTime,
             Float wekaTime
     ){
-        pProperties.setValues(fileName,pixelCount,clusterCount,impIterCount,wekaIterCount,impTime,wekaTime);
+        pProperties.setValues(fileName,pixelCount,clusterCount,impIterCount,adaptIterCount,wekaIterCount,impTime,adaptTime,wekaTime);
     }
 
-    public void setMetricsValues(
-            Double jaccard,
-            Double dice,
-            Double mse,
-            Double rmse
-    ){
-        pMetrics.setValues(jaccard, dice, mse, rmse);
+    public void setJaccardValues(ArrayList<Double> jaccardIndex){
+        pMetrics.setJaccardValues(jaccardIndex.get(0),jaccardIndex.get(1),jaccardIndex.get(2));
+    }
+    public void setDiceValues(ArrayList<Double> diceScore){
+        pMetrics.setDiceValues(diceScore.get(0),diceScore.get(1),diceScore.get(2));
+    }
+    public void setSilhouetteValues(ArrayList<Double>  silhouette){
+        pMetrics.setSilhouetteValues(silhouette.get(0),silhouette.get(1),silhouette.get(2));
     }
 
     public void setImageLabel(BufferedImage image, Position position){
-        double frameWidth = MainFrame.getFrameWidth() / 2.0;
+        double frameWidth = MainFrame.getFrameWidth() / 3.0;
         double frameHeight = MainFrame.getFrameHeight() * 2.0 / 3;
 
         int width = image.getWidth();
@@ -401,6 +462,7 @@ public class ComparePanel extends JPanel {
         switch(position){
             case LEFT -> leftImageLabel.setText(htmlString);
             case RIGHT -> rightImageLabel.setText(htmlString);
+            case CENTER -> centerImageLabel.setText(htmlString);
         }
     }
 
@@ -423,11 +485,17 @@ public class ComparePanel extends JPanel {
         sizesChartPanel.setChart(chart);
     }
 
-    public enum Position{ LEFT, RIGHT }
+    public void setChMetrics(JFreeChart chart){
+        chMetrics = chart;
+        chpMetrics.setChart(chart);
+    }
+
+    public enum Position{ LEFT, RIGHT, CENTER }
 
     private enum StatsComboBox{
         PROPERTIES("Właściwości"),
         CLUSTERS("Klastry"),
+        METRICS("Metryki"),
         INITIAL("Punkty początkowe");
 
         final String value;
@@ -437,95 +505,135 @@ public class ComparePanel extends JPanel {
         }
 
         public static JComboBox<String> getJComboBox(){
-            return new JComboBox<>(new String[]{PROPERTIES.value, CLUSTERS.value,INITIAL.value});
+            return new JComboBox<>(new String[]{PROPERTIES.value, CLUSTERS.value, METRICS.value,INITIAL.value});
         }
     }
     private class MetricsPanel extends JPanel{
-        JLabel lMetric = new JLabel("Metryka", SwingConstants.CENTER);
-        JLabel lValue = new JLabel("Wartość", SwingConstants.CENTER);
+        JLabel lImpAdapt = new JLabel("Implementacja - Adaptive", SwingConstants.CENTER);
+        JLabel lImpWeka = new JLabel("Implementacja - Weka", SwingConstants.CENTER);
+        JLabel lAdaptWeka = new JLabel("Adaptive - Weka", SwingConstants.CENTER);
+
         JLabel lJaccard = new JLabel("Indeks Jaccard'a", SwingConstants.CENTER);
-        JTextField tfJaccard = new JTextField();
+        JTextField tfJaccard1 = new JTextField();
+        JTextField tfJaccard2 = new JTextField();
+        JTextField tfJaccard3 = new JTextField();
         JLabel lDice = new JLabel("Współczynnik Dice'a", SwingConstants.CENTER);
-        JTextField tfDice = new JTextField();
-        JLabel lMSE = new JLabel("MSE", SwingConstants.CENTER);
-        JTextField tfMSE = new JTextField();
-        JLabel lRMSE = new JLabel("RMSE", SwingConstants.CENTER);
-        JTextField tfRMSE = new JTextField();
+        JTextField tfDice1 = new JTextField();
+        JTextField tfDice2 = new JTextField();
+        JTextField tfDice3 = new JTextField();
+
+        JLabel lImp = new JLabel("Implementacja", SwingConstants.CENTER);
+        JLabel lAdapt = new JLabel("Adaptive", SwingConstants.CENTER);
+        JLabel lWeka = new JLabel("Weka", SwingConstants.CENTER);
+
+
+        JLabel lSil = new JLabel("Wynik Silhouette", SwingConstants.CENTER);
+        JTextField tfImpSil   = new JTextField();
+        JTextField tfAdaptSil   = new JTextField();
+        JTextField tfWekaSil   = new JTextField();
+
 
         public MetricsPanel(){
-            tfDice.setEditable(false);
-            tfJaccard.setEditable(false);
-            tfMSE.setEditable(false);
-            tfRMSE.setEditable(false);
-            tfDice.setBackground(Color.WHITE);
-            tfJaccard.setBackground(Color.WHITE);
-            tfMSE.setBackground(Color.WHITE);
-            tfRMSE.setBackground(Color.WHITE);
-
+            Border lineBorder = BorderFactory.createEtchedBorder();
             Border etchedBorder = BorderFactory.createEtchedBorder();
             GridBagConstraints c = new GridBagConstraints();
-            this.setLayout(new GridLayout(5, 2));
+            this.setLayout(new GridBagLayout());
             c.weightx = 100;
             c.weighty = 100;
-            c.gridx = 0;
+            c.gridx = 1;
             c.gridy = 0;
             c.gridwidth = 1;
-            c.ipadx = 10;
-            c.ipady = 5;
             c.anchor = GridBagConstraints.EAST;
             c.fill = GridBagConstraints.BOTH;
 
-            this.add(lMetric,c);
-            lMetric.setBorder(etchedBorder);
-            c.gridx = 1;
-            this.add(lValue,c);
-            lValue.setBorder(etchedBorder);
+            /*--JACCARD DICE--*/
+            lImpAdapt.setBorder(etchedBorder);
+            this.add(lImpAdapt, c);
+            c.gridx = 2;
+            lImpWeka.setBorder(etchedBorder);
+            this.add(lImpWeka, c);
+            c.gridx = 3;
+            lAdaptWeka.setBorder(etchedBorder);
+            this.add(lAdaptWeka, c);
 
+            //JACCARD
             c.gridx = 0;
             c.gridy = 1;
-            this.add(lJaccard,c);
             lJaccard.setBorder(etchedBorder);
+            this.add(lJaccard, c);
             c.gridx = 1;
-            this.add(tfJaccard,c);
+            tfJaccard1.setEditable(false);
+            tfJaccard1.setBackground(Color.WHITE);
+            this.add(tfJaccard1, c);
+            c.gridx = 2;
+            tfJaccard2.setEditable(false);
+            tfJaccard2.setBackground(Color.WHITE);
+            this.add(tfJaccard2, c);
+            c.gridx = 3;
+            tfJaccard3.setEditable(false);
+            tfJaccard3.setBackground(Color.WHITE);
+            this.add(tfJaccard3, c);
 
+            //DICE
             c.gridx = 0;
             c.gridy = 2;
-            this.add(lDice,c);
             lDice.setBorder(etchedBorder);
+            this.add(lDice, c);
             c.gridx = 1;
-            this.add(tfDice,c);
-            c.gridx = 0;
+            tfDice1.setEditable(false);
+            tfDice1.setBackground(Color.WHITE);
+            this.add(tfDice1, c);
+            c.gridx = 2;
+            tfDice2.setBackground(Color.WHITE);
+            tfDice2.setEditable(false);
+            this.add(tfDice2, c);
+            c.gridx = 3;
+            tfDice3.setEditable(false);
+            tfDice3.setBackground(Color.WHITE);
+            this.add(tfDice3, c);
+            /*--Silhouette--*/
             c.gridy = 3;
-            this.add(lMSE,c);
-            lMSE.setBorder(etchedBorder);
             c.gridx = 1;
-            this.add(tfMSE,c);
+            lImp.setBorder(etchedBorder);
+            this.add(lImp, c);
+            c.gridx = 2;
+            lAdapt.setBorder(etchedBorder);
+            this.add(lAdapt, c);
+            c.gridx = 3;
+            lWeka.setBorder(etchedBorder);
+            this.add(lWeka, c);
             c.gridx = 0;
             c.gridy = 4;
-            this.add(lRMSE,c);
-            lRMSE.setBorder(etchedBorder);
+            lSil.setBorder(etchedBorder);
+            this.add(lSil, c);
             c.gridx = 1;
-            this.add(tfRMSE,c);
+            tfImpSil.setEditable(false);
+            tfImpSil.setBackground(Color.WHITE);
+            this.add(tfImpSil, c);
+            c.gridx = 2;
+            tfAdaptSil.setEditable(false);
+            tfAdaptSil.setBackground(Color.WHITE);
+            this.add(tfAdaptSil, c);
+            c.gridx = 3;
+            tfWekaSil.setEditable(false);
+            tfWekaSil.setBackground(Color.WHITE);
+            this.add(tfWekaSil, c);
         }
-        public void setValues(
-                Double jaccard,
-                Double dice,
-                Double mse,
-                Double rmse
-        ){
-            tfJaccard.setText(
-                    String.valueOf(Calculations.round(jaccard, 4))
-            );
-            tfDice.setText(
-                    String.valueOf(Calculations.round(dice,4))
-            );
-            tfMSE.setText(
-                    String.valueOf(Calculations.round(mse, 4))
-            );
 
-            tfRMSE.setText(
-                    String.valueOf(Calculations.round(rmse,4))
-            );
+        public void setJaccardValues(Double jaccard1, Double jaccard2, Double jaccard3){
+            tfJaccard1.setText(jaccard1.toString());
+            tfJaccard2.setText(jaccard2.toString());
+            tfJaccard3.setText(jaccard3.toString());
+        }
+        public void setDiceValues(Double dice1, Double dice2, Double dice3){
+            tfDice1.setText(dice1.toString());
+            tfDice2.setText(dice2.toString());
+            tfDice3.setText(dice3.toString());
+        }
+        public void setSilhouetteValues(Double silhouette1,Double silhouette2,Double silhouette3){
+            tfImpSil.setText(silhouette1.toString());
+            tfAdaptSil.setText(silhouette2.toString());
+            tfWekaSil.setText(silhouette3.toString());
         }
     }
     private class PropertiesPanel extends JPanel{
@@ -539,13 +647,19 @@ public class ComparePanel extends JPanel {
         JLabel vlClusterCount = new JLabel();
 
         JLabel lImp = new JLabel("Implementacja", SwingConstants.CENTER);
+        JLabel lAdapt = new JLabel("Adaptive", SwingConstants.CENTER);
         JLabel lWeka = new JLabel("Weka", SwingConstants.CENTER);
+
+
         JLabel lIterationCount = new JLabel("Liczba iteracji:");
         JLabel vlImpIterCount  = new JLabel();
+        JLabel vlAdaptIterCount  = new JLabel();
         JLabel vlWekaIterCount  = new JLabel();
+
 
         JLabel lTime = new JLabel("<html>Czas trwania <small>(sec)</small>:</html>");
         JLabel vlImpTime = new JLabel();
+        JLabel vlAdaptTime = new JLabel();
         JLabel vlWekaTime = new JLabel();
 
         public PropertiesPanel(){
@@ -564,7 +678,7 @@ public class ComparePanel extends JPanel {
             this.add(lName,c);
             lName.setBorder(lineBorder);
             c.gridx = 1;
-            c.gridwidth = 2;
+            c.gridwidth = 3;
             this.add(vlName, c);
             vlName.setBorder(lineBorder);
             vlName.setOpaque(true);
@@ -576,7 +690,7 @@ public class ComparePanel extends JPanel {
             this.add(lPixelCount,c);
             lPixelCount.setBorder(lineBorder);
             c.gridx = 1;
-            c.gridwidth = 2;
+            c.gridwidth = 3;
             this.add(vlPixelCount, c);
             vlPixelCount.setBorder(lineBorder);
             vlPixelCount.setOpaque(true);
@@ -587,7 +701,7 @@ public class ComparePanel extends JPanel {
             this.add(lClusterCount,c);
             lClusterCount.setBorder(lineBorder);
             c.gridx = 1;
-            c.gridwidth = 2;
+            c.gridwidth = 3;
             this.add(vlClusterCount, c);
             vlClusterCount.setBorder(lineBorder);
             vlClusterCount.setOpaque(true);
@@ -599,6 +713,9 @@ public class ComparePanel extends JPanel {
             this.add(lImp,c);
             lImp.setBorder(etchedBorder);
             c.gridx = 2;
+            this.add(lAdapt,c);
+            lAdapt.setBorder(etchedBorder);
+            c.gridx = 3;
             this.add(lWeka, c);
             lWeka.setBorder(etchedBorder);
             c.gridx = 0;
@@ -611,12 +728,18 @@ public class ComparePanel extends JPanel {
             vlImpIterCount.setOpaque(true);
             vlImpIterCount.setBackground(Color.WHITE);
             c.gridx = 2;
+            this.add(vlAdaptIterCount,c);
+            vlAdaptIterCount.setBorder(lineBorder);
+            vlAdaptIterCount.setOpaque(true);
+            vlAdaptIterCount.setBackground(Color.WHITE);
+            c.gridx = 3;
             this.add(vlWekaIterCount,c);
             c.gridx = 0;
             c.gridy = 5;
             vlWekaIterCount.setBorder(lineBorder);
             vlWekaIterCount.setOpaque(true);
             vlWekaIterCount.setBackground(Color.WHITE);
+
             this.add(lTime,c);
             lTime.setBorder(lineBorder);
             c.gridx = 1;
@@ -625,6 +748,11 @@ public class ComparePanel extends JPanel {
             vlImpTime.setOpaque(true);
             vlImpTime.setBackground(Color.WHITE);
             c.gridx = 2;
+            this.add(vlAdaptTime,c);
+            vlAdaptTime.setBorder(lineBorder);
+            vlAdaptTime.setOpaque(true);
+            vlAdaptTime.setBackground(Color.WHITE);
+            c.gridx = 3;
             this.add(vlWekaTime,c);
             vlWekaTime.setBorder(lineBorder);
             vlWekaTime.setBackground(Color.WHITE);
@@ -636,16 +764,20 @@ public class ComparePanel extends JPanel {
                 Integer pixelCount,
                 Integer clusterCount,
                 Integer impIterCount,
+                Integer adaptIterCount,
                 Integer wekaIterCount,
                 Float impTime,
+                Float adaptTime,
                 Float wekaTime
         ){
             vlName.setText(fileName);
             vlPixelCount.setText(pixelCount.toString());
             vlClusterCount.setText(clusterCount.toString());
             vlImpIterCount.setText(impIterCount.toString());
+            vlAdaptIterCount.setText(adaptIterCount.toString());
             vlWekaIterCount.setText(wekaIterCount.toString());
             vlImpTime.setText(impTime.toString());
+            vlAdaptTime.setText(adaptTime.toString());
             vlWekaTime.setText(wekaTime.toString());
         }
     }

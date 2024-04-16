@@ -16,8 +16,9 @@ public class MetricsBarChart {
     private static final String TITLE = "Metryki";
     private static final String JACCARD_LBL = "Indeks Jaccard'a";
     private static final String DICE_LBL = "Współczynnik Dice'a";
-    private static final String MSELabel = "MSE";
-    private static final String RMSELabel = "RMSE";
+    private static final String SILHOUETTE = "Wynik Silhouette";
+
+    private static final String[] ALGS = {"Impementacja", "Adaptive", "Weka"};
 
     private static DefaultCategoryDataset createDataset(double[] jaccard, double[] dice){
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -30,13 +31,13 @@ public class MetricsBarChart {
         return dataset;
     }
 
-    private static DefaultCategoryDataset createDataset(double jaccard, double dice, double mse, double rmse){
+    private static DefaultCategoryDataset createDataset(ArrayList<Double> jaccard, ArrayList<Double> dice){
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        dataset.addValue(jaccard, JACCARD_LBL, "");
-        dataset.addValue(dice, DICE_LBL, "");
-        dataset.addValue(mse, MSELabel, "");
-        dataset.addValue(rmse, RMSELabel, "");
 
+        for(int i = 0; i < jaccard.size(); i++){
+            dataset.addValue(jaccard.get(i),ALGS[i], JACCARD_LBL);
+            dataset.addValue(dice.get(i),ALGS[i], DICE_LBL);
+        }
         return dataset;
     }
 
@@ -60,8 +61,6 @@ public class MetricsBarChart {
 
         plot.getRenderer().setSeriesPaint(0, new Color(245, 213, 71));
         plot.getRenderer().setSeriesPaint(1, new Color(119, 51,68));
-        plot.getRenderer().setSeriesPaint(3, new Color(175, 203, 255));
-        plot.getRenderer().setSeriesPaint(4, new Color(222,143,110));
 
         TextTitle title = new TextTitle(TITLE, new Font("SansSerif", Font.BOLD, 14));
         chart.setTitle(title);
@@ -84,8 +83,8 @@ public class MetricsBarChart {
         return chart;
     }
 
-    public static JFreeChart create(double jaccard, double dice, double mse, double rmse){
-        DefaultCategoryDataset dataset = createDataset(jaccard,dice,mse,rmse);
+    public static JFreeChart create(ArrayList<Double> jaccard, ArrayList<Double> dice){
+        DefaultCategoryDataset dataset = createDataset(jaccard,dice);
 
         JFreeChart chart = ChartFactory.createBarChart(
                 TITLE,
