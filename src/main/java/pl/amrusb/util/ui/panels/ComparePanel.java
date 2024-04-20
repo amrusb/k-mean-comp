@@ -490,6 +490,11 @@ public class ComparePanel extends JPanel {
         chpMetrics.setChart(chart);
     }
 
+    public void setChSilhouette(JFreeChart chart){
+        chSilhouette = chart;
+        chpSilhouette.setChart(chart);
+    }
+
     public enum Position{ LEFT, RIGHT, CENTER }
 
     private enum StatsComboBox{

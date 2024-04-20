@@ -3,7 +3,6 @@ package pl.amrusb.util.charts;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -37,6 +36,15 @@ public class MetricsBarChart {
         for(int i = 0; i < jaccard.size(); i++){
             dataset.addValue(jaccard.get(i),ALGS[i], JACCARD_LBL);
             dataset.addValue(dice.get(i),ALGS[i], DICE_LBL);
+        }
+        return dataset;
+    }
+
+    private static DefaultCategoryDataset createDataset(ArrayList<Double> silhouette){
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        for(int i = 0; i <  silhouette.size(); i++){
+            dataset.addValue(silhouette.get(i),ALGS[i], SILHOUETTE);
         }
         return dataset;
     }
@@ -98,9 +106,27 @@ public class MetricsBarChart {
         );
 
         customizeChart(chart);
-
+        chart.setTitle("");
         return chart;
     }
 
+    public static JFreeChart create(ArrayList<Double> silhouette){
+        DefaultCategoryDataset dataset = createDataset(silhouette);
+
+        JFreeChart chart = ChartFactory.createBarChart(
+                TITLE,
+                null,
+                null,
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false
+        );
+
+        customizeChart(chart);
+        chart.setTitle("");
+        return chart;
+    }
 
 }

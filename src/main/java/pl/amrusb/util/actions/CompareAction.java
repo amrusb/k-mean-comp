@@ -11,7 +11,9 @@ import pl.amrusb.util.Metrics;
 import pl.amrusb.util.charts.ClusterSizesBarChart;
 import pl.amrusb.util.charts.MetricsBarChart;
 import pl.amrusb.util.charts.RGBHistogram;
+import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.util.models.Cluster;
+import pl.amrusb.util.models.Pixel;
 import pl.amrusb.util.models.Point3D;
 import pl.amrusb.util.ui.ClusterInputDialog;
 import pl.amrusb.util.ui.MainFrame;
@@ -97,9 +99,11 @@ public class CompareAction implements ActionListener {
 
                 ArrayList<Double> jaccardIdx = calculateJaccardIndex(ownStats, adaptStats, wekaStats);
                 ArrayList<Double> sorenDiceCoef = calculateDice(ownStats, adaptStats, wekaStats);
+                ArrayList<Double> silhouetteScore = calculateSilhouette(ownStats, adaptStats, wekaStats, current.getOriginalImage());
 
                 current.getComparePanel().setJaccardValues(jaccardIdx);
                 current.getComparePanel().setDiceValues(sorenDiceCoef);
+                current.getComparePanel().setSilhouetteValues(silhouetteScore);
 
                 double[] jaccardIdxs = Metrics.JaccardIndex(
                         (int[]) ownStats.get(AKMeans.KMeansStats.ASSIGNMENTS),
@@ -155,6 +159,8 @@ public class CompareAction implements ActionListener {
 
                 JFreeChart chMertrics = MetricsBarChart.create(jaccardIdx, sorenDiceCoef);
                 current.getComparePanel().setChMetrics(chMertrics);
+                JFreeChart chSilhouette = MetricsBarChart.create(silhouetteScore);
+                current.getComparePanel().setChSilhouette(chSilhouette);
             }
             catch (InterruptedException | ExecutionException ex) {
                 JOptionPane.showMessageDialog(
@@ -232,4 +238,39 @@ public class CompareAction implements ActionListener {
         return diceCoefs;
     }
 
+    private ArrayList<Double> calculateSilhouette(
+            Map<AKMeans.KMeansStats, Object> impStats,
+            Map<AKMeans.KMeansStats, Object> adaptStats,
+            Map<AKMeans.KMeansStats, Object> wekaStats,
+            BufferedImage image
+    ){
+        Double silhouette = null;
+        ArrayList<Double> silhouetteScores = new ArrayList<>();
+
+        silhouette = Metrics.SilhouetteScore(
+                (ArrayList<Cluster>)impStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS),
+                ImageReader.getPixelArray(image),
+                (int[]) impStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
+        );
+        silhouette = Calculations.round(silhouette, 4);
+        silhouetteScores.add(silhouette);
+
+        silhouette = Metrics.SilhouetteScore(
+                (ArrayList<Cluster>)adaptStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS),
+                ImageReader.getPixelArray(image),
+                (int[]) adaptStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
+        );
+        silhouette = Calculations.round(silhouette, 4);
+        silhouetteScores.add(silhouette);
+
+        silhouette = Metrics.SilhouetteScore(
+                (ArrayList<Cluster>)wekaStats.get(AKMeans.KMeansStats.CLUSTER_CENTROIDS),
+                ImageReader.getPixelArray(image),
+                (int[]) wekaStats.get(AKMeans.KMeansStats.ASSIGNMENTS)
+        );
+        silhouette = Calculations.round(silhouette, 4);
+        silhouetteScores.add(silhouette);
+
+        return silhouetteScores;
+    }
 }
