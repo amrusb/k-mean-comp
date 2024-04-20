@@ -18,6 +18,7 @@ public class MetricsBarChart {
     private static final String SILHOUETTE = "Wynik Silhouette";
 
     private static final String[] ALGS = {"Impementacja", "Adaptive", "Weka"};
+    private static final String[] ALGS_C = {"Implementacja - Adaptive", "Implementacja - Weka", "Adaptive - Weka"};
 
     private static DefaultCategoryDataset createDataset(double[] jaccard, double[] dice){
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -34,8 +35,8 @@ public class MetricsBarChart {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
         for(int i = 0; i < jaccard.size(); i++){
-            dataset.addValue(jaccard.get(i),ALGS[i], JACCARD_LBL);
-            dataset.addValue(dice.get(i),ALGS[i], DICE_LBL);
+            dataset.addValue(jaccard.get(i),ALGS_C[i], JACCARD_LBL);
+            dataset.addValue(dice.get(i),ALGS_C[i], DICE_LBL);
         }
         return dataset;
     }
