@@ -1,6 +1,7 @@
 package pl.amrusb.util;
 
 import pl.amrusb.util.models.Cluster;
+import pl.amrusb.util.models.Pixel;
 
 import java.util.ArrayList;
 
@@ -106,6 +107,66 @@ public class Metrics {
         return  results;
     }
 
+    public static Double SilhouetteScore(
+            int clusterIndex,
+            ArrayList<Cluster> clusters,
+            ArrayList<Pixel> image,
+            int[] assignments
+    ){
+        Cluster cluster = clusters.get(clusterIndex);
+        // closest cluster
+        double minDist = Double.MAX_VALUE;
+        int closestIndex = -1;
+        for (int i = 0; i < clusters.size() ; i++) {
+            if(i == clusterIndex) continue;
+            Cluster current = clusters.get(i);
+            double distance = Calculations.calculateDistance(cluster, current);
+            if(distance < minDist){
+                minDist = distance;
+                closestIndex = i;
+            }
+        }
+
+        // intra-cluster-distance
+        double a = 0.0;
+        int size = 0;
+        for (int i = 0; i < assignments.length; i++) {
+            if(assignments[i] == clusterIndex){
+                Pixel current = image.get(i);
+                a += Calculations.calculateDistance(cluster, current);
+                size++;
+            }
+        }
+        a /= size;
+
+        //inter-cluster-distance
+        double b = 0.0;
+        size = 0;
+        for (int i = 0; i < assignments.length; i++) {
+            if(assignments[i] == closestIndex){
+                Pixel current = image.get(i);
+                b += Calculations.calculateDistance(cluster, current);
+                size++;
+            }
+        }
+        b /= size;
+
+        return (b-a) / (Math.max(a, b));
+    }
+
+    public static Double SilhouetteScore(
+            ArrayList<Cluster> clusters,
+            ArrayList<Pixel> image,
+            int[] assignments
+    ){
+        double sum = 0.0;
+
+        for (int i = 0; i < clusters.size(); i++) {
+            sum += SilhouetteScore(i, clusters,image, assignments);
+        }
+
+        return  sum / clusters.size();
+    }
 
     public static Double MeanSquareError(int[] assign1, int[] assign2){
         Double result = 0.0;
