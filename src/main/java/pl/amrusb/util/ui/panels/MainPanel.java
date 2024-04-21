@@ -5,9 +5,10 @@ import pl.amrusb.util.ui.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.text.MessageFormat;
 
 public class MainPanel extends JPanel {
 
@@ -34,6 +35,17 @@ public class MainPanel extends JPanel {
         }
         CHtmlEditorPane ep = new CHtmlEditorPane(bodyBackground);
 
+        ep.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                ep.getCaret().setVisible(false);
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+
+            }
+        });
         background.setPreferredSize(new Dimension(MainFrame.getFrameWidth(), MainFrame.getFrameHeight()));
         background.setText(bodyBackground);
 
