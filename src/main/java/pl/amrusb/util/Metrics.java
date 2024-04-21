@@ -35,10 +35,10 @@ public class Metrics {
      * @param clusterNum ilość klastrów
      * @return lista wartości indeksu dla poszczególnych klastrów
      */
-    public static double[] JaccardIndex(int[] assign1, int[] assign2, int clusterNum){
+    public static ArrayList<Double> JaccardIndex(int[] assign1, int[] assign2, int clusterNum){
         int[] sums = new int[clusterNum];
         double[] intercepts = new double[clusterNum];
-        double[] results = new double[clusterNum];
+        ArrayList<Double> results = new ArrayList<>();
 
 
         for (int i = 0; i < assign1.length; i++) {
@@ -49,8 +49,8 @@ public class Metrics {
             sums[assign2[i]]++;
         }
 
-        for (int i = 0; i < results.length; i++) {
-            results[i] = intercepts[i] / (sums[i] - intercepts[i]);
+        for (int i = 0; i < clusterNum; i++) {
+            results.add(Calculations.round(intercepts[i] / (sums[i] - intercepts[i]),4));
         }
 
         return  results;
@@ -85,11 +85,11 @@ public class Metrics {
      * @param clusterNum ilość klastrów
      * @return lista wartości współczynnika dla poszczególnych klastrów
      */
-    public static double[] SorensenDiceCoefficient(int[] assign1, int[] assign2, int clusterNum){
+    public static ArrayList<Double> SorensenDiceCoefficient(int[] assign1, int[] assign2, int clusterNum){
 
         int[] sums = new int[clusterNum];
         double[] intercepts = new double[clusterNum];
-        double[] results = new double[clusterNum];
+        ArrayList<Double> results = new ArrayList<>();
 
 
         for (int i = 0; i < assign1.length; i++) {
@@ -100,8 +100,8 @@ public class Metrics {
             sums[assign2[i]]++;
         }
 
-        for (int i = 0; i < results.length; i++) {
-            results[i] = (2 * intercepts[i]) / sums[i];
+        for (int i = 0; i < clusterNum; i++) {
+            results.add(Calculations.round((2 * intercepts[i]) / sums[i], 4));
         }
 
         return  results;

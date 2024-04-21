@@ -6,10 +6,12 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
+import pl.amrusb.util.constants.AlgorithmsMetrics;
 import pl.amrusb.util.models.Cluster;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class MetricsBarChart {
     private static final String TITLE = "Metryki";
@@ -89,6 +91,69 @@ public class MetricsBarChart {
                 false
         );
         customizeChart(chart, c1, c2);
+        return chart;
+    }
+
+    private static DefaultCategoryDataset createDataset(Map<AlgorithmsMetrics, ArrayList<Double>> data){
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        ArrayList<Double> first = data.get(AlgorithmsMetrics.IMP);
+        String firstLabel = AlgorithmsMetrics.IMP.getValue();
+        ArrayList<Double> second;
+        String secondLabel;
+        ArrayList<Double> third;
+        String thirdLabel;
+
+        if(first == null){
+            firstLabel = AlgorithmsMetrics.IMP_ADAPT.getValue();
+            secondLabel = AlgorithmsMetrics.IMP_WEKA.getValue();
+            thirdLabel = AlgorithmsMetrics.ADAPT_WEKA.getValue();
+
+            first = data.get(AlgorithmsMetrics.IMP_ADAPT);
+            second = data.get(AlgorithmsMetrics.IMP_WEKA);
+            third = data.get(AlgorithmsMetrics.ADAPT_WEKA);
+        }
+        else {
+            secondLabel = AlgorithmsMetrics.ADAPT.getValue();
+            thirdLabel = AlgorithmsMetrics.WEKA.getValue();
+            second = data.get(AlgorithmsMetrics.ADAPT);
+            third =data.get(AlgorithmsMetrics.WEKA);
+        }
+
+        for(int i = 0; i <  first.size(); i++){
+            dataset.addValue(first.get(i), String.valueOf(i + 1), firstLabel);
+            dataset.addValue(second.get(i), String.valueOf(i + 1), secondLabel);
+            dataset.addValue(third.get(i), String.valueOf(i + 1), thirdLabel);
+        }
+        return dataset;
+    }
+
+    private static void customizeChart(JFreeChart chart, ArrayList<Cluster> c){
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+
+        for (int i = 0; i < c.size(); i++){
+            plot.getRenderer().setSeriesPaint(i, new Color(c.get(i).getX(), c.get(i).getY(), c.get(i).getZ()));
+        }
+
+        TextTitle title = new TextTitle(TITLE, new Font("SansSerif", Font.BOLD, 14));
+        chart.setTitle(title);
+    }
+
+    public static JFreeChart create(Map<AlgorithmsMetrics, ArrayList<Double>> silhouette, String title, ArrayList<Cluster> c){
+        DefaultCategoryDataset dataset =  createDataset(silhouette);
+
+        JFreeChart chart = ChartFactory.createBarChart(
+                TITLE,
+                null,
+                null,
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false
+        );
+        customizeChart(chart, c);
+        chart.setTitle(title);
         return chart;
     }
 
