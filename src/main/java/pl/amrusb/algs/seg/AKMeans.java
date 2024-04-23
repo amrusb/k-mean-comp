@@ -3,6 +3,7 @@ package pl.amrusb.algs.seg;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import pl.amrusb.util.constants.KMeansStats;
 import pl.amrusb.util.img.ImageSaver;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
@@ -22,14 +23,6 @@ public abstract class AKMeans implements IKMeans{
 
     private final int width;
     private final int height;
-
-    public enum KMeansStats{
-        INITIAL_START_POINTS,
-        CLUSTER_CENTROIDS,
-        ITERATIONS,
-        TIME,
-        ASSIGNMENTS
-    }
 
     /**
      * Zwraca obraz wyjściowy po segmentowaniu obrazu algorytmem k-means.
