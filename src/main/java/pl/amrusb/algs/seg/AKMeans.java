@@ -16,9 +16,10 @@ import java.util.Map;
 @Setter
 @AllArgsConstructor
 public abstract class AKMeans implements IKMeans{
+    private final int maxIter;
+    private Integer clusterNum;
     @Getter
     private Map<KMeansStats, Object> statistics;
-    private Integer clusterNum;
     private ArrayList<Pixel> pixelArray;
 
     private final int width;

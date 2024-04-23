@@ -22,13 +22,12 @@ import java.util.Map;
 import pl.amrusb.util.timer.Timer;
 
 public class WekaKMeans extends AKMeans {
-    private static final int MAX_ITERATIONS = 100;
     private static final String PREFIX = "pixel_data";
     private static final String SUFFIX = ".arff";
     private final Timer timer;
 
-    public  WekaKMeans(int k, BufferedImage image){
-        super(null,k,ImageReader.getPixelArray(image),image.getWidth(), image.getHeight());
+    public  WekaKMeans(int k, int maxIter, BufferedImage image){
+        super(maxIter,k,null, ImageReader.getPixelArray(image),image.getWidth(), image.getHeight());
         timer = new Timer();
     }
 
@@ -37,14 +36,14 @@ public class WekaKMeans extends AKMeans {
         try {
             Instances data = createDataSet();
             SimpleKMeans algorithm = new SimpleKMeans();
-            algorithm.setMaxIterations(MAX_ITERATIONS);
             algorithm.setInitializationMethod(
                     new SelectedTag(
                             SimpleKMeans.KMEANS_PLUS_PLUS,
                             SimpleKMeans.TAGS_SELECTION
                     )
             );
-            algorithm.setDebug(true);
+            algorithm.setDebug(false);
+            algorithm.setMaxIterations(super.getMaxIter());
             algorithm.setPreserveInstancesOrder(true);
             algorithm.setNumClusters(getClusterNum());
 

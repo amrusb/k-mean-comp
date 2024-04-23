@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 class HamerlySegmentation {
-    private static final int MAX_ITERATIONS = 100;
+    private final Integer maxIter;
     private final Integer clusterNum;
     @Getter
     private final ArrayList<Cluster> clusters;
@@ -25,10 +25,12 @@ class HamerlySegmentation {
 
     public HamerlySegmentation(
             Integer clusterNum,
+            Integer maxIter,
             ArrayList<Pixel> image,
             ArrayList<Cluster> clusters
     ){
         this.clusterNum = clusterNum;
+        this.maxIter = maxIter;
         this.image = image;
         this.clusters = clusters;
 
@@ -44,7 +46,7 @@ class HamerlySegmentation {
         Arrays.fill(lowerBounds, 0.0);
         Arrays.fill(assignments, -1);
 
-        for (iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+        for (iteration = 0; iteration < maxIter; iteration++) {
             for (int index = 0; index < size; index++) {
 
                 var pixel = image.get(index);

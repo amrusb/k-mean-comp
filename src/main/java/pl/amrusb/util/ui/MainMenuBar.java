@@ -4,6 +4,7 @@ package pl.amrusb.util.ui;
 import lombok.Getter;
 import pl.amrusb.util.actions.*;
 import pl.amrusb.util.charts.RGBHistogram;
+import pl.amrusb.util.constants.AlgorithmsMetrics;
 import pl.amrusb.util.ui.panels.ImagePanel;
 
 import javax.swing.*;
@@ -47,14 +48,13 @@ public class MainMenuBar extends JMenuBar {
         add(imageMenu);
 
         segmentationMenu.add(kmeanItem);
-        //kmeanItem.addActionListener(new KMeansAction());
-        kmeanItem.addActionListener(new KMeansAction(KMeansAction.Types.K_MEANS));
+        kmeanItem.addActionListener(new KMeansAction(AlgorithmsMetrics.IMP));
 
         segmentationMenu.add(wekaItem);
-        wekaItem.addActionListener(new KMeansAction(KMeansAction.Types.WEKA));
+        wekaItem.addActionListener(new KMeansAction(AlgorithmsMetrics.WEKA));
 
         segmentationMenu.add(adaptiveItem);
-        adaptiveItem.addActionListener(new KMeansAction(KMeansAction.Types.ADAPTIVE));
+        adaptiveItem.addActionListener(new KMeansAction(AlgorithmsMetrics.ADAPT));
 
         segmentationMenu.addSeparator();
 

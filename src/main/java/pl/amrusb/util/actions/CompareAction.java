@@ -42,32 +42,34 @@ public class CompareAction implements ActionListener {
         ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getSelectedComponent();
         ClusterInputDialog dialog = new ClusterInputDialog(
                 MainMenuBar.getOwner(),
+                "Parametry porównania algorytmów k-means",
                 false
         );
         dialog.setVisible(true);
         Integer clusterNum = dialog.getClusterCount();
+        Integer maxIter = dialog.getMaxIter();
 
 
         ExecutorService segmentationExecutor = Executors.newFixedThreadPool(3);
         if (clusterNum != null) {
-            current.setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            current.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
             AtomicReference<IKMeans> impKMeansAlg = new AtomicReference<>();
             AtomicReference<IKMeans> wekaKMeansAlg = new AtomicReference<>();
             AtomicReference<IKMeans> adaptKMeansAlg = new AtomicReference<>();
 
             Future<?> impKMeans = segmentationExecutor.submit(() -> {
-                impKMeansAlg.set(new KMeans(clusterNum, current.getOriginalImage()));
+                impKMeansAlg.set(new KMeans(clusterNum,maxIter, current.getOriginalImage()));
                 impKMeansAlg.get().execute();
             });
 
             Future<?> adaptKMeans = segmentationExecutor.submit(()->{
-                adaptKMeansAlg.set(new AdaptiveKMeans(clusterNum, current.getOriginalImage()));
+                adaptKMeansAlg.set(new AdaptiveKMeans(clusterNum,maxIter, current.getOriginalImage()));
                 adaptKMeansAlg.get().execute();
             });
 
             Future<?> wekaKMeans = segmentationExecutor.submit(() -> {
-                wekaKMeansAlg.set(new WekaKMeans(clusterNum, current.getOriginalImage()));
+                wekaKMeansAlg.set(new WekaKMeans(clusterNum,maxIter, current.getOriginalImage()));
                 wekaKMeansAlg.get().execute();
             });
 

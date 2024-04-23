@@ -5,6 +5,7 @@ import pl.amrusb.algs.seg.IKMeans;
 import pl.amrusb.algs.seg.imp.AdaptiveKMeans;
 import pl.amrusb.algs.seg.imp.KMeans;
 import pl.amrusb.algs.seg.weka.WekaKMeans;
+import pl.amrusb.util.constants.AlgorithmsMetrics;
 import pl.amrusb.util.ui.ClusterInputDialog;
 import pl.amrusb.util.ui.MainFrame;
 import pl.amrusb.util.ui.MainMenuBar;
@@ -21,9 +22,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class KMeansAction implements ActionListener {
-    private  KMeansAction.Types type;
+    private  AlgorithmsMetrics type;
 
-    public KMeansAction(KMeansAction.Types type){
+    public KMeansAction(AlgorithmsMetrics type){
         this.type = type;
     }
 
@@ -37,11 +38,13 @@ public class KMeansAction implements ActionListener {
         }
         ClusterInputDialog dialog = new ClusterInputDialog(
                 MainMenuBar.getOwner(),
+                "Parametry k-means ("+ type.getValue() +")",
                 current.hasRescaledImage()
         );
         dialog.setVisible(true);
 
         Integer clusterNum = dialog.getClusterCount();
+        Integer maxIter = dialog.getMaxIter();
         Boolean original = dialog.checkImageSource();
 
 
@@ -51,10 +54,10 @@ public class KMeansAction implements ActionListener {
             AtomicReference<IKMeans> segmentation = new AtomicReference<>();
             Future<?> segmenationExec = executor.submit(()->{
                 if(original){
-                    segmentation.set(getAlgorithm(clusterNum, current.getOriginalImage(), type));
+                    segmentation.set(getAlgorithm(clusterNum,maxIter, current.getOriginalImage(), type));
                 }
                 else{
-                    segmentation.set(getAlgorithm(clusterNum, current.getRescaledImage(), type));
+                    segmentation.set(getAlgorithm(clusterNum,maxIter, current.getRescaledImage(), type));
                 }
                 segmentation.get().execute();
             });
@@ -74,23 +77,18 @@ public class KMeansAction implements ActionListener {
         }
     }
 
-    private AKMeans getAlgorithm(int k, BufferedImage image, KMeansAction.Types type){
+    private AKMeans getAlgorithm(int k,int maxIter, BufferedImage image, AlgorithmsMetrics type){
         switch (type){
-            case K_MEANS -> {
-                return new KMeans(k, image);
+            case IMP -> {
+                return new KMeans(k,maxIter, image);
             }
             case WEKA -> {
-                return new WekaKMeans(k, image);
+                return new WekaKMeans(k,maxIter, image);
             }
-            case ADAPTIVE -> {
-                return new AdaptiveKMeans(k, image);
+            case ADAPT -> {
+                return new AdaptiveKMeans(k,maxIter, image);
             }
         }
         return null;
-    }
-    public enum Types{
-        K_MEANS,
-        WEKA,
-        ADAPTIVE;
     }
 }

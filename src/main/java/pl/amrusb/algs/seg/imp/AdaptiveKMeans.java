@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AdaptiveKMeans extends AKMeans {
-    private static final int MAX_ITERATIONS = 100;
     private final Integer size;
     @Getter
     private ArrayList<Cluster> clusters;
@@ -30,8 +29,8 @@ public class AdaptiveKMeans extends AKMeans {
     private double[][] cDistMtx;
     private ArrayList<Pair<Double, Integer>> cMinTbl;
 
-    public AdaptiveKMeans(int k, BufferedImage image){
-        super(null,k, ImageReader.getPixelArray(image),image.getWidth(), image.getHeight());
+    public AdaptiveKMeans(int k, int maxIter, BufferedImage image){
+        super(maxIter,k, null, ImageReader.getPixelArray(image),image.getWidth(), image.getHeight());
         size = super.getPixelArray().size();
         assignments = new int[size];
 
@@ -120,7 +119,7 @@ public class AdaptiveKMeans extends AKMeans {
     }
 
     private void segmentation(){
-        for(iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+        for(iteration = 0; iteration < super.getMaxIter(); iteration++) {
             boolean flag = false;
             for (int index = 0; index < size; index++) {
                 flag = false;

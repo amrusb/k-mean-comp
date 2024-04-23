@@ -14,8 +14,8 @@ import java.util.*;
 
 public class KMeans extends AKMeans {
 
-    public KMeans(int k, BufferedImage image){
-        super(null,k,ImageReader.getPixelArray(image),image.getWidth(), image.getHeight());
+    public KMeans(int k, int maxIter, BufferedImage image){
+        super(maxIter,k,null,ImageReader.getPixelArray(image),image.getWidth(), image.getHeight());
     }
 
     public void execute(){
@@ -36,6 +36,7 @@ public class KMeans extends AKMeans {
 
             HamerlySegmentation alg = new HamerlySegmentation(
                     getClusterNum(),
+                    super.getMaxIter(),
                     getPixelArray(),
                     clusters);
             setPixelArray(alg.execute());
