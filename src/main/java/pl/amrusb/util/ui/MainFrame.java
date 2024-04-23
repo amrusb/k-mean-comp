@@ -15,7 +15,6 @@ import java.util.ArrayList;
 public class MainFrame extends JFrame {
     private static final Double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     private static final Double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-    private static final Font BASIC_FONT = new Font("SansSerif", Font.PLAIN, 14);
 
     @Getter
     private static final JTabbedPane tabbedPane = new JTabbedPane();
@@ -41,7 +40,7 @@ public class MainFrame extends JFrame {
         MainPanel mainPanel = new MainPanel();
         JScrollPane scrollTabbedPane = new JScrollPane(tabbedPane);
         JButton closeButton = new JButton();
-        Image closeIcon = null;
+        Image closeIcon;
         try {
             closeIcon = ImageIO.read(new File(Main.getROOT_PATH() + "icons/xmark.png"));
             closeButton.setIcon(new ImageIcon(closeIcon));
@@ -73,22 +72,23 @@ public class MainFrame extends JFrame {
         int panelIdx = imagePanels.indexOf(panel);
 
         JPanel tabComponent = new JPanel(new BorderLayout());
+        tabComponent.setOpaque(false);
+
         String fileName = panel.getFileName();
         JLabel tabLabel = new JLabel();
-        tabbedPane.setToolTipText("<html><i>" + fileName + "</i></html>");
-        if (fileName.length() > 10) {
-            fileName = fileName.substring(0, 10) + "...";
+        tabLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        tabbedPane.setToolTipText("<html>" + fileName + "</html>");
+        if (fileName.length() > 14) {
+            fileName = fileName.substring(0, 14) + "...";
         }
 
-        tabLabel.setText("<html><i>" + fileName + "</i></html>");
+        tabLabel.setText("<html>" + fileName + "</html>");
 
-
-
-        JButton closeButton = new JButton();
-        Image closeIcon = null;
+        JButton closeButton = null;
+        Image closeIcon;
         try {
             closeIcon = ImageIO.read(new File(Main.getROOT_PATH() + "icons/xmark.png"));
-            closeButton.setIcon(new ImageIcon(closeIcon));
+            closeButton = new JButton(new ImageIcon(closeIcon));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
                     MainMenuBar.getOwner(),
@@ -98,11 +98,10 @@ public class MainFrame extends JFrame {
             );
         }
 
-        tabLabel.setBackground(null);
-
+        tabLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 2));
+        assert closeButton != null;
         closeButton.setBorderPainted(false);
         closeButton.setContentAreaFilled(false);
-        closeButton.setFocusPainted(false);
         closeButton.addActionListener(e -> {
             int index = tabbedPane.indexOfComponent(imagePanels.get(panelIdx));
             if (index != -1) {
@@ -111,6 +110,7 @@ public class MainFrame extends JFrame {
             }
             MainFrame.changePanel();
         });
+
         tabComponent.add(tabLabel, BorderLayout.CENTER);
         tabComponent.add(closeButton, BorderLayout.EAST);
         tabbedPane.addTab(null, imagePanels.get(panelIdx));
@@ -131,10 +131,5 @@ public class MainFrame extends JFrame {
     public static int getFrameHeight(){
         return (int)(SCREEN_HEIGHT * 4 / 5);
     }
-    /**
-     * Zwraca podstawową czcionkę używaną przez program
-     * @return podstawowa czcionka
-     */
-    public static Font getBasicFont() {return BASIC_FONT;}
 
 }
