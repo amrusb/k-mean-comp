@@ -85,15 +85,15 @@ public class CompareAction implements ActionListener {
 
                 current.getComparePanel().setImageLabel(
                         leftImage,
-                        ComparePanel.Position.LEFT
+                        AlgorithmsMetrics.IMP
                 );
                 current.getComparePanel().setImageLabel(
                         centerImage,
-                        ComparePanel.Position.CENTER
+                        AlgorithmsMetrics.ADAPT
                 );
                 current.getComparePanel().setImageLabel(
                         rightImage,
-                        ComparePanel.Position.RIGHT
+                        AlgorithmsMetrics.WEKA
                 );
 
                 Map<KMeansStats, Object> ownStats = impKMeansAlg.get().getStatistics();
