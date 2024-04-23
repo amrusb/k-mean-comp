@@ -20,8 +20,6 @@ import pl.amrusb.util.models.Point3D;
 import pl.amrusb.util.ui.ClusterInputDialog;
 import pl.amrusb.util.ui.MainFrame;
 import pl.amrusb.util.ui.MainMenuBar;
-import pl.amrusb.util.ui.panels.BottomPanel;
-import pl.amrusb.util.ui.panels.ComparePanel;
 import pl.amrusb.util.ui.panels.ImagePanel;
 
 import javax.swing.*;
@@ -107,8 +105,6 @@ public class CompareAction implements ActionListener {
                 current.getComparePanel().setJaccardValues(jaccardIdx);
                 current.getComparePanel().setDiceValues(sorenDiceCoef);
                 current.getComparePanel().setSilhouetteValues(silhouetteScore);
-
-                BottomPanel.setProgressBarVisible(false);
 
                 current.getComparePanel().setPropertiesValues(
                         current.getFileName(),

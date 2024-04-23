@@ -7,7 +7,6 @@ import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
 import pl.amrusb.util.models.Point3D;
-import pl.amrusb.util.ui.panels.BottomPanel;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -49,18 +48,11 @@ public class WekaKMeans extends AKMeans {
             algorithm.setPreserveInstancesOrder(true);
             algorithm.setNumClusters(getClusterNum());
 
-            BottomPanel.setProgress(0);
-            //TODO
-            BottomPanel.setProgressMaximum(1);
-            BottomPanel.setProgressLabel("K-means...");
-
             timer.start();
 
             algorithm.buildClusterer(data);
 
             timer.stop();
-
-            BottomPanel.setProgress(1);
 
             createStats(algorithm);
 
@@ -142,7 +134,6 @@ public class WekaKMeans extends AKMeans {
     private void setPixelToClusterVal(int[] assignments, Instances centroids){
         int index = 0;
         for(Pixel pixel: getPixelArray()){
-            BottomPanel.incrementProgress();
             int k = assignments[index];
             int R, G, B;
 
@@ -159,9 +150,6 @@ public class WekaKMeans extends AKMeans {
     }
 
     private Instances createDataSet() throws Exception {
-        BottomPanel.setProgress(0);
-        BottomPanel.setProgressMaximum(getPixelArray().size());
-        BottomPanel.setProgressLabel("Tworzenie zbioru danych...");
         BufferedReader dataSource;
         File tempDataFile = File.createTempFile(PREFIX, SUFFIX);
         FileWriter writer = new FileWriter(tempDataFile);
@@ -173,7 +161,6 @@ public class WekaKMeans extends AKMeans {
         writer.write("@DATA\n");
 
         for (Pixel pixel: getPixelArray()) {
-            BottomPanel.incrementProgress();
             String line = "{0},{1},{2}\n";
 
             writer.write(

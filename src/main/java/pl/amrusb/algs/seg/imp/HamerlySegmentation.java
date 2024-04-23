@@ -4,7 +4,6 @@ import lombok.Getter;
 import pl.amrusb.util.Calculations;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
-import pl.amrusb.util.ui.panels.BottomPanel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,11 +44,7 @@ class HamerlySegmentation {
         Arrays.fill(lowerBounds, 0.0);
         Arrays.fill(assignments, -1);
 
-        BottomPanel.setProgress(0);
-        BottomPanel.setProgressMaximum(MAX_ITERATIONS - 1);
-        BottomPanel.setProgressLabel("K-means...");
         for (iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
-            BottomPanel.incrementProgress();
             for (int index = 0; index < size; index++) {
 
                 var pixel = image.get(index);
@@ -127,7 +122,6 @@ class HamerlySegmentation {
                 break;
 
         }
-        BottomPanel.setProgress(MAX_ITERATIONS * size - 1);
 
         setPixelToClusterVal();
 

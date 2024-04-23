@@ -2,7 +2,6 @@ package pl.amrusb.util.ui;
 
 import lombok.Getter;
 import pl.amrusb.Main;
-import pl.amrusb.util.ui.panels.BottomPanel;
 import pl.amrusb.util.ui.panels.MainPanel;
 import pl.amrusb.util.ui.panels.ImagePanel;
 
@@ -10,7 +9,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -61,7 +59,6 @@ public class MainFrame extends JFrame {
 
         add(body, BorderLayout.CENTER);
         changePanel();
-        add(new BottomPanel(), BorderLayout.SOUTH);
     }
     public static void changePanel(){
         if(tabbedPane.getTabCount() == 0){

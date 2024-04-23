@@ -4,7 +4,6 @@ import pl.amrusb.algs.rand.LCGenerator;
 import pl.amrusb.util.Calculations;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
-import pl.amrusb.util.ui.panels.BottomPanel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,11 +33,8 @@ class KMeansPP {
         double[] distances = new double[pixelArraySize];
         Arrays.fill(distances, Double.MAX_VALUE);
 
-        BottomPanel.setProgressMaximum(clusterNum - 1);
-        BottomPanel.setProgressLabel("Inicjalizajca klastrów...");
         main_for:
         for (int i = 1; i < clusterNum; i++) {
-            BottomPanel.incrementProgress();
             double sum = 0.0;
 
             for (int j = 0; j < pixelArraySize; j++) {

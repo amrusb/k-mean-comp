@@ -1,7 +1,6 @@
 package pl.amrusb.util.img;
 
 import pl.amrusb.util.models.Pixel;
-import pl.amrusb.util.ui.panels.BottomPanel;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -82,9 +81,7 @@ public class ImageReader {
     public static double[][] convertToGrayScale(BufferedImage image){
         Pixel[][] pixels = get2DPixelArray(image);
         double[][] output = new double[pixels.length][pixels[0].length];
-        BottomPanel.setProgress(1);
-        BottomPanel.setProgressMaximum(pixels.length*pixels[0].length);
-        BottomPanel.setProgressLabel("Konwersja na skalę szarości...");
+
         for (int i = 0; i < pixels.length; i++) {
             for (int j = 0; j < pixels[0].length; j++) {
                 output[i][j] = 0.299 * pixels[i][j].getR() + 0.587 * pixels[i][j].getG()  + 0.114 * pixels[i][j].getB();

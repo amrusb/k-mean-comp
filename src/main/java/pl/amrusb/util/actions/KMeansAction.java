@@ -8,7 +8,6 @@ import pl.amrusb.algs.seg.weka.WekaKMeans;
 import pl.amrusb.util.ui.ClusterInputDialog;
 import pl.amrusb.util.ui.MainFrame;
 import pl.amrusb.util.ui.MainMenuBar;
-import pl.amrusb.util.ui.panels.BottomPanel;
 import pl.amrusb.util.ui.panels.ImagePanel;
 
 import java.awt.*;
@@ -33,7 +32,6 @@ public class KMeansAction implements ActionListener {
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
         ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getSelectedComponent();
-        BottomPanel.setDurationInfoVisible(false);
         if (current.hasSegmentedImage()) {
             current.setOriginalImage(current.getSegmentedImage());
         }
