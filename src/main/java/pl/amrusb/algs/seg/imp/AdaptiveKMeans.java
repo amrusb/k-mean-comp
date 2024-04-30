@@ -4,6 +4,7 @@ import lombok.Getter;
 import pl.amrusb.algs.seg.AKMeans;
 import pl.amrusb.util.Calculations;
 import pl.amrusb.util.ClusterComparator;
+import pl.amrusb.util.Statistics;
 import pl.amrusb.util.constants.KMeansStats;
 import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.util.models.Cluster;
@@ -15,8 +16,6 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AdaptiveKMeans extends AKMeans {
     private final Integer size;
@@ -43,7 +42,7 @@ public class AdaptiveKMeans extends AKMeans {
             Timer timer = new Timer();
             timer.start();
 
-            Map<KMeansStats, Object> stats = new HashMap<>();
+            Statistics stats = new Statistics();
             KMeansPP init = new KMeansPP(getClusterNum(), getPixelArray());
             clusters = init.execute();
             setClusterNum(clusters.size());

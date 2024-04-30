@@ -19,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -196,6 +197,7 @@ public class ComparePanel extends JPanel {
             String fileName,
             Integer pixelCount,
             Integer clusterCount,
+            Integer maxIterations,
             Integer impIterCount,
             Integer adaptIterCount,
             Integer wekaIterCount,
@@ -203,7 +205,7 @@ public class ComparePanel extends JPanel {
             Float adaptTime,
             Float wekaTime
     ){
-        pProperties.setValues(fileName,pixelCount,clusterCount,impIterCount,adaptIterCount,wekaIterCount,impTime,adaptTime,wekaTime);
+        pProperties.setValues(fileName,pixelCount,clusterCount,maxIterations,impIterCount,adaptIterCount,wekaIterCount,impTime,adaptTime,wekaTime);
     }
 
     public void setJaccardValues(ArrayList<Double> jaccardIndex){
@@ -229,7 +231,7 @@ public class ComparePanel extends JPanel {
             height = (int)(height * scale);
         }
 
-        File stream = null;
+        File stream;
         try {
             stream = File.createTempFile("show-img", ".jpg");
             ImageIO.write(image, "jpg", stream);
@@ -237,7 +239,7 @@ public class ComparePanel extends JPanel {
             throw new RuntimeException(e);
         }
 
-        htmlString = String.format(htmlString, stream.toString() , width, height);
+        htmlString = String.format(htmlString, stream , width, height);
 
         switch(position){
             case IMP -> {
@@ -275,6 +277,16 @@ public class ComparePanel extends JPanel {
         chpClustersJaccard.setChart(chart2);
         chpClustersDice.setChart(chart3);
     }
+
+    public Map<AlgorithmsMetrics, BufferedImage> getOutputImages(){
+        Map<AlgorithmsMetrics, BufferedImage> output = new HashMap<>();
+
+        output.put(AlgorithmsMetrics.IMP,ivpImp.getImage());
+        output.put(AlgorithmsMetrics.ADAPT, ivpAdapt.getImage());
+        output.put(AlgorithmsMetrics.WEKA, ivpWeka.getImage());
+
+        return output;
+    }
     private enum StatsComboBox{
         PROPERTIES("Właściwości"),
         CLUSTERS("Klastry"),
@@ -292,7 +304,8 @@ public class ComparePanel extends JPanel {
             return new JComboBox<>(new String[]{PROPERTIES.value, METRICS.value,CLUSTER_METRICS.value,CLUSTERS.value,INITIAL.value});
         }
     }
-    private class MetricsPanel extends JPanel{
+    @Getter
+    public class MetricsPanel extends JPanel{
         JLabel lImpAdapt = new JLabel(AlgorithmsMetrics.IMP_ADAPT.getValue(), SwingConstants.CENTER);
         JLabel lImpWeka = new JLabel(AlgorithmsMetrics.IMP_WEKA.getValue(), SwingConstants.CENTER);
         JLabel lAdaptWeka = new JLabel(AlgorithmsMetrics.ADAPT_WEKA.getValue(), SwingConstants.CENTER);
@@ -420,7 +433,8 @@ public class ComparePanel extends JPanel {
             tfWekaSil.setText(silhouette3.toString());
         }
     }
-    private class PropertiesPanel extends JPanel{
+    @Getter
+    public class PropertiesPanel extends JPanel{
         JLabel lName = new JLabel("Nazwa pliku:");
         JLabel vlName = new JLabel();
 
@@ -429,6 +443,9 @@ public class ComparePanel extends JPanel {
 
         JLabel lClusterCount = new JLabel("Liczba klastrów:");
         JLabel vlClusterCount = new JLabel();
+
+        JLabel lMaxIter = new JLabel("Maksymalna liczba iteracji:");
+        JLabel vlMaxIter = new JLabel();
 
         JLabel lImp = new JLabel(AlgorithmsMetrics.IMP.getValue(), SwingConstants.CENTER);
         JLabel lAdapt = new JLabel(AlgorithmsMetrics.ADAPT.getValue(), SwingConstants.CENTER);
@@ -491,8 +508,20 @@ public class ComparePanel extends JPanel {
             vlClusterCount.setOpaque(true);
             vlClusterCount.setBackground(Color.WHITE);
 
-            c.gridx = 1;
+            c.gridx = 0;
             c.gridy = 3;
+            c.gridwidth = 1;
+            this.add(lMaxIter,c);
+            lMaxIter.setBorder(lineBorder);
+            c.gridx = 1;
+            c.gridwidth = 3;
+            this.add(vlMaxIter, c);
+            vlMaxIter.setBorder(lineBorder);
+            vlMaxIter.setOpaque(true);
+            vlMaxIter.setBackground(Color.WHITE);
+
+            c.gridx = 1;
+            c.gridy = 4;
             c.gridwidth = 1;
             this.add(lImp,c);
             lImp.setBorder(etchedBorder);
@@ -503,7 +532,7 @@ public class ComparePanel extends JPanel {
             this.add(lWeka, c);
             lWeka.setBorder(etchedBorder);
             c.gridx = 0;
-            c.gridy = 4;
+            c.gridy = 5;
             this.add(lIterationCount,c);
             lIterationCount.setBorder(lineBorder);
             c.gridx = 1;
@@ -519,7 +548,7 @@ public class ComparePanel extends JPanel {
             c.gridx = 3;
             this.add(vlWekaIterCount,c);
             c.gridx = 0;
-            c.gridy = 5;
+            c.gridy = 6;
             vlWekaIterCount.setBorder(lineBorder);
             vlWekaIterCount.setOpaque(true);
             vlWekaIterCount.setBackground(Color.WHITE);
@@ -547,6 +576,7 @@ public class ComparePanel extends JPanel {
                 String fileName,
                 Integer pixelCount,
                 Integer clusterCount,
+                Integer maxIterations,
                 Integer impIterCount,
                 Integer adaptIterCount,
                 Integer wekaIterCount,
@@ -557,6 +587,7 @@ public class ComparePanel extends JPanel {
             vlName.setText(fileName);
             vlPixelCount.setText(pixelCount.toString());
             vlClusterCount.setText(clusterCount.toString());
+            vlMaxIter.setText(maxIterations.toString());
             vlImpIterCount.setText(impIterCount.toString());
             vlAdaptIterCount.setText(adaptIterCount.toString());
             vlWekaIterCount.setText(wekaIterCount.toString());
@@ -565,7 +596,8 @@ public class ComparePanel extends JPanel {
             vlWekaTime.setText(wekaTime.toString());
         }
     }
-    private class ClusterMetricsPanel extends JPanel{
+    @Getter
+    public class ClusterMetricsPanel extends JPanel{
         private CTable tbShiluette;
         private CTable tbImpAdapt;
         private CTable tbImpWeka;

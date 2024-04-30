@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ImagePanel extends JPanel {
     public static final String BASIC_PANEL = "basicPanel";
     public static final String COMPARE_PANEL = "comparePanel";
+    private Boolean isEdited;
 
     private final JLabel imageLabel = new JLabel();
     private BufferedImage originalImage = null;
@@ -36,6 +37,7 @@ public class ImagePanel extends JPanel {
     private static CardLayout cardLayout = null;
 
     public ImagePanel(){
+        isEdited = false;
         cardLayout = new CardLayout();
         this.setLayout(cardLayout);
 
@@ -79,7 +81,6 @@ public class ImagePanel extends JPanel {
             AtomicReference<BufferedImage> displayImage = new AtomicReference<>();
             ExecutorService executor = Executors.newSingleThreadExecutor();
             Future<?> future = executor.submit(() -> displayImage.set(ImageRescaler.rescaleImage(image, scale)));
-
 
             executor.shutdown();
 

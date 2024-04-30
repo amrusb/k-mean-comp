@@ -3,14 +3,13 @@ package pl.amrusb.algs.seg;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import pl.amrusb.util.constants.KMeansStats;
+import pl.amrusb.util.Statistics;
 import pl.amrusb.util.img.ImageSaver;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Map;
 
 @Getter
 @Setter
@@ -19,7 +18,7 @@ public abstract class AKMeans implements IKMeans{
     private final int maxIter;
     private Integer clusterNum;
     @Getter
-    private Map<KMeansStats, Object> statistics;
+    private Statistics statistics;
     private ArrayList<Pixel> pixelArray;
 
     private final int width;

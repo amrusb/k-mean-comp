@@ -2,6 +2,7 @@ package pl.amrusb.algs.seg.weka;
 
 import pl.amrusb.algs.seg.AKMeans;
 import pl.amrusb.util.ClusterComparator;
+import pl.amrusb.util.Statistics;
 import pl.amrusb.util.constants.KMeansStats;
 import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.util.models.Cluster;
@@ -17,8 +18,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import pl.amrusb.util.timer.Timer;
 
 public class WekaKMeans extends AKMeans {
@@ -70,7 +69,7 @@ public class WekaKMeans extends AKMeans {
 
     private void createStats(SimpleKMeans algorithm){
         try{
-            Map<KMeansStats, Object> stats = new HashMap<>();
+            Statistics stats = new Statistics();
             ArrayList<Cluster> clusters = new ArrayList<>();
             Instances centroids = algorithm.getClusterCentroids();
             double[] sizes = algorithm.getClusterSizes();

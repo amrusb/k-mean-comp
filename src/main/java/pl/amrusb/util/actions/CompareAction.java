@@ -7,6 +7,7 @@ import pl.amrusb.algs.seg.imp.KMeans;
 import pl.amrusb.algs.seg.weka.WekaKMeans;
 import pl.amrusb.util.Calculations;
 import pl.amrusb.util.Metrics;
+import pl.amrusb.util.Statistics;
 import pl.amrusb.util.charts.ClusterSizesBarChart;
 import pl.amrusb.util.charts.MetricsBarChart;
 import pl.amrusb.util.charts.RGBHistogram;
@@ -96,13 +97,27 @@ public class CompareAction implements ActionListener {
                         AlgorithmsMetrics.WEKA
                 );
 
-                Map<KMeansStats, Object> ownStats = impKMeansAlg.get().getStatistics();
-                Map<KMeansStats, Object> wekaStats = wekaKMeansAlg.get().getStatistics();
-                Map<KMeansStats, Object> adaptStats = adaptKMeansAlg.get().getStatistics();
+                Map<AlgorithmsMetrics, Statistics> stats = new HashMap<>();
+                stats.put(AlgorithmsMetrics.IMP, impKMeansAlg.get().getStatistics());
+                stats.put(AlgorithmsMetrics.ADAPT, adaptKMeansAlg.get().getStatistics());
+                stats.put(AlgorithmsMetrics.WEKA, wekaKMeansAlg.get().getStatistics());
 
-                ArrayList<Double> jaccardIdx = calculateJaccardIndex(ownStats, adaptStats, wekaStats);
-                ArrayList<Double> sorenDiceCoef = calculateDice(ownStats, adaptStats, wekaStats);
-                ArrayList<Double> silhouetteScore = calculateSilhouette(ownStats, adaptStats, wekaStats, current.getOriginalImage());
+                ArrayList<Double> jaccardIdx = calculateJaccardIndex(
+                        stats.get(AlgorithmsMetrics.IMP),
+                        stats.get(AlgorithmsMetrics.ADAPT),
+                        stats.get(AlgorithmsMetrics.WEKA)
+                );
+                ArrayList<Double> sorenDiceCoef = calculateDice(
+                        stats.get(AlgorithmsMetrics.IMP),
+                        stats.get(AlgorithmsMetrics.ADAPT),
+                        stats.get(AlgorithmsMetrics.WEKA)
+                );
+                ArrayList<Double> silhouetteScore = calculateSilhouette(
+                        stats.get(AlgorithmsMetrics.IMP),
+                        stats.get(AlgorithmsMetrics.ADAPT),
+                        stats.get(AlgorithmsMetrics.WEKA),
+                        current.getOriginalImage()
+                );
 
                 current.getComparePanel().setJaccardValues(jaccardIdx);
                 current.getComparePanel().setDiceValues(sorenDiceCoef);
@@ -112,29 +127,34 @@ public class CompareAction implements ActionListener {
                         current.getFileName(),
                         current.getWidth() * current.getHeight(),
                         clusterNum,
-                        (Integer) ownStats.get(KMeansStats.ITERATIONS),
-                        (Integer) adaptStats.get(KMeansStats.ITERATIONS),
-                        (Integer) wekaStats.get(KMeansStats.ITERATIONS),
-                        (Float) ownStats.get(KMeansStats.TIME),
-                        (Float) adaptStats.get(KMeansStats.TIME),
-                        (Float) wekaStats.get(KMeansStats.TIME)
+                        maxIter,
+                        (Integer) stats.get(AlgorithmsMetrics.IMP).get(KMeansStats.ITERATIONS),
+                        (Integer) stats.get(AlgorithmsMetrics.ADAPT).get(KMeansStats.ITERATIONS),
+                        (Integer) stats.get(AlgorithmsMetrics.WEKA).get(KMeansStats.ITERATIONS),
+                        (Float) stats.get(AlgorithmsMetrics.IMP).get(KMeansStats.TIME),
+                        (Float) stats.get(AlgorithmsMetrics.ADAPT).get(KMeansStats.TIME),
+                        (Float) stats.get(AlgorithmsMetrics.WEKA).get(KMeansStats.TIME)
                 );
 
 
-                ArrayList<Cluster> impClusters  = (ArrayList<Cluster>) ownStats.get(KMeansStats.CLUSTER_CENTROIDS);
-                ArrayList<Cluster> wekaClusters = (ArrayList<Cluster>)wekaStats.get(KMeansStats.CLUSTER_CENTROIDS);
-                ArrayList<Cluster> adaptClusters = (ArrayList<Cluster>) adaptStats.get(KMeansStats.CLUSTER_CENTROIDS);
+                ArrayList<Cluster> impClusters  = (ArrayList<Cluster>) stats.get(AlgorithmsMetrics.IMP).get(KMeansStats.CLUSTER_CENTROIDS);
+                ArrayList<Cluster> wekaClusters = (ArrayList<Cluster>)stats.get(AlgorithmsMetrics.WEKA).get(KMeansStats.CLUSTER_CENTROIDS);
+                ArrayList<Cluster> adaptClusters = (ArrayList<Cluster>) stats.get(AlgorithmsMetrics.ADAPT).get(KMeansStats.CLUSTER_CENTROIDS);
                 current.getComparePanel().fillClustersTable(
                         impClusters,
                         adaptClusters,
                         wekaClusters
                 );
                 current.getComparePanel().fillInitialsTable(
-                        (ArrayList<Point3D>) ownStats.get(KMeansStats.INITIAL_START_POINTS),
-                        (ArrayList<Point3D>) adaptStats.get(KMeansStats.INITIAL_START_POINTS),
-                        (ArrayList<Point3D>) wekaStats.get(KMeansStats.INITIAL_START_POINTS)
+                        (ArrayList<Point3D>) stats.get(AlgorithmsMetrics.IMP).get(KMeansStats.INITIAL_START_POINTS),
+                        (ArrayList<Point3D>) stats.get(AlgorithmsMetrics.ADAPT).get(KMeansStats.INITIAL_START_POINTS),
+                        (ArrayList<Point3D>) stats.get(AlgorithmsMetrics.WEKA).get(KMeansStats.INITIAL_START_POINTS)
                 );
-                Map<MetricsTypes, Object> metrics = getClusterMetrics(ownStats, adaptStats,wekaStats, current.getOriginalImage());
+                Map<MetricsTypes, Object> metrics = getClusterMetrics(
+                        stats.get(AlgorithmsMetrics.IMP),
+                        stats.get(AlgorithmsMetrics.ADAPT),
+                        stats.get(AlgorithmsMetrics.WEKA),
+                        current.getOriginalImage());
                 current.getComparePanel().fillClustersMetricTable(metrics);
 
                 JFreeChart sizesChart = ClusterSizesBarChart.create(impClusters, adaptClusters, wekaClusters);
@@ -145,13 +165,23 @@ public class CompareAction implements ActionListener {
                 JFreeChart chSilhouette = MetricsBarChart.create(silhouetteScore);
                 current.getComparePanel().setChSilhouette(chSilhouette);
 
-                JFreeChart chClustersSilhouette = MetricsBarChart.create((Map<AlgorithmsMetrics, ArrayList<Double>>)metrics.get(MetricsTypes.SIHLOUETTE), MetricsTypes.SIHLOUETTE.getValue(), impClusters);
+                JFreeChart chClustersSilhouette = MetricsBarChart.create(
+                        (Map<AlgorithmsMetrics, ArrayList<Double>>)metrics.get(MetricsTypes.SIHLOUETTE),
+                        MetricsTypes.SIHLOUETTE.getValue(),
+                        impClusters);
 
-                JFreeChart chClustersJaccard = MetricsBarChart.create((Map<AlgorithmsMetrics, ArrayList<Double>>)metrics.get(MetricsTypes.JACCARD), MetricsTypes.JACCARD.getValue(),impClusters);
-                JFreeChart chClustersDice = MetricsBarChart.create((Map<AlgorithmsMetrics, ArrayList<Double>>)metrics.get(MetricsTypes.DICE), MetricsTypes.DICE.getValue(),impClusters);
+                JFreeChart chClustersJaccard = MetricsBarChart.create(
+                        (Map<AlgorithmsMetrics, ArrayList<Double>>)metrics.get(MetricsTypes.JACCARD),
+                        MetricsTypes.JACCARD.getValue(),
+                        impClusters);
+                JFreeChart chClustersDice = MetricsBarChart.create(
+                        (Map<AlgorithmsMetrics, ArrayList<Double>>)metrics.get(MetricsTypes.DICE),
+                        MetricsTypes.DICE.getValue(),
+                        impClusters);
 
                 current.getComparePanel().setChClustersMetrics(chClustersSilhouette,chClustersJaccard,chClustersDice);
-
+                MainMenuBar.enableUndo(true);
+                MainMenuBar.enableAlgorithms(false);
             }
             catch (InterruptedException | ExecutionException ex) {
                 JOptionPane.showMessageDialog(
@@ -169,6 +199,8 @@ public class CompareAction implements ActionListener {
             current.getComparePanel().setHistogram(histogram);
 
             current.changePanel(ImagePanel.COMPARE_PANEL);
+            current.setIsEdited(true);
+            MainFrame.setTabTitle(current, true);
             current.setCursor(Cursor.getDefaultCursor());
         }
     }
@@ -177,7 +209,7 @@ public class CompareAction implements ActionListener {
             Map<KMeansStats, Object> adaptStats,
             Map<KMeansStats, Object> wekaStats
     ){
-        Double jaccardIdx = null;
+        Double jaccardIdx;
         ArrayList<Double> jaccardIndex = new ArrayList<>();
         jaccardIdx = Metrics.JaccardIndex(
                 (int[]) impStats.get(KMeansStats.ASSIGNMENTS),
@@ -205,7 +237,7 @@ public class CompareAction implements ActionListener {
             Map<KMeansStats, Object> adaptStats,
             Map<KMeansStats, Object> wekaStats
     ){
-        Double dice = null;
+        Double dice;
         ArrayList<Double> diceCoefs = new ArrayList<>();
         dice = Metrics.SorensenDiceCoefficient(
                 (int[]) impStats.get(KMeansStats.ASSIGNMENTS),
@@ -235,7 +267,7 @@ public class CompareAction implements ActionListener {
             Map<KMeansStats, Object> wekaStats,
             BufferedImage image
     ){
-        Double silhouette = null;
+        Double silhouette;
         ArrayList<Double> silhouetteScores = new ArrayList<>();
 
         silhouette = Metrics.SilhouetteScore(

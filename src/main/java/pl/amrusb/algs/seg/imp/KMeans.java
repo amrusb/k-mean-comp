@@ -2,6 +2,7 @@ package pl.amrusb.algs.seg.imp;
 
 import pl.amrusb.algs.seg.AKMeans;
 import pl.amrusb.util.ClusterComparator;
+import pl.amrusb.util.Statistics;
 import pl.amrusb.util.constants.KMeansStats;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.img.ImageReader;
@@ -23,7 +24,7 @@ public class KMeans extends AKMeans {
             Timer timer = new Timer();
             timer.start();
 
-            Map<KMeansStats, Object> stats = new HashMap<>();
+            Statistics stats = new Statistics();
             KMeansPP init = new KMeansPP(getClusterNum(), getPixelArray());
             ArrayList<Cluster> clusters = init.execute();
             setClusterNum(clusters.size());

@@ -22,7 +22,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class KMeansAction implements ActionListener {
-    private  AlgorithmsMetrics type;
+    private final AlgorithmsMetrics type;
 
     public KMeansAction(AlgorithmsMetrics type){
         this.type = type;
@@ -47,8 +47,6 @@ public class KMeansAction implements ActionListener {
         Integer maxIter = dialog.getMaxIter();
         Boolean original = dialog.checkImageSource();
 
-
-
         if (clusterNum != null) {
             current.setCursor( Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             AtomicReference<IKMeans> segmentation = new AtomicReference<>();
@@ -69,8 +67,11 @@ public class KMeansAction implements ActionListener {
                 BufferedImage output = segmentation.get().getOutputImage();
                 current.setImageLabel(output);
                 current.setSegmentedImage(output);
-
+                current.setIsEdited(true);
+                MainFrame.setTabTitle(current, true);
                 current.setCursor(Cursor.getDefaultCursor());
+                MainMenuBar.enableUndo(true);
+                MainMenuBar.enableAlgorithms(false);
             } catch (InterruptedException | ExecutionException ex) {
                 throw new RuntimeException(ex);
             }
