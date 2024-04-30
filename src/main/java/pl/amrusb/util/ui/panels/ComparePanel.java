@@ -35,8 +35,8 @@ public class ComparePanel extends JPanel {
 
     private JPanel chartsPanel;
     private CardLayout chartsCardLayout;
+    private ImageViewPanel ivpOriginal;
     private CChartPanel histogramPanel;
-    private CChartPanel metricsChartPanel;
     private CChartPanel sizesChartPanel;
     private CChartPanel chpSilhouette;
     private CChartPanel chpMetrics;
@@ -116,7 +116,32 @@ public class ComparePanel extends JPanel {
         bottomPanel.add(chartsPanel);
         bottomPanel.add(rightBottomPanel);
     }
+    public void setOriginalImage(BufferedImage image){
+        double frameWidth = MainFrame.getFrameWidth() / 4.0;
+        double frameHeight = MainFrame.getFrameHeight() * 0.3;
 
+        int width = image.getWidth();
+        int height = image.getHeight();
+        String htmlString = "<html><img src=\"file:%s\" width=\"%s\" height=\"%s\"></html>";
+
+        if (width >= frameWidth || height >= frameHeight) {
+            double scale = Math.min(frameWidth / (width), frameHeight / (height));
+            width = (int)(width * scale);
+            height = (int)(height * scale);
+        }
+
+        File stream;
+        try {
+            stream = File.createTempFile("show-img", ".jpg");
+            ImageIO.write(image, "jpg", stream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        htmlString = String.format(htmlString, stream , width, height);
+
+        ivpOriginal.setImage(htmlString);
+    }
     private void createLeftBottomPanel(){
         chartsCardLayout = new CardLayout();
         chartsPanel = new JPanel();
@@ -125,16 +150,16 @@ public class ComparePanel extends JPanel {
         JPanel propertiesPanel = new JPanel();
         propertiesPanel.setLayout(new GridLayout(0,2));
         histogramPanel = new CChartPanel();
+        ivpOriginal = new ImageViewPanel("Oryginalny");
 
         propertiesPanel.add(histogramPanel);
+        propertiesPanel.add(ivpOriginal);
         JPanel clustersPanel = new JPanel();
-        clustersPanel.setLayout(new GridLayout(0,2));
+        clustersPanel.setLayout(new BorderLayout());
 
-        metricsChartPanel = new CChartPanel();
         sizesChartPanel = new CChartPanel();
 
-        clustersPanel.add(sizesChartPanel);
-        clustersPanel.add(metricsChartPanel);
+        clustersPanel.add(sizesChartPanel, BorderLayout.CENTER);
 
         JPanel metricsPanel = new JPanel();
         metricsPanel.setLayout(new GridLayout(0,2));
@@ -331,7 +356,6 @@ public class ComparePanel extends JPanel {
 
 
         public MetricsPanel(){
-            Border lineBorder = BorderFactory.createEtchedBorder();
             Border etchedBorder = BorderFactory.createEtchedBorder();
             GridBagConstraints c = new GridBagConstraints();
             this.setLayout(new GridBagLayout());

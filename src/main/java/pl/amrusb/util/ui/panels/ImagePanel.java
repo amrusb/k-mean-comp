@@ -59,6 +59,9 @@ public class ImagePanel extends JPanel {
 
     public void changePanel(String panel){
         cardLayout.show(this, panel);
+        if(panel.equals(COMPARE_PANEL)){
+            comparePanel.setOriginalImage(originalImage);
+        }
     }
     /**
      * Ustawia obraz jako ikonę etykiety w scrollPane.
