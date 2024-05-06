@@ -1,6 +1,7 @@
 package pl.amrusb.util.img;
 
 import pl.amrusb.util.models.Pixel;
+import pl.amrusb.util.models.Point3D;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -73,21 +74,8 @@ public class ImageReader {
         }
         return array;
     }
-    /**
-     * Konwertuje obraz w postaci BufferedImage na skalę szarości.
-     * @param image obiekt BufferedImage reprezentujący obraz
-     * @return dwuwymiarowa tablica liczb zmiennoprzecinkowych reprezentujących obraz w skali szarości
-     */
-    public static double[][] convertToGrayScale(BufferedImage image){
-        Pixel[][] pixels = get2DPixelArray(image);
-        double[][] output = new double[pixels.length][pixels[0].length];
 
-        for (int i = 0; i < pixels.length; i++) {
-            for (int j = 0; j < pixels[0].length; j++) {
-                output[i][j] = 0.299 * pixels[i][j].getR() + 0.587 * pixels[i][j].getG()  + 0.114 * pixels[i][j].getB();
-            }
-        }
-
-        return  output;
+    public static Double getGrayScale(Point3D cluster){
+        return 0.299 * cluster.getX() + 0.587 * cluster.getY()  + 0.114 * cluster.getZ();
     }
 }

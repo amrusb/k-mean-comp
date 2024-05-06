@@ -108,14 +108,12 @@ public class WekaKMeans extends AKMeans {
                     initialClusters.add(cluster);
                 }
             }
-            clusters.sort(new ClusterComparator());
-            int[] assignments = reassignment(algorithm.getAssignments(), clusters);
 
             stats.put(KMeansStats.TIME, timer.getResult());
             stats.put(KMeansStats.INITIAL_START_POINTS, initialClusters);
             stats.put(KMeansStats.ITERATIONS, iterations);
             stats.put(KMeansStats.CLUSTER_CENTROIDS, clusters);
-            stats.put(KMeansStats.ASSIGNMENTS, assignments);
+            stats.put(KMeansStats.ASSIGNMENTS, algorithm.getAssignments());
 
             this.setStatistics(stats);
         }

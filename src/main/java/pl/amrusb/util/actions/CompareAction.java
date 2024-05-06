@@ -6,6 +6,7 @@ import pl.amrusb.algs.seg.imp.AdaptiveKMeans;
 import pl.amrusb.algs.seg.imp.KMeans;
 import pl.amrusb.algs.seg.weka.WekaKMeans;
 import pl.amrusb.util.Calculations;
+import pl.amrusb.util.ClusterSorter;
 import pl.amrusb.util.Metrics;
 import pl.amrusb.util.Statistics;
 import pl.amrusb.util.charts.ClusterSizesBarChart;
@@ -102,6 +103,29 @@ public class CompareAction implements ActionListener {
                 stats.put(AlgorithmsMetrics.ADAPT, adaptKMeansAlg.get().getStatistics());
                 stats.put(AlgorithmsMetrics.WEKA, wekaKMeansAlg.get().getStatistics());
 
+                Map<AlgorithmsMetrics, ArrayList<Cluster>> sortedClusters  = new HashMap<>();
+
+                sortedClusters.put(AlgorithmsMetrics.IMP,(ArrayList<Cluster>) stats.get(AlgorithmsMetrics.IMP).get(KMeansStats.CLUSTER_CENTROIDS));
+                sortedClusters.put(AlgorithmsMetrics.WEKA,(ArrayList<Cluster>)stats.get(AlgorithmsMetrics.WEKA).get(KMeansStats.CLUSTER_CENTROIDS));
+                sortedClusters.put(AlgorithmsMetrics.ADAPT,(ArrayList<Cluster>) stats.get(AlgorithmsMetrics.ADAPT).get(KMeansStats.CLUSTER_CENTROIDS));
+
+                sortedClusters = ClusterSorter.hungarianAlgorithm(sortedClusters);
+
+                ArrayList<Cluster> impClusters = sortedClusters.get(AlgorithmsMetrics.IMP);
+                ArrayList<Cluster> wekaClusters = sortedClusters.get(AlgorithmsMetrics.WEKA);
+                ArrayList<Cluster> adaptClusters = sortedClusters.get(AlgorithmsMetrics.ADAPT);
+
+                int[] impAssign = reassignment((int[]) stats.get(AlgorithmsMetrics.IMP).get(KMeansStats.ASSIGNMENTS), impClusters);
+                int[] adaptAssign = reassignment((int[]) stats.get(AlgorithmsMetrics.ADAPT).get(KMeansStats.ASSIGNMENTS), adaptClusters);
+                int[] wekaAssign = reassignment((int[]) stats.get(AlgorithmsMetrics.WEKA).get(KMeansStats.ASSIGNMENTS), wekaClusters);
+
+                stats.get(AlgorithmsMetrics.IMP).put(KMeansStats.ASSIGNMENTS, impAssign);
+                stats.get(AlgorithmsMetrics.IMP).put(KMeansStats.CLUSTER_CENTROIDS, impClusters);
+                stats.get(AlgorithmsMetrics.ADAPT).put(KMeansStats.ASSIGNMENTS, adaptAssign);
+                stats.get(AlgorithmsMetrics.ADAPT).put(KMeansStats.CLUSTER_CENTROIDS, adaptClusters);
+                stats.get(AlgorithmsMetrics.WEKA).put(KMeansStats.ASSIGNMENTS, wekaAssign);
+                stats.get(AlgorithmsMetrics.WEKA).put(KMeansStats.CLUSTER_CENTROIDS, wekaClusters);
+
                 ArrayList<Double> jaccardIdx = calculateJaccardIndex(
                         stats.get(AlgorithmsMetrics.IMP),
                         stats.get(AlgorithmsMetrics.ADAPT),
@@ -137,9 +161,7 @@ public class CompareAction implements ActionListener {
                 );
 
 
-                ArrayList<Cluster> impClusters  = (ArrayList<Cluster>) stats.get(AlgorithmsMetrics.IMP).get(KMeansStats.CLUSTER_CENTROIDS);
-                ArrayList<Cluster> wekaClusters = (ArrayList<Cluster>)stats.get(AlgorithmsMetrics.WEKA).get(KMeansStats.CLUSTER_CENTROIDS);
-                ArrayList<Cluster> adaptClusters = (ArrayList<Cluster>) stats.get(AlgorithmsMetrics.ADAPT).get(KMeansStats.CLUSTER_CENTROIDS);
+
                 current.getComparePanel().fillClustersTable(
                         impClusters,
                         adaptClusters,
@@ -366,14 +388,12 @@ public class CompareAction implements ActionListener {
                     (int[]) impStats.get(KMeansStats.ASSIGNMENTS)
             );
             impSihlouette.add(Calculations.round(silhouette, 4));
-
             silhouette = Metrics.SilhouetteScore(i,
                     (ArrayList<Cluster>) adaptStats.get(KMeansStats.CLUSTER_CENTROIDS),
                     pixels,
                     (int[]) adaptStats.get(KMeansStats.ASSIGNMENTS)
             );
             adaptSihlouette.add(Calculations.round(silhouette,4 ));
-
             silhouette = Metrics.SilhouetteScore(i,
                     (ArrayList<Cluster>) wekaStats.get(KMeansStats.CLUSTER_CENTROIDS),
                     pixels,
@@ -392,5 +412,28 @@ public class CompareAction implements ActionListener {
         result.put(MetricsTypes.SIHLOUETTE, SihlouetteMetrics);
 
         return result;
+    }
+
+    public int[] reassignment(int[] assignments, ArrayList<Cluster> clusters){
+        int[] newAssignments = new int[assignments.length];
+        int[] clustersPositions = new int[clusters.size()];
+
+        int i = 0;
+        for (Cluster cluster: clusters) {
+            clustersPositions[i] = cluster.getOrdinal();
+            i++;
+        }
+
+        for(i = 0; i < clustersPositions.length; i++){
+            int old = clustersPositions[i];
+
+            for (int j = 0; j < assignments.length; j++) {
+                if(assignments[j] == old){
+                    newAssignments[j] = i;
+                }
+            }
+        }
+
+        return newAssignments;
     }
 }

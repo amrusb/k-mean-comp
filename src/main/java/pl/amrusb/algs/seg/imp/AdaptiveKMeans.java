@@ -60,12 +60,9 @@ public class AdaptiveKMeans extends AKMeans {
 
             Float time = timer.stop();
 
-            clusters.sort(new ClusterComparator());
-            int[] newAssignments = reassignment(assignments, clusters);
-
             stats.put(KMeansStats.TIME, time);
             stats.put(KMeansStats.CLUSTER_CENTROIDS, clusters);
-            stats.put(KMeansStats.ASSIGNMENTS, newAssignments);
+            stats.put(KMeansStats.ASSIGNMENTS, assignments);
             stats.put(KMeansStats.ITERATIONS, iteration);
 
             super.setStatistics(stats);

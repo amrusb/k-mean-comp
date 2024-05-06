@@ -44,12 +44,9 @@ public class KMeans extends AKMeans {
 
             Float time = timer.stop();
 
-            clusters.sort(new ClusterComparator());
-            int[] assignments = reassignment(alg.getAssignments(), clusters);
-
             stats.put(KMeansStats.TIME, time);
             stats.put(KMeansStats.CLUSTER_CENTROIDS, clusters);
-            stats.put(KMeansStats.ASSIGNMENTS, assignments);
+            stats.put(KMeansStats.ASSIGNMENTS, alg.getAssignments());
             stats.put(KMeansStats.ITERATIONS, alg.getIteration());
 
             this.setStatistics(stats);
