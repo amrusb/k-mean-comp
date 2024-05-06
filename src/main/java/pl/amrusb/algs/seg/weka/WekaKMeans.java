@@ -2,12 +2,12 @@ package pl.amrusb.algs.seg.weka;
 
 import pl.amrusb.algs.seg.AKMeans;
 import pl.amrusb.util.ClusterComparator;
+import pl.amrusb.util.Statistics;
 import pl.amrusb.util.constants.KMeansStats;
 import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
 import pl.amrusb.util.models.Point3D;
-import pl.amrusb.util.ui.panels.BottomPanel;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -18,18 +18,15 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import pl.amrusb.util.timer.Timer;
 
 public class WekaKMeans extends AKMeans {
-    private static final int MAX_ITERATIONS = 100;
     private static final String PREFIX = "pixel_data";
     private static final String SUFFIX = ".arff";
     private final Timer timer;
 
-    public  WekaKMeans(int k, BufferedImage image){
-        super(null,k,ImageReader.getPixelArray(image),image.getWidth(), image.getHeight());
+    public  WekaKMeans(int k, int maxIter, BufferedImage image){
+        super(maxIter,k,null, ImageReader.getPixelArray(image),image.getWidth(), image.getHeight());
         timer = new Timer();
     }
 
@@ -38,29 +35,22 @@ public class WekaKMeans extends AKMeans {
         try {
             Instances data = createDataSet();
             SimpleKMeans algorithm = new SimpleKMeans();
-            algorithm.setMaxIterations(MAX_ITERATIONS);
             algorithm.setInitializationMethod(
                     new SelectedTag(
                             SimpleKMeans.KMEANS_PLUS_PLUS,
                             SimpleKMeans.TAGS_SELECTION
                     )
             );
-            algorithm.setDebug(true);
+            algorithm.setDebug(false);
+            algorithm.setMaxIterations(super.getMaxIter());
             algorithm.setPreserveInstancesOrder(true);
             algorithm.setNumClusters(getClusterNum());
-
-            BottomPanel.setProgress(0);
-            //TODO
-            BottomPanel.setProgressMaximum(1);
-            BottomPanel.setProgressLabel("K-means...");
 
             timer.start();
 
             algorithm.buildClusterer(data);
 
             timer.stop();
-
-            BottomPanel.setProgress(1);
 
             createStats(algorithm);
 
@@ -79,7 +69,7 @@ public class WekaKMeans extends AKMeans {
 
     private void createStats(SimpleKMeans algorithm){
         try{
-            Map<KMeansStats, Object> stats = new HashMap<>();
+            Statistics stats = new Statistics();
             ArrayList<Cluster> clusters = new ArrayList<>();
             Instances centroids = algorithm.getClusterCentroids();
             double[] sizes = algorithm.getClusterSizes();
@@ -118,14 +108,12 @@ public class WekaKMeans extends AKMeans {
                     initialClusters.add(cluster);
                 }
             }
-            clusters.sort(new ClusterComparator());
-            int[] assignments = reassignment(algorithm.getAssignments(), clusters);
 
             stats.put(KMeansStats.TIME, timer.getResult());
             stats.put(KMeansStats.INITIAL_START_POINTS, initialClusters);
             stats.put(KMeansStats.ITERATIONS, iterations);
             stats.put(KMeansStats.CLUSTER_CENTROIDS, clusters);
-            stats.put(KMeansStats.ASSIGNMENTS, assignments);
+            stats.put(KMeansStats.ASSIGNMENTS, algorithm.getAssignments());
 
             this.setStatistics(stats);
         }
@@ -142,7 +130,6 @@ public class WekaKMeans extends AKMeans {
     private void setPixelToClusterVal(int[] assignments, Instances centroids){
         int index = 0;
         for(Pixel pixel: getPixelArray()){
-            BottomPanel.incrementProgress();
             int k = assignments[index];
             int R, G, B;
 
@@ -159,9 +146,6 @@ public class WekaKMeans extends AKMeans {
     }
 
     private Instances createDataSet() throws Exception {
-        BottomPanel.setProgress(0);
-        BottomPanel.setProgressMaximum(getPixelArray().size());
-        BottomPanel.setProgressLabel("Tworzenie zbioru danych...");
         BufferedReader dataSource;
         File tempDataFile = File.createTempFile(PREFIX, SUFFIX);
         FileWriter writer = new FileWriter(tempDataFile);
@@ -173,7 +157,6 @@ public class WekaKMeans extends AKMeans {
         writer.write("@DATA\n");
 
         for (Pixel pixel: getPixelArray()) {
-            BottomPanel.incrementProgress();
             String line = "{0},{1},{2}\n";
 
             writer.write(

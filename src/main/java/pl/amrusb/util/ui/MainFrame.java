@@ -1,23 +1,19 @@
 package pl.amrusb.util.ui;
 
 import lombok.Getter;
-import pl.amrusb.Main;
-import pl.amrusb.util.ui.panels.BottomPanel;
 import pl.amrusb.util.ui.panels.MainPanel;
 import pl.amrusb.util.ui.panels.ImagePanel;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 
 public class MainFrame extends JFrame {
+    private static final String MAIN_PANEL = "mainPanel";
+    private static final String TABBED_PANEL = "tabbedPanel";
     private static final Double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     private static final Double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-    private static final Font BASIC_FONT = new Font("SansSerif", Font.PLAIN, 14);
 
     @Getter
     private static final JTabbedPane tabbedPane = new JTabbedPane();
@@ -42,84 +38,101 @@ public class MainFrame extends JFrame {
         body.setLayout(cardLayout);
         MainPanel mainPanel = new MainPanel();
         JScrollPane scrollTabbedPane = new JScrollPane(tabbedPane);
-        JButton closeButton = new JButton();
-        Image closeIcon = null;
-        try {
-            closeIcon = ImageIO.read(new File(Main.getROOT_PATH() + "icons/xmark.png"));
-            closeButton.setIcon(new ImageIcon(closeIcon));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(
-                    MainMenuBar.getOwner(),
-                    e.getMessage(),
-                    "Błąd",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
 
-        body.add(mainPanel, "mainPanel");
-        body.add(scrollTabbedPane, "tabbedPane");
+        body.add(mainPanel, MAIN_PANEL);
+        body.add(scrollTabbedPane, TABBED_PANEL);
 
         add(body, BorderLayout.CENTER);
         changePanel();
-        add(new BottomPanel(), BorderLayout.SOUTH);
+
+        tabbedPane.addChangeListener((l)->{
+            ImagePanel current = (ImagePanel) tabbedPane.getSelectedComponent();
+            if(current != null) {
+                Boolean isEdited = current.getIsEdited();
+
+                MainMenuBar.enableUndo(isEdited);
+                MainMenuBar.enableAlgorithms(!isEdited);
+                MainMenuBar.enableSave(isEdited);
+            }
+        });
     }
     public static void changePanel(){
         if(tabbedPane.getTabCount() == 0){
-            cardLayout.show(body, "mainPanel");
+            cardLayout.show(body, MAIN_PANEL);
         }
         else{
-            cardLayout.show(body, "tabbedPane");
+            cardLayout.show(body, TABBED_PANEL);
         }
+        MainMenuBar.reload();
     }
     public static void addTab(ImagePanel panel){
         imagePanels.add(panel);
         int panelIdx = imagePanels.indexOf(panel);
 
-        JPanel tabComponent = new JPanel(new BorderLayout());
-        String fileName = panel.getFileName();
+        tabbedPane.addTab(null, imagePanels.get(panelIdx));
+        tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, getTabComponent(panel.getFileName(), panelIdx, false));
+        tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
+    }
+
+    private static JPanel getTabComponent(String fileName, int panelIdx, boolean edited){
+        JPanel tabPanel = new JPanel(new BorderLayout());
+        tabPanel.setOpaque(false);
+
         JLabel tabLabel = new JLabel();
-        tabbedPane.setToolTipText("<html><i>" + fileName + "</i></html>");
-        if (fileName.length() > 10) {
-            fileName = fileName.substring(0, 10) + "...";
+        tabLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        if (fileName.length() > 14) {
+            fileName = fileName.substring(0, 14) + "...";
         }
 
-        tabLabel.setText("<html><i>" + fileName + "</i></html>");
-
-
-
-        JButton closeButton = new JButton();
-        Image closeIcon = null;
-        try {
-            closeIcon = ImageIO.read(new File(Main.getROOT_PATH() + "icons/xmark.png"));
-            closeButton.setIcon(new ImageIcon(closeIcon));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(
-                    MainMenuBar.getOwner(),
-                    e.getMessage(),
-                    "Błąd",
-                    JOptionPane.ERROR_MESSAGE
-            );
+        if(edited){
+            fileName = "<html><i>*" +fileName+"</i></html>";
         }
-
         tabLabel.setBackground(null);
+        tabLabel.setText(fileName);
+        tabPanel.add(tabLabel, BorderLayout.CENTER);
+        tabPanel.add(getCloseButton(panelIdx), BorderLayout.EAST);
 
+        return tabPanel;
+    }
+
+    private static JButton getCloseButton(int panelIdx) {
+        JButton closeButton  = new JButton("<html><b>x</b></html>");
+        closeButton.setFont(new Font("SansSerif", Font.BOLD, 12));
         closeButton.setBorderPainted(false);
         closeButton.setContentAreaFilled(false);
-        closeButton.setFocusPainted(false);
         closeButton.addActionListener(e -> {
             int index = tabbedPane.indexOfComponent(imagePanels.get(panelIdx));
-            if (index != -1) {
+
+            int result = 0;
+
+            if(((ImagePanel) tabbedPane.getSelectedComponent()).getIsEdited()){
+                result = JOptionPane.showConfirmDialog(
+                        null,
+                        "Czy na pewno chcesz zamknąć bez zapisywania?",
+                        "Potwierdzenie",
+                        JOptionPane.OK_CANCEL_OPTION
+                );
+            }
+            if (index != -1 && result == JOptionPane.OK_OPTION) {
                 tabbedPane.remove(index);
                 imagePanels.set(index, null);
             }
             MainFrame.changePanel();
         });
-        tabComponent.add(tabLabel, BorderLayout.CENTER);
-        tabComponent.add(closeButton, BorderLayout.EAST);
-        tabbedPane.addTab(null, imagePanels.get(panelIdx));
-        tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, tabComponent);
-        tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
+        return closeButton;
     }
+
+    public static void setTabTitle(JPanel component, boolean edited){
+        int index = tabbedPane.indexOfComponent(component);
+        ImagePanel tab = (ImagePanel) tabbedPane.getComponentAt(index);
+
+        String title = tab.getFileName();
+
+        JPanel panel = getTabComponent(title, index, edited);
+        panel.setBackground(null);
+        tabbedPane.setTabComponentAt(index, panel);
+    }
+
     /**
      * Zwraca domyślną szerokość okna programu
      * @return szerokość okna programu
@@ -134,10 +147,5 @@ public class MainFrame extends JFrame {
     public static int getFrameHeight(){
         return (int)(SCREEN_HEIGHT * 4 / 5);
     }
-    /**
-     * Zwraca podstawową czcionkę używaną przez program
-     * @return podstawowa czcionka
-     */
-    public static Font getBasicFont() {return BASIC_FONT;}
 
 }

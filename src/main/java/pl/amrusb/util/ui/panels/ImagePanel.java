@@ -7,6 +7,7 @@ import pl.amrusb.util.ui.MainFrame;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -17,14 +18,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * Panel sluzyacy do wyswietlania obrazka
- */
 @Getter
 @Setter
 public class ImagePanel extends JPanel {
     public static final String BASIC_PANEL = "basicPanel";
     public static final String COMPARE_PANEL = "comparePanel";
+    private Boolean isEdited;
 
     private final JLabel imageLabel = new JLabel();
     private BufferedImage originalImage = null;
@@ -38,6 +37,7 @@ public class ImagePanel extends JPanel {
     private static CardLayout cardLayout = null;
 
     public ImagePanel(){
+        isEdited = false;
         cardLayout = new CardLayout();
         this.setLayout(cardLayout);
 
@@ -46,6 +46,7 @@ public class ImagePanel extends JPanel {
 
         this.add(basicPanel, BASIC_PANEL);
         this.add(comparePanel, COMPARE_PANEL);
+        this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
     }
 
     private void createBasicPanel(){
@@ -58,9 +59,12 @@ public class ImagePanel extends JPanel {
 
     public void changePanel(String panel){
         cardLayout.show(this, panel);
+        if(panel.equals(COMPARE_PANEL)){
+            comparePanel.setOriginalImage(originalImage);
+        }
     }
     /**
-     * Ustawia obraz jako ikonę etykiety w scrollPane
+     * Ustawia obraz jako ikonę etykiety w scrollPane.
      * Jeżeli obraz jest za duży, zostaje przeskalowany do odpowiednich wymiarów
      * @param image obraz do ustawienia jako ikona etykiety
      */
@@ -77,12 +81,9 @@ public class ImagePanel extends JPanel {
             width = (int)(width * scale);
             height = (int)(height * scale);
 
-            AtomicReference<BufferedImage> displayImage = new AtomicReference<BufferedImage>();
+            AtomicReference<BufferedImage> displayImage = new AtomicReference<>();
             ExecutorService executor = Executors.newSingleThreadExecutor();
-            Future<?> future = executor.submit(() -> {
-                displayImage.set(ImageRescaler.rescaleImage(image, scale));
-            });
-
+            Future<?> future = executor.submit(() -> displayImage.set(ImageRescaler.rescaleImage(image, scale)));
 
             executor.shutdown();
 
@@ -94,7 +95,7 @@ public class ImagePanel extends JPanel {
             }
         }
 
-        File stream = null;
+        File stream;
         try {
             stream = File.createTempFile("show-img", ".jpg");
             ImageIO.write(image, "jpg", stream);
@@ -102,20 +103,24 @@ public class ImagePanel extends JPanel {
             throw new RuntimeException(e);
         }
 
-        htmlString = String.format(htmlString, stream.toString() , width, height);
+        htmlString = String.format(htmlString, stream, width, height);
         imageLabel.setText(htmlString);
     }
 
     /**
      * Zwraca informacje o przechowywaniu przeskalowanego obrazu
-     * @return (1) true jezeli obiekt image przechowuje przeskalowany
-     *         (2) false w przeciwnym wypadku*/
+     * @return <ol>
+     *     <li>true wtw, gdy obiekt image przechowuje przeskalowany</li>
+     *     <li>false w przeciwnym wypadku</li>
+     * </ol>*/
     public boolean hasRescaledImage(){
         return rescaledImage != null;
     }
     /**
      * Zwraca informację o przechowywaniu obrazu po zastosowaniu algorytmu segmentacji
-     * @return (1) true jezeli obiekt image po zastosowaniu algorytmu segmentacji
-     *         (2) false w przeciwnym wypadku*/
+     * @return <ol>
+     *     <li>true wtw, gdy obiekt image po zastosowaniu algorytmu segmentacji</li>
+     *     <li>false w przeciwnym wypadku</li>
+     * </ol>*/
     public boolean hasSegmentedImage() {return segmentedImage != null; }
 }

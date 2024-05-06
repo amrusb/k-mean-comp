@@ -19,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -26,30 +27,16 @@ import java.util.Map;
 public class ComparePanel extends JPanel {
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    private JPanel leftPanel;
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    private JPanel rightPanel;
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    private JPanel centerPanel;
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
     private JPanel bottomPanel;
 
-    private BufferedImage leftImage;
-    private JLabel leftImageLabel;
-
-    private BufferedImage centerImage;
-    private JLabel centerImageLabel;
-
-    private BufferedImage rightImage;
-    private JLabel rightImageLabel;
+    private ImageViewPanel ivpImp;
+    private ImageViewPanel ivpAdapt;
+    private ImageViewPanel ivpWeka;
 
     private JPanel chartsPanel;
     private CardLayout chartsCardLayout;
+    private ImageViewPanel ivpOriginal;
     private CChartPanel histogramPanel;
-    private CChartPanel metricsChartPanel;
     private CChartPanel sizesChartPanel;
     private CChartPanel chpSilhouette;
     private CChartPanel chpMetrics;
@@ -79,13 +66,9 @@ public class ComparePanel extends JPanel {
                 )
         );
 
-        JScrollPane leftSP = new JScrollPane(leftPanel);
-        JScrollPane centerSP = new JScrollPane(centerPanel);
-        JScrollPane rightSP = new JScrollPane(rightPanel);
-
-        imagePanel.add(leftSP);
-        imagePanel.add(centerSP);
-        imagePanel.add(rightSP);
+        imagePanel.add(ivpImp);
+        imagePanel.add(ivpAdapt);
+        imagePanel.add(ivpWeka);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, imagePanel, bottomPanel);
         splitPane.setResizeWeight(0.7);
@@ -95,54 +78,10 @@ public class ComparePanel extends JPanel {
     }
 
     private void createComponents(){
-        createLeftPanel();
-        createCenterPanel();
-        createRightPanel();
+        ivpImp = new ImageViewPanel(AlgorithmsMetrics.IMP);
+        ivpAdapt = new ImageViewPanel(AlgorithmsMetrics.ADAPT);
+        ivpWeka = new ImageViewPanel(AlgorithmsMetrics.WEKA);
         createBottomPanel();
-    }
-
-    private void createLeftPanel(){
-        leftPanel = new JPanel();
-
-        leftPanel.setLayout(new BorderLayout());
-
-        leftImageLabel = new JLabel();
-        leftImageLabel.setVerticalAlignment(SwingConstants.CENTER);
-        leftImageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-        JLabel leftLabel = new JLabel("Własna implementacja");
-
-        leftPanel.add(leftImageLabel, BorderLayout.CENTER);
-        leftPanel.add(leftLabel, BorderLayout.SOUTH);
-    }
-
-    private void createCenterPanel(){
-        centerPanel = new JPanel();
-
-        centerPanel.setLayout(new BorderLayout());
-
-        centerImageLabel = new JLabel();
-        centerImageLabel.setVerticalAlignment(SwingConstants.CENTER);
-        centerImageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-        JLabel centerLabel = new JLabel("Adaptive");
-
-        centerPanel.add(centerImageLabel, BorderLayout.CENTER);
-        centerPanel.add(centerLabel, BorderLayout.SOUTH);
-    }
-
-    private void createRightPanel(){
-        rightPanel = new JPanel();
-        rightPanel.setLayout(new BorderLayout());
-
-        rightImageLabel = new JLabel();
-        rightImageLabel.setVerticalAlignment(SwingConstants.CENTER);
-        rightImageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-        JLabel rightLabel = new JLabel("Weka");
-
-        rightPanel.add(rightImageLabel, BorderLayout.CENTER);
-        rightPanel.add(rightLabel, BorderLayout.SOUTH);
     }
 
     private void createBottomPanel(){
@@ -177,7 +116,32 @@ public class ComparePanel extends JPanel {
         bottomPanel.add(chartsPanel);
         bottomPanel.add(rightBottomPanel);
     }
+    public void setOriginalImage(BufferedImage image){
+        double frameWidth = MainFrame.getFrameWidth() / 4.0;
+        double frameHeight = MainFrame.getFrameHeight() * 0.3;
 
+        int width = image.getWidth();
+        int height = image.getHeight();
+        String htmlString = "<html><img src=\"file:%s\" width=\"%s\" height=\"%s\"></html>";
+
+        if (width >= frameWidth || height >= frameHeight) {
+            double scale = Math.min(frameWidth / (width), frameHeight / (height));
+            width = (int)(width * scale);
+            height = (int)(height * scale);
+        }
+
+        File stream;
+        try {
+            stream = File.createTempFile("show-img", ".jpg");
+            ImageIO.write(image, "jpg", stream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        htmlString = String.format(htmlString, stream , width, height);
+
+        ivpOriginal.setImage(htmlString);
+    }
     private void createLeftBottomPanel(){
         chartsCardLayout = new CardLayout();
         chartsPanel = new JPanel();
@@ -186,16 +150,16 @@ public class ComparePanel extends JPanel {
         JPanel propertiesPanel = new JPanel();
         propertiesPanel.setLayout(new GridLayout(0,2));
         histogramPanel = new CChartPanel();
+        ivpOriginal = new ImageViewPanel("Oryginalny");
 
         propertiesPanel.add(histogramPanel);
+        propertiesPanel.add(ivpOriginal);
         JPanel clustersPanel = new JPanel();
-        clustersPanel.setLayout(new GridLayout(0,2));
+        clustersPanel.setLayout(new BorderLayout());
 
-        metricsChartPanel = new CChartPanel();
         sizesChartPanel = new CChartPanel();
 
-        clustersPanel.add(sizesChartPanel);
-        clustersPanel.add(metricsChartPanel);
+        clustersPanel.add(sizesChartPanel, BorderLayout.CENTER);
 
         JPanel metricsPanel = new JPanel();
         metricsPanel.setLayout(new GridLayout(0,2));
@@ -258,6 +222,7 @@ public class ComparePanel extends JPanel {
             String fileName,
             Integer pixelCount,
             Integer clusterCount,
+            Integer maxIterations,
             Integer impIterCount,
             Integer adaptIterCount,
             Integer wekaIterCount,
@@ -265,7 +230,7 @@ public class ComparePanel extends JPanel {
             Float adaptTime,
             Float wekaTime
     ){
-        pProperties.setValues(fileName,pixelCount,clusterCount,impIterCount,adaptIterCount,wekaIterCount,impTime,adaptTime,wekaTime);
+        pProperties.setValues(fileName,pixelCount,clusterCount,maxIterations,impIterCount,adaptIterCount,wekaIterCount,impTime,adaptTime,wekaTime);
     }
 
     public void setJaccardValues(ArrayList<Double> jaccardIndex){
@@ -277,7 +242,7 @@ public class ComparePanel extends JPanel {
     public void setSilhouetteValues(ArrayList<Double>  silhouette){
         pMetrics.setSilhouetteValues(silhouette.get(0),silhouette.get(1),silhouette.get(2));
     }
-    public void setImageLabel(BufferedImage image, Position position){
+    public void setImageLabel(BufferedImage image, AlgorithmsMetrics position){
         double frameWidth = MainFrame.getFrameWidth() / 3.0;
         double frameHeight = MainFrame.getFrameHeight() * 2.0 / 3;
 
@@ -291,7 +256,7 @@ public class ComparePanel extends JPanel {
             height = (int)(height * scale);
         }
 
-        File stream = null;
+        File stream;
         try {
             stream = File.createTempFile("show-img", ".jpg");
             ImageIO.write(image, "jpg", stream);
@@ -299,12 +264,21 @@ public class ComparePanel extends JPanel {
             throw new RuntimeException(e);
         }
 
-        htmlString = String.format(htmlString, stream.toString() , width, height);
+        htmlString = String.format(htmlString, stream , width, height);
 
         switch(position){
-            case LEFT -> leftImageLabel.setText(htmlString);
-            case RIGHT -> rightImageLabel.setText(htmlString);
-            case CENTER -> centerImageLabel.setText(htmlString);
+            case IMP -> {
+                ivpImp.setImage(image);
+                ivpImp.setImage(htmlString);
+            }
+            case ADAPT -> {
+                ivpAdapt.setImage(image);
+                ivpAdapt.setImage(htmlString);
+            }
+            case WEKA -> {
+                ivpWeka.setImage(image);
+                ivpWeka.setImage(htmlString);
+            }
         }
     }
 
@@ -328,8 +302,16 @@ public class ComparePanel extends JPanel {
         chpClustersJaccard.setChart(chart2);
         chpClustersDice.setChart(chart3);
     }
-    public enum Position{ LEFT, RIGHT, CENTER }
 
+    public Map<AlgorithmsMetrics, BufferedImage> getOutputImages(){
+        Map<AlgorithmsMetrics, BufferedImage> output = new HashMap<>();
+
+        output.put(AlgorithmsMetrics.IMP,ivpImp.getImage());
+        output.put(AlgorithmsMetrics.ADAPT, ivpAdapt.getImage());
+        output.put(AlgorithmsMetrics.WEKA, ivpWeka.getImage());
+
+        return output;
+    }
     private enum StatsComboBox{
         PROPERTIES("Właściwości"),
         CLUSTERS("Klastry"),
@@ -347,7 +329,8 @@ public class ComparePanel extends JPanel {
             return new JComboBox<>(new String[]{PROPERTIES.value, METRICS.value,CLUSTER_METRICS.value,CLUSTERS.value,INITIAL.value});
         }
     }
-    private class MetricsPanel extends JPanel{
+    @Getter
+    public class MetricsPanel extends JPanel{
         JLabel lImpAdapt = new JLabel(AlgorithmsMetrics.IMP_ADAPT.getValue(), SwingConstants.CENTER);
         JLabel lImpWeka = new JLabel(AlgorithmsMetrics.IMP_WEKA.getValue(), SwingConstants.CENTER);
         JLabel lAdaptWeka = new JLabel(AlgorithmsMetrics.ADAPT_WEKA.getValue(), SwingConstants.CENTER);
@@ -373,7 +356,6 @@ public class ComparePanel extends JPanel {
 
 
         public MetricsPanel(){
-            Border lineBorder = BorderFactory.createEtchedBorder();
             Border etchedBorder = BorderFactory.createEtchedBorder();
             GridBagConstraints c = new GridBagConstraints();
             this.setLayout(new GridBagLayout());
@@ -475,7 +457,8 @@ public class ComparePanel extends JPanel {
             tfWekaSil.setText(silhouette3.toString());
         }
     }
-    private class PropertiesPanel extends JPanel{
+    @Getter
+    public class PropertiesPanel extends JPanel{
         JLabel lName = new JLabel("Nazwa pliku:");
         JLabel vlName = new JLabel();
 
@@ -484,6 +467,9 @@ public class ComparePanel extends JPanel {
 
         JLabel lClusterCount = new JLabel("Liczba klastrów:");
         JLabel vlClusterCount = new JLabel();
+
+        JLabel lMaxIter = new JLabel("Maksymalna liczba iteracji:");
+        JLabel vlMaxIter = new JLabel();
 
         JLabel lImp = new JLabel(AlgorithmsMetrics.IMP.getValue(), SwingConstants.CENTER);
         JLabel lAdapt = new JLabel(AlgorithmsMetrics.ADAPT.getValue(), SwingConstants.CENTER);
@@ -546,8 +532,20 @@ public class ComparePanel extends JPanel {
             vlClusterCount.setOpaque(true);
             vlClusterCount.setBackground(Color.WHITE);
 
-            c.gridx = 1;
+            c.gridx = 0;
             c.gridy = 3;
+            c.gridwidth = 1;
+            this.add(lMaxIter,c);
+            lMaxIter.setBorder(lineBorder);
+            c.gridx = 1;
+            c.gridwidth = 3;
+            this.add(vlMaxIter, c);
+            vlMaxIter.setBorder(lineBorder);
+            vlMaxIter.setOpaque(true);
+            vlMaxIter.setBackground(Color.WHITE);
+
+            c.gridx = 1;
+            c.gridy = 4;
             c.gridwidth = 1;
             this.add(lImp,c);
             lImp.setBorder(etchedBorder);
@@ -558,7 +556,7 @@ public class ComparePanel extends JPanel {
             this.add(lWeka, c);
             lWeka.setBorder(etchedBorder);
             c.gridx = 0;
-            c.gridy = 4;
+            c.gridy = 5;
             this.add(lIterationCount,c);
             lIterationCount.setBorder(lineBorder);
             c.gridx = 1;
@@ -574,7 +572,7 @@ public class ComparePanel extends JPanel {
             c.gridx = 3;
             this.add(vlWekaIterCount,c);
             c.gridx = 0;
-            c.gridy = 5;
+            c.gridy = 6;
             vlWekaIterCount.setBorder(lineBorder);
             vlWekaIterCount.setOpaque(true);
             vlWekaIterCount.setBackground(Color.WHITE);
@@ -602,6 +600,7 @@ public class ComparePanel extends JPanel {
                 String fileName,
                 Integer pixelCount,
                 Integer clusterCount,
+                Integer maxIterations,
                 Integer impIterCount,
                 Integer adaptIterCount,
                 Integer wekaIterCount,
@@ -612,6 +611,7 @@ public class ComparePanel extends JPanel {
             vlName.setText(fileName);
             vlPixelCount.setText(pixelCount.toString());
             vlClusterCount.setText(clusterCount.toString());
+            vlMaxIter.setText(maxIterations.toString());
             vlImpIterCount.setText(impIterCount.toString());
             vlAdaptIterCount.setText(adaptIterCount.toString());
             vlWekaIterCount.setText(wekaIterCount.toString());
@@ -620,7 +620,8 @@ public class ComparePanel extends JPanel {
             vlWekaTime.setText(wekaTime.toString());
         }
     }
-    private class ClusterMetricsPanel extends JPanel{
+    @Getter
+    public class ClusterMetricsPanel extends JPanel{
         private CTable tbShiluette;
         private CTable tbImpAdapt;
         private CTable tbImpWeka;

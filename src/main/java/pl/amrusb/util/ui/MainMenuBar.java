@@ -3,8 +3,7 @@ package pl.amrusb.util.ui;
 
 import lombok.Getter;
 import pl.amrusb.util.actions.*;
-import pl.amrusb.util.charts.RGBHistogram;
-import pl.amrusb.util.ui.panels.ImagePanel;
+import pl.amrusb.util.constants.AlgorithmsMetrics;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +24,6 @@ public class MainMenuBar extends JMenuBar {
     private static final JMenuItem adaptiveItem = new JMenuItem("<html>Adaptive k-means</html>");
     private static final JMenuItem compItem = new JMenuItem("Porównanie");
     private static final JMenuItem undo = new JMenuItem("Cofnij");
-    private static final JMenuItem chart = new JMenuItem("Generuj histogram");
     @Getter
     private static JFrame owner;
 
@@ -39,22 +37,21 @@ public class MainMenuBar extends JMenuBar {
 
         imageMenu.add(saveItem);
         saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
-        saveItem.addActionListener(new SaveAction());
+        saveItem.addActionListener(new SaveAction(false));
 
         imageMenu.add(saveAsItem);
         saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_DOWN_MASK));
-        saveAsItem.addActionListener(new SaveAsAction());
+        saveAsItem.addActionListener(new SaveAction(true));
         add(imageMenu);
 
         segmentationMenu.add(kmeanItem);
-        //kmeanItem.addActionListener(new KMeansAction());
-        kmeanItem.addActionListener(new KMeansAction(KMeansAction.Types.K_MEANS));
+        kmeanItem.addActionListener(new KMeansAction(AlgorithmsMetrics.IMP));
 
         segmentationMenu.add(wekaItem);
-        wekaItem.addActionListener(new KMeansAction(KMeansAction.Types.WEKA));
+        wekaItem.addActionListener(new KMeansAction(AlgorithmsMetrics.WEKA));
 
         segmentationMenu.add(adaptiveItem);
-        adaptiveItem.addActionListener(new KMeansAction(KMeansAction.Types.ADAPTIVE));
+        adaptiveItem.addActionListener(new KMeansAction(AlgorithmsMetrics.ADAPT));
 
         segmentationMenu.addSeparator();
 
@@ -62,13 +59,6 @@ public class MainMenuBar extends JMenuBar {
         compItem.addActionListener(new CompareAction());
 
         segmentationMenu.addSeparator();
-        segmentationMenu.add(chart);
-        chart.addActionListener(e -> {
-            int index = MainFrame.getTabbedPane().getSelectedIndex();
-            ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getComponentAt(index);
-
-            RGBHistogram.createImage(current.getOriginalImage(), current.getFileName());
-        });
         segmentationMenu.add(undo);
         undo.setAccelerator(KeyStroke.getKeyStroke("ctrl Z"));
         undo.setEnabled(false);
@@ -99,5 +89,19 @@ public class MainMenuBar extends JMenuBar {
         }
     }
 
+    public static void enableAlgorithms(Boolean value){
+        kmeanItem.setEnabled(value);
+        wekaItem.setEnabled(value);
+        adaptiveItem.setEnabled(value);
+        compItem.setEnabled(value);
+    }
+    public static void enableUndo(Boolean value){
+        undo.setEnabled(value);
+    }
+
+    public static void enableSave(Boolean value) {
+        saveItem.setEnabled(value);
+        saveAsItem.setEnabled(value);
+    }
 }
 

@@ -4,6 +4,7 @@ import lombok.Getter;
 import pl.amrusb.algs.seg.AKMeans;
 import pl.amrusb.util.Calculations;
 import pl.amrusb.util.ClusterComparator;
+import pl.amrusb.util.Statistics;
 import pl.amrusb.util.constants.KMeansStats;
 import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.util.models.Cluster;
@@ -15,11 +16,8 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AdaptiveKMeans extends AKMeans {
-    private static final int MAX_ITERATIONS = 100;
     private final Integer size;
     @Getter
     private ArrayList<Cluster> clusters;
@@ -30,8 +28,8 @@ public class AdaptiveKMeans extends AKMeans {
     private double[][] cDistMtx;
     private ArrayList<Pair<Double, Integer>> cMinTbl;
 
-    public AdaptiveKMeans(int k, BufferedImage image){
-        super(null,k, ImageReader.getPixelArray(image),image.getWidth(), image.getHeight());
+    public AdaptiveKMeans(int k, int maxIter, BufferedImage image){
+        super(maxIter,k, null, ImageReader.getPixelArray(image),image.getWidth(), image.getHeight());
         size = super.getPixelArray().size();
         assignments = new int[size];
 
@@ -44,7 +42,7 @@ public class AdaptiveKMeans extends AKMeans {
             Timer timer = new Timer();
             timer.start();
 
-            Map<KMeansStats, Object> stats = new HashMap<>();
+            Statistics stats = new Statistics();
             KMeansPP init = new KMeansPP(getClusterNum(), getPixelArray());
             clusters = init.execute();
             setClusterNum(clusters.size());
@@ -62,12 +60,9 @@ public class AdaptiveKMeans extends AKMeans {
 
             Float time = timer.stop();
 
-            clusters.sort(new ClusterComparator());
-            int[] newAssignments = reassignment(assignments, clusters);
-
             stats.put(KMeansStats.TIME, time);
             stats.put(KMeansStats.CLUSTER_CENTROIDS, clusters);
-            stats.put(KMeansStats.ASSIGNMENTS, newAssignments);
+            stats.put(KMeansStats.ASSIGNMENTS, assignments);
             stats.put(KMeansStats.ITERATIONS, iteration);
 
             super.setStatistics(stats);
@@ -120,7 +115,7 @@ public class AdaptiveKMeans extends AKMeans {
     }
 
     private void segmentation(){
-        for(iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+        for(iteration = 0; iteration < super.getMaxIter(); iteration++) {
             boolean flag = false;
             for (int index = 0; index < size; index++) {
                 flag = false;
