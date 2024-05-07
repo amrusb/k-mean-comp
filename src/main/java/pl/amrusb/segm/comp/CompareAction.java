@@ -151,7 +151,7 @@ public class CompareAction implements ActionListener {
 
                 current.getComparePanel().setPropertiesValues(
                         current.getFileName(),
-                        current.getWidth() * current.getHeight(),
+                        impAssign.length,
                         clusterNum,
                         maxIter,
                         (Integer) stats.get(AlgorithmsMetrics.IMP).get(KMeansStats.ITERATIONS),
