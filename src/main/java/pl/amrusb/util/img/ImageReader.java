@@ -30,14 +30,14 @@ public class ImageReader {
      * Odczytuje obraz z pliku i zwraca go jako obiekt BufferedImage.
      * @return obiekt BufferedImage reprezentujący odczytany obraz
      */
-    public static BufferedImage readImage(){
+    public static BufferedImage readImage() throws RuntimeException{
         File file;
         BufferedImage image = null;
         try{
             file = new File(filePath);
             image = ImageIO.read(file);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
         return image;
     }

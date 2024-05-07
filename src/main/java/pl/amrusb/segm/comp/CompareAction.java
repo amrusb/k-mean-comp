@@ -1,5 +1,6 @@
 package pl.amrusb.segm.comp;
 
+import lombok.SneakyThrows;
 import org.jfree.chart.JFreeChart;
 import pl.amrusb.algs.seg.IKMeans;
 import pl.amrusb.algs.seg.imp.AdaptiveKMeans;
@@ -39,6 +40,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CompareAction implements ActionListener {
+    @SneakyThrows
     @Override
     public void actionPerformed(ActionEvent e) {
         ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getSelectedComponent();
@@ -206,12 +208,7 @@ public class CompareAction implements ActionListener {
                 MainMenuBar.enableAlgorithms(false);
             }
             catch (InterruptedException | ExecutionException ex) {
-                JOptionPane.showMessageDialog(
-                        null,
-                        ex.getMessage(),
-                        "Błąd",
-                        JOptionPane.ERROR_MESSAGE
-                );
+                throw ex;
             }
 
             segmentationExecutor.shutdown();

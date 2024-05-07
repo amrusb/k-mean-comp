@@ -1,5 +1,6 @@
 package pl.amrusb.util.actions;
 
+import lombok.SneakyThrows;
 import pl.amrusb.Main;
 import pl.amrusb.util.img.ImageFilter;
 import pl.amrusb.util.constants.AlgorithmsMetrics;
@@ -31,6 +32,7 @@ public class SaveAction implements ActionListener {
         this.saveAs = saveAs;
     }
 
+    @SneakyThrows
     @Override
     public void actionPerformed(ActionEvent e) {
         ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getSelectedComponent();
@@ -139,12 +141,7 @@ public class SaveAction implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Pomyślnie zapisano.");
             }
         }catch (Exception ex){
-            JOptionPane.showMessageDialog(
-                    MainMenuBar.getOwner(),
-                    ex.getMessage(),
-                    "Błąd zapisu obrazu",
-                    JOptionPane.ERROR_MESSAGE
-            );
+           throw ex;
         }
         MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
     }

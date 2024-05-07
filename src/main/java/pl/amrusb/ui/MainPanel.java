@@ -1,5 +1,6 @@
 package pl.amrusb.ui;
 
+import lombok.SneakyThrows;
 import pl.amrusb.Main;
 import pl.amrusb.ui.MainFrame;
 import pl.amrusb.util.ui.panels.CHtmlEditorPane;
@@ -13,6 +14,7 @@ import java.io.FileInputStream;
 
 public class MainPanel extends JPanel {
 
+    @SneakyThrows
     public MainPanel(){
         final JLabel background = new JLabel();
         this.setLayout(new BorderLayout());
@@ -27,12 +29,7 @@ public class MainPanel extends JPanel {
             bodyBackground = String.format(new String(f.readAllBytes()), logo, width, width);
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage(),
-                    "Błąd",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            throw e;
         }
         CHtmlEditorPane ep = new CHtmlEditorPane(bodyBackground);
 

@@ -1,5 +1,6 @@
 package pl.amrusb.util.actions;
 
+import lombok.SneakyThrows;
 import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.ui.MainFrame;
 import pl.amrusb.ui.MainMenuBar;
@@ -13,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 public class OpenAction implements ActionListener {
+    @SneakyThrows
     @Override
     public void actionPerformed(ActionEvent e) {
         ImagePanel panel = new ImagePanel();

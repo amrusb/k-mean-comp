@@ -66,12 +66,7 @@ public class AdaptiveKMeans extends AKMeans {
 
             super.setStatistics(stats);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(
-                    null,
-                    e.getMessage(),
-                    "Błąd",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            throw new RuntimeException(e);
 
         }
 

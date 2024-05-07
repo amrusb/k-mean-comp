@@ -1,5 +1,6 @@
 package pl.amrusb.util.math;
 
+import lombok.SneakyThrows;
 import pl.amrusb.algs.comb_opt.HungarianAlgorithm;
 import pl.amrusb.util.constants.AlgorithmsMetrics;
 import pl.amrusb.util.models.Cluster;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 public class ClusterSorter {
 
+    @SneakyThrows
     public static Map<AlgorithmsMetrics, ArrayList<Cluster>> hungarianAlgorithm(Map<AlgorithmsMetrics, ArrayList<Cluster>> clusters){
         ArrayList<Cluster> imp = clusters.get(AlgorithmsMetrics.IMP);
         ArrayList<Cluster> adapt = clusters.get(AlgorithmsMetrics.ADAPT);
