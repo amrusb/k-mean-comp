@@ -1,7 +1,7 @@
 package pl.amrusb;
 
 import lombok.Getter;
-import pl.amrusb.util.ui.MainFrame;
+import pl.amrusb.ui.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;

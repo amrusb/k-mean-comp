@@ -1,4 +1,4 @@
-package pl.amrusb.util;
+package pl.amrusb.algs.comb_opt;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;

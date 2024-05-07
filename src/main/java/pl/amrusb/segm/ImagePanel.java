@@ -1,9 +1,10 @@
-package pl.amrusb.util.ui.panels;
+package pl.amrusb.segm;
 
 import lombok.Getter;
 import lombok.Setter;
+import pl.amrusb.segm.comp.ComparePanel;
 import pl.amrusb.util.img.ImageRescaler;
-import pl.amrusb.util.ui.MainFrame;
+import pl.amrusb.ui.MainFrame;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

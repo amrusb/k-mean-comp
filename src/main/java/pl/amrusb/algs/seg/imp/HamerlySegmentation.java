@@ -1,7 +1,7 @@
 package pl.amrusb.algs.seg.imp;
 
 import lombok.Getter;
-import pl.amrusb.util.Calculations;
+import pl.amrusb.util.math.Calculations;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
 

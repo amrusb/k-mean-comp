@@ -1,12 +1,12 @@
 package pl.amrusb.util.actions;
 
 import pl.amrusb.Main;
-import pl.amrusb.util.ImageFilter;
+import pl.amrusb.util.img.ImageFilter;
 import pl.amrusb.util.constants.AlgorithmsMetrics;
-import pl.amrusb.util.ui.MainFrame;
-import pl.amrusb.util.ui.MainMenuBar;
-import pl.amrusb.util.ui.panels.ComparePanel;
-import pl.amrusb.util.ui.panels.ImagePanel;
+import pl.amrusb.ui.MainFrame;
+import pl.amrusb.ui.MainMenuBar;
+import pl.amrusb.segm.comp.ComparePanel;
+import pl.amrusb.segm.ImagePanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

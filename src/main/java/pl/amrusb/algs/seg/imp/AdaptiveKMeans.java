@@ -2,9 +2,8 @@ package pl.amrusb.algs.seg.imp;
 
 import lombok.Getter;
 import pl.amrusb.algs.seg.AKMeans;
-import pl.amrusb.util.Calculations;
-import pl.amrusb.util.ClusterComparator;
-import pl.amrusb.util.Statistics;
+import pl.amrusb.util.math.Calculations;
+import pl.amrusb.util.models.Statistics;
 import pl.amrusb.util.constants.KMeansStats;
 import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.util.models.Cluster;

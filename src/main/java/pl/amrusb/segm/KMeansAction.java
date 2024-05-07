@@ -1,4 +1,4 @@
-package pl.amrusb.util.actions;
+package pl.amrusb.segm;
 
 import pl.amrusb.algs.seg.AKMeans;
 import pl.amrusb.algs.seg.IKMeans;
@@ -6,10 +6,10 @@ import pl.amrusb.algs.seg.imp.AdaptiveKMeans;
 import pl.amrusb.algs.seg.imp.KMeans;
 import pl.amrusb.algs.seg.weka.WekaKMeans;
 import pl.amrusb.util.constants.AlgorithmsMetrics;
-import pl.amrusb.util.ui.ClusterInputDialog;
-import pl.amrusb.util.ui.MainFrame;
-import pl.amrusb.util.ui.MainMenuBar;
-import pl.amrusb.util.ui.panels.ImagePanel;
+import pl.amrusb.ui.ClusterInputDialog;
+import pl.amrusb.ui.MainFrame;
+import pl.amrusb.ui.MainMenuBar;
+import pl.amrusb.segm.ImagePanel;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

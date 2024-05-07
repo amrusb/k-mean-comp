@@ -1,8 +1,8 @@
 package pl.amrusb.util.actions;
 
-import pl.amrusb.util.ui.MainFrame;
-import pl.amrusb.util.ui.MainMenuBar;
-import pl.amrusb.util.ui.panels.ImagePanel;
+import pl.amrusb.ui.MainFrame;
+import pl.amrusb.ui.MainMenuBar;
+import pl.amrusb.segm.ImagePanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

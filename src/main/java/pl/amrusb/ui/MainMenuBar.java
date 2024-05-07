@@ -1,7 +1,9 @@
-package pl.amrusb.util.ui;
+package pl.amrusb.ui;
 
 
 import lombok.Getter;
+import pl.amrusb.segm.KMeansAction;
+import pl.amrusb.segm.comp.CompareAction;
 import pl.amrusb.util.actions.*;
 import pl.amrusb.util.constants.AlgorithmsMetrics;
 

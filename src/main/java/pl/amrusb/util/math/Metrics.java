@@ -1,5 +1,6 @@
-package pl.amrusb.util;
+package pl.amrusb.util.math;
 
+import pl.amrusb.util.math.Calculations;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
 

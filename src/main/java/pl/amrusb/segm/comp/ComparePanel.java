@@ -1,4 +1,4 @@
-package pl.amrusb.util.ui.panels;
+package pl.amrusb.segm.comp;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,7 +8,10 @@ import pl.amrusb.util.constants.AlgorithmsMetrics;
 import pl.amrusb.util.constants.MetricsTypes;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Point3D;
-import pl.amrusb.util.ui.MainFrame;
+import pl.amrusb.ui.MainFrame;
+import pl.amrusb.util.ui.panels.CChartPanel;
+import pl.amrusb.util.ui.panels.ImageViewPanel;
+import pl.amrusb.util.ui.panels.TablePane;
 import pl.amrusb.util.ui.table.CTable;
 
 import javax.imageio.ImageIO;

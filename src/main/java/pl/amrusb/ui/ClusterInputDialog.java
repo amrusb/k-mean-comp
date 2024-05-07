@@ -1,4 +1,4 @@
-package pl.amrusb.util.ui;
+package pl.amrusb.ui;
 
 import lombok.Getter;
 

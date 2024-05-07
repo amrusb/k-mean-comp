@@ -1,7 +1,8 @@
-package pl.amrusb.util.ui.panels;
+package pl.amrusb.ui;
 
 import pl.amrusb.Main;
-import pl.amrusb.util.ui.MainFrame;
+import pl.amrusb.ui.MainFrame;
+import pl.amrusb.util.ui.panels.CHtmlEditorPane;
 
 import javax.swing.*;
 import java.awt.*;

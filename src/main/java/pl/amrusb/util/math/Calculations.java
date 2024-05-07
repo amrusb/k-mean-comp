@@ -1,4 +1,4 @@
-package pl.amrusb.util;
+package pl.amrusb.util.math;
 
 import pl.amrusb.util.models.Pair;
 import pl.amrusb.util.models.Point3D;

@@ -1,8 +1,7 @@
-package pl.amrusb.util.ui;
+package pl.amrusb.ui;
 
 import lombok.Getter;
-import pl.amrusb.util.ui.panels.MainPanel;
-import pl.amrusb.util.ui.panels.ImagePanel;
+import pl.amrusb.segm.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;

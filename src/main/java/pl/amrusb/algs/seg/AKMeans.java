@@ -3,9 +3,8 @@ package pl.amrusb.algs.seg;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import pl.amrusb.util.Statistics;
+import pl.amrusb.util.models.Statistics;
 import pl.amrusb.util.img.ImageSaver;
-import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
 
 import java.awt.image.BufferedImage;

@@ -1,8 +1,7 @@
 package pl.amrusb.algs.seg.imp;
 
 import pl.amrusb.algs.seg.AKMeans;
-import pl.amrusb.util.ClusterComparator;
-import pl.amrusb.util.Statistics;
+import pl.amrusb.util.models.Statistics;
 import pl.amrusb.util.constants.KMeansStats;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.img.ImageReader;

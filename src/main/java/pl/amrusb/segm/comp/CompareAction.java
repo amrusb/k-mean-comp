@@ -1,14 +1,14 @@
-package pl.amrusb.util.actions;
+package pl.amrusb.segm.comp;
 
 import org.jfree.chart.JFreeChart;
 import pl.amrusb.algs.seg.IKMeans;
 import pl.amrusb.algs.seg.imp.AdaptiveKMeans;
 import pl.amrusb.algs.seg.imp.KMeans;
 import pl.amrusb.algs.seg.weka.WekaKMeans;
-import pl.amrusb.util.Calculations;
-import pl.amrusb.util.ClusterSorter;
-import pl.amrusb.util.Metrics;
-import pl.amrusb.util.Statistics;
+import pl.amrusb.util.math.Calculations;
+import pl.amrusb.util.math.ClusterSorter;
+import pl.amrusb.util.math.Metrics;
+import pl.amrusb.util.models.Statistics;
 import pl.amrusb.util.charts.ClusterSizesBarChart;
 import pl.amrusb.util.charts.MetricsBarChart;
 import pl.amrusb.util.charts.RGBHistogram;
@@ -19,10 +19,10 @@ import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
 import pl.amrusb.util.models.Point3D;
-import pl.amrusb.util.ui.ClusterInputDialog;
-import pl.amrusb.util.ui.MainFrame;
-import pl.amrusb.util.ui.MainMenuBar;
-import pl.amrusb.util.ui.panels.ImagePanel;
+import pl.amrusb.ui.ClusterInputDialog;
+import pl.amrusb.ui.MainFrame;
+import pl.amrusb.ui.MainMenuBar;
+import pl.amrusb.segm.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;

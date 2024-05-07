@@ -1,5 +1,6 @@
-package pl.amrusb.util;
+package pl.amrusb.util.math;
 
+import pl.amrusb.algs.comb_opt.HungarianAlgorithm;
 import pl.amrusb.util.constants.AlgorithmsMetrics;
 import pl.amrusb.util.models.Cluster;
 
