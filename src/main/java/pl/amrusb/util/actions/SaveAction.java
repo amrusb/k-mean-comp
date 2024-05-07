@@ -59,6 +59,7 @@ public class SaveAction implements ActionListener {
                 } else {
                     formatName = defaultExtension.toLowerCase();
                     filePath += "." + formatName;
+                    fileName +="." + formatName;
                 }
             }
             else return;
@@ -71,7 +72,11 @@ public class SaveAction implements ActionListener {
                 String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
                 String dirPath = rootPath + "\\" + name + "-" + date;
 
-                boolean created = new File(dirPath).mkdir();
+                File dir =  new File(dirPath);
+                if(dir.exists()){
+                    throw new RuntimeException("Istnieje już folder " + dirPath);
+                }
+                boolean created = dir.mkdir();
                 if(created){
                     File impFile = new File(dirPath + "\\" + name + IMP_SUFIX + formatName);
                     File adaptFile = new File(dirPath + "\\" + name + ADAPT_SUFIX + formatName);
@@ -95,33 +100,35 @@ public class SaveAction implements ActionListener {
                     csvFileWriter.write(comparePanel.getPProperties().getVlMaxIter().getText() + "\n");
                     csvFileWriter.write(";Implementacja;Adaptive;Weka" + "\n");
                     csvFileWriter.write("Liczba iteracji:;");
-                    csvFileWriter.write("'" + comparePanel.getPProperties().getVlImpIterCount().getText() + ";");
-                    csvFileWriter.write("'" + comparePanel.getPProperties().getVlAdaptIterCount().getText() + ";");
-                    csvFileWriter.write("'" + comparePanel.getPProperties().getVlWekaIterCount().getText() + "\n");
+                    csvFileWriter.write("\"" + comparePanel.getPProperties().getVlImpIterCount().getText().replace('.',',') + "\";");
+                    csvFileWriter.write("\"" + comparePanel.getPProperties().getVlAdaptIterCount().getText().replace('.',',')  + "\";");
+                    csvFileWriter.write("\"" + comparePanel.getPProperties().getVlWekaIterCount().getText().replace('.',',')  + "\"\n");
                     csvFileWriter.write("Czas trwania (sec):;");
-                    csvFileWriter.write("'" + comparePanel.getPProperties().getVlImpTime().getText() + ";");
-                    csvFileWriter.write("'" + comparePanel.getPProperties().getVlAdaptTime().getText() + ";");
-                    csvFileWriter.write("'" + comparePanel.getPProperties().getVlWekaTime().getText() + "\n");
+                    csvFileWriter.write("\"" + comparePanel.getPProperties().getVlImpTime().getText().replace('.',',')  + "\";");
+                    csvFileWriter.write("\"" + comparePanel.getPProperties().getVlAdaptTime().getText().replace('.',',')  + "\";");
+                    csvFileWriter.write("\"" + comparePanel.getPProperties().getVlWekaTime().getText().replace('.',',')  + "\"\n");
                     csvFileWriter.write("\n");
                     csvFileWriter.write(";Implementacja-Adaptive;Implementacja-Weka;Adaptive-Weka" + "\n");
                     csvFileWriter.write("Indeks Jaccard'a:;");
-                    csvFileWriter.write("'" + comparePanel.getPMetrics().getTfJaccard1().getText() + ";");
-                    csvFileWriter.write("'" + comparePanel.getPMetrics().getTfJaccard2().getText() + ";");
-                    csvFileWriter.write("'" + comparePanel.getPMetrics().getTfJaccard3().getText() + "\n");
+                    csvFileWriter.write("\"" + comparePanel.getPMetrics().getTfJaccard1().getText().replace('.',',')  + "\";");
+                    csvFileWriter.write("\"" + comparePanel.getPMetrics().getTfJaccard2().getText().replace('.',',')  + "\";");
+                    csvFileWriter.write("\"" + comparePanel.getPMetrics().getTfJaccard3().getText().replace('.',',')  + "\"\n");
                     csvFileWriter.write("Współczynnik Dice'a:;");
-                    csvFileWriter.write("'" + comparePanel.getPMetrics().getTfDice1().getText() + ";");
-                    csvFileWriter.write("'" + comparePanel.getPMetrics().getTfDice2().getText() + ";");
-                    csvFileWriter.write("'" + comparePanel.getPMetrics().getTfDice3().getText() + "\n");
+                    csvFileWriter.write("\"" + comparePanel.getPMetrics().getTfDice1().getText().replace('.',',')  + "\";");
+                    csvFileWriter.write("\"" + comparePanel.getPMetrics().getTfDice2().getText().replace('.',',')  + "\";");
+                    csvFileWriter.write("\"" + comparePanel.getPMetrics().getTfDice3().getText().replace('.',',')  + "\"\n");
                     csvFileWriter.write(";Implementacja;Adaptive;Weka" + "\n");
 
                     csvFileWriter.write("Wynik Sihlouette:;");
-                    csvFileWriter.write("'" + comparePanel.getPMetrics().getTfImpSil().getText() + ";");
-                    csvFileWriter.write("'" + comparePanel.getPMetrics().getTfAdaptSil().getText() + ";");
-                    csvFileWriter.write("'" + comparePanel.getPMetrics().getTfWekaSil().getText() + "\n");
+                    csvFileWriter.write("\"" + comparePanel.getPMetrics().getTfImpSil().getText().replace('.',',')  + "\";");
+                    csvFileWriter.write("\"" + comparePanel.getPMetrics().getTfAdaptSil().getText().replace('.',',') + "\";");
+                    csvFileWriter.write("\"" + comparePanel.getPMetrics().getTfWekaSil().getText().replace('.',',')  + "\"\n");
                     csvFileWriter.close();
+
                     MainFrame.setTabTitle(current, false);
                     current.setIsEdited(false);
                     JOptionPane.showMessageDialog(null, "Pomyślnie zapisano.");
+                    MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
                 }
                 else throw new Exception("Błąd w tworzeniu katalogu!");
             }
@@ -139,10 +146,13 @@ public class SaveAction implements ActionListener {
                 MainFrame.setTabTitle(current, false);
                 current.setIsEdited(false);
                 JOptionPane.showMessageDialog(null, "Pomyślnie zapisano.");
+                MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
             }
         }catch (Exception ex){
            throw ex;
         }
         MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
     }
+
+
 }
