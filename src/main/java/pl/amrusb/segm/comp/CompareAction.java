@@ -9,7 +9,7 @@ import pl.amrusb.algs.seg.weka.WekaKMeans;
 import pl.amrusb.util.math.Calculations;
 import pl.amrusb.util.math.ClusterSorter;
 import pl.amrusb.util.math.Metrics;
-import pl.amrusb.util.models.Statistics;
+import pl.amrusb.util.models.*;
 import pl.amrusb.util.charts.ClusterSizesBarChart;
 import pl.amrusb.util.charts.MetricsBarChart;
 import pl.amrusb.util.charts.RGBHistogram;
@@ -17,15 +17,11 @@ import pl.amrusb.util.constants.AlgorithmsMetrics;
 import pl.amrusb.util.constants.KMeansStats;
 import pl.amrusb.util.constants.MetricsTypes;
 import pl.amrusb.util.img.ImageReader;
-import pl.amrusb.util.models.Cluster;
-import pl.amrusb.util.models.Pixel;
-import pl.amrusb.util.models.Point3D;
 import pl.amrusb.ui.ClusterInputDialog;
 import pl.amrusb.ui.MainFrame;
 import pl.amrusb.ui.MainMenuBar;
-import pl.amrusb.segm.ImagePanel;
+import pl.amrusb.segm.ImageWidow;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,7 +39,7 @@ public class CompareAction implements ActionListener {
     @SneakyThrows
     @Override
     public void actionPerformed(ActionEvent e) {
-        ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getSelectedComponent();
+        ImageWidow current = (ImageWidow) MainFrame.getTabbedPane().getSelectedComponent();
         ClusterInputDialog dialog = new ClusterInputDialog(
                 MainMenuBar.getOwner(),
                 "Parametry porównania algorytmów k-means",
@@ -217,7 +213,7 @@ public class CompareAction implements ActionListener {
             JFreeChart histogram = RGBHistogram.create(current.getOriginalImage());
             current.getComparePanel().setHistogram(histogram);
 
-            current.changePanel(ImagePanel.COMPARE_PANEL);
+            current.changePanel(ImageWidow.COMPARE_PANEL);
             current.setIsEdited(true);
             MainFrame.setTabTitle(current, true);
             current.setCursor(Cursor.getDefaultCursor());
@@ -228,7 +224,7 @@ public class CompareAction implements ActionListener {
             Map<KMeansStats, Object> adaptStats,
             Map<KMeansStats, Object> wekaStats
     ){
-        Double jaccardIdx;
+        double jaccardIdx;
         ArrayList<Double> jaccardIndex = new ArrayList<>();
         jaccardIdx = Metrics.JaccardIndex(
                 (int[]) impStats.get(KMeansStats.ASSIGNMENTS),
@@ -256,7 +252,7 @@ public class CompareAction implements ActionListener {
             Map<KMeansStats, Object> adaptStats,
             Map<KMeansStats, Object> wekaStats
     ){
-        Double dice;
+        double dice;
         ArrayList<Double> diceCoefs = new ArrayList<>();
         dice = Metrics.SorensenDiceCoefficient(
                 (int[]) impStats.get(KMeansStats.ASSIGNMENTS),
@@ -286,7 +282,7 @@ public class CompareAction implements ActionListener {
             Map<KMeansStats, Object> wekaStats,
             BufferedImage image
     ){
-        Double silhouette;
+        double silhouette;
         ArrayList<Double> silhouetteScores = new ArrayList<>();
 
         silhouette = Metrics.SilhouetteScore(

@@ -1,6 +1,5 @@
 package pl.amrusb.util.math;
 
-import pl.amrusb.util.math.Calculations;
 import pl.amrusb.util.models.Point3D;
 
 import java.util.Comparator;

@@ -2,7 +2,6 @@ package pl.amrusb.ui;
 
 import lombok.SneakyThrows;
 import pl.amrusb.Main;
-import pl.amrusb.ui.MainFrame;
 import pl.amrusb.util.ui.panels.CHtmlEditorPane;
 
 import javax.swing.*;
@@ -22,15 +21,11 @@ public class MainPanel extends JPanel {
         String bodyPath = Main.getROOT_PATH() + Main.getProperties().getProperty("app.background.file");
         String imagePath = Main.getROOT_PATH() + Main.getProperties().getProperty("app.background.logo");
         File logo = new File(imagePath);
-        String bodyBackground = null;
-        try {
-            FileInputStream f = new FileInputStream(bodyPath);
-            int width = MainFrame.getFrameWidth() / 5;
-            bodyBackground = String.format(new String(f.readAllBytes()), logo, width, width);
+        FileInputStream f = new FileInputStream(bodyPath);
+        int width = MainFrame.getFrameWidth() / 5;
+        String bodyBackground= String.format(new String(f.readAllBytes()), logo, width, width);
+        f.close();
 
-        } catch (Exception e) {
-            throw e;
-        }
         CHtmlEditorPane ep = new CHtmlEditorPane(bodyBackground);
 
         ep.addFocusListener(new FocusListener() {

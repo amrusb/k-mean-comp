@@ -6,8 +6,8 @@ import pl.amrusb.util.img.ImageFilter;
 import pl.amrusb.util.constants.AlgorithmsMetrics;
 import pl.amrusb.ui.MainFrame;
 import pl.amrusb.ui.MainMenuBar;
-import pl.amrusb.segm.comp.ComparePanel;
-import pl.amrusb.segm.ImagePanel;
+import pl.amrusb.segm.comp.CompareWindow;
+import pl.amrusb.segm.ImageWidow;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -35,7 +35,7 @@ public class SaveAction implements ActionListener {
     @SneakyThrows
     @Override
     public void actionPerformed(ActionEvent e) {
-        ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getSelectedComponent();
+        ImageWidow current = (ImageWidow) MainFrame.getTabbedPane().getSelectedComponent();
         MainMenuBar.getOwner().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         String filePath = current.getFilePath();
         String fileName = current.getFileName();
@@ -89,7 +89,7 @@ public class SaveAction implements ActionListener {
                     ImageIO.write(images.get(AlgorithmsMetrics.WEKA), formatName, wekaFile);
 
 
-                    ComparePanel comparePanel = current.getComparePanel();
+                    CompareWindow comparePanel = current.getComparePanel();
                     FileWriter csvFileWriter = new FileWriter(dirPath + "\\" + name + INFO_SUFIX);
                     byte[] bom = { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
                     csvFileWriter.write(new String(bom));
@@ -149,7 +149,7 @@ public class SaveAction implements ActionListener {
                 MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
             }
         }catch (Exception ex){
-           throw ex;
+           throw new RuntimeException(ex);
         }
         MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
     }

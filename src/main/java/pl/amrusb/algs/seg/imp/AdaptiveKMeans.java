@@ -11,7 +11,6 @@ import pl.amrusb.util.models.Pair;
 import pl.amrusb.util.models.Pixel;
 import pl.amrusb.util.timer.Timer;
 
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,9 +45,7 @@ public class AdaptiveKMeans extends AKMeans {
             clusters = init.execute();
             setClusterNum(clusters.size());
             ArrayList<Cluster> initialClusters = new ArrayList<>(clusters.size());
-            clusters.forEach(e -> {
-                initialClusters.add(e.clone());
-            });
+            clusters.forEach(e -> initialClusters.add(e.clone()));
 
             stats.put(KMeansStats.INITIAL_START_POINTS, initialClusters);
 

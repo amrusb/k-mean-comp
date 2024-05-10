@@ -2,7 +2,7 @@ package pl.amrusb.util.actions;
 
 import pl.amrusb.ui.MainFrame;
 import pl.amrusb.ui.MainMenuBar;
-import pl.amrusb.segm.ImagePanel;
+import pl.amrusb.segm.ImageWidow;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -12,10 +12,10 @@ import java.awt.image.BufferedImage;
 public class UndoAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
-        ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getSelectedComponent();
+        ImageWidow current = (ImageWidow) MainFrame.getTabbedPane().getSelectedComponent();
         BufferedImage image = current.getOriginalImage();
         if(current.getSegmentedImage() == null){
-            current.changePanel(ImagePanel.BASIC_PANEL);
+            current.changePanel(ImageWidow.BASIC_PANEL);
         }
         else{
             current.setSegmentedImage(null);

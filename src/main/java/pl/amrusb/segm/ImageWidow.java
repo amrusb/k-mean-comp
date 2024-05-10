@@ -2,7 +2,7 @@ package pl.amrusb.segm;
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.amrusb.segm.comp.ComparePanel;
+import pl.amrusb.segm.comp.CompareWindow;
 import pl.amrusb.util.img.ImageRescaler;
 import pl.amrusb.ui.MainFrame;
 
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Getter
 @Setter
-public class ImagePanel extends JPanel {
+public class ImageWidow extends JPanel {
     public static final String BASIC_PANEL = "basicPanel";
     public static final String COMPARE_PANEL = "comparePanel";
     private Boolean isEdited;
@@ -34,16 +34,16 @@ public class ImagePanel extends JPanel {
     private String filePath;
 
     private JPanel basicPanel;
-    private ComparePanel comparePanel;
+    private CompareWindow comparePanel;
     private static CardLayout cardLayout = null;
 
-    public ImagePanel(){
+    public ImageWidow(){
         isEdited = false;
         cardLayout = new CardLayout();
         this.setLayout(cardLayout);
 
         createBasicPanel();
-        comparePanel = new ComparePanel();
+        comparePanel = new CompareWindow();
 
         this.add(basicPanel, BASIC_PANEL);
         this.add(comparePanel, COMPARE_PANEL);

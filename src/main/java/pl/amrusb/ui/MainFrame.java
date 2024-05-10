@@ -1,7 +1,7 @@
 package pl.amrusb.ui;
 
 import lombok.Getter;
-import pl.amrusb.segm.ImagePanel;
+import pl.amrusb.segm.ImageWidow;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +19,7 @@ public class MainFrame extends JFrame {
     private static JPanel body = null;
     private static CardLayout cardLayout = null;
 
-    private static final ArrayList<ImagePanel> imagePanels = new ArrayList<>();
+    private static final ArrayList<ImageWidow> imagePanels = new ArrayList<>();
 
     public MainFrame(){
         setTitle("Segmentacja obrazu");
@@ -45,7 +45,7 @@ public class MainFrame extends JFrame {
         changePanel();
 
         tabbedPane.addChangeListener((l)->{
-            ImagePanel current = (ImagePanel) tabbedPane.getSelectedComponent();
+            ImageWidow current = (ImageWidow) tabbedPane.getSelectedComponent();
             if(current != null) {
                 Boolean isEdited = current.getIsEdited();
 
@@ -64,7 +64,7 @@ public class MainFrame extends JFrame {
         }
         MainMenuBar.reload();
     }
-    public static void addTab(ImagePanel panel){
+    public static void addTab(ImageWidow panel){
         imagePanels.add(panel);
         int panelIdx = imagePanels.indexOf(panel);
 
@@ -104,7 +104,7 @@ public class MainFrame extends JFrame {
 
             int result = 0;
 
-            if(((ImagePanel) tabbedPane.getSelectedComponent()).getIsEdited()){
+            if(((ImageWidow) tabbedPane.getSelectedComponent()).getIsEdited()){
                 result = JOptionPane.showConfirmDialog(
                         null,
                         "Czy na pewno chcesz zamknąć bez zapisywania?",
@@ -123,7 +123,7 @@ public class MainFrame extends JFrame {
 
     public static void setTabTitle(JPanel component, boolean edited){
         int index = tabbedPane.indexOfComponent(component);
-        ImagePanel tab = (ImagePanel) tabbedPane.getComponentAt(index);
+        ImageWidow tab = (ImageWidow) tabbedPane.getComponentAt(index);
 
         String title = tab.getFileName();
 

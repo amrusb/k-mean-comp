@@ -19,8 +19,7 @@ public class ColorTableCellRenderer extends DefaultTableCellRenderer {
                 row, column
         );
 
-        if (value instanceof Color) {
-            Color color = (Color) value;
+        if (value instanceof Color color) {
             component.setBackground(color);
             setText("");
         }

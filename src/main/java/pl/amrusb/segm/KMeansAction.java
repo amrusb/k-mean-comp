@@ -9,7 +9,6 @@ import pl.amrusb.util.constants.AlgorithmsMetrics;
 import pl.amrusb.ui.ClusterInputDialog;
 import pl.amrusb.ui.MainFrame;
 import pl.amrusb.ui.MainMenuBar;
-import pl.amrusb.segm.ImagePanel;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -32,7 +31,7 @@ public class KMeansAction implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getSelectedComponent();
+        ImageWidow current = (ImageWidow) MainFrame.getTabbedPane().getSelectedComponent();
         if (current.hasSegmentedImage()) {
             current.setOriginalImage(current.getSegmentedImage());
         }

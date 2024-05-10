@@ -5,7 +5,7 @@ import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.ui.MainFrame;
 import pl.amrusb.ui.MainMenuBar;
 import pl.amrusb.util.img.ImageFilter;
-import pl.amrusb.segm.ImagePanel;
+import pl.amrusb.segm.ImageWidow;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +17,7 @@ public class OpenAction implements ActionListener {
     @SneakyThrows
     @Override
     public void actionPerformed(ActionEvent e) {
-        ImagePanel panel = new ImagePanel();
+        ImageWidow panel = new ImageWidow();
 
         JFileChooser imageChooser = new JFileChooser();
         imageChooser.setCurrentDirectory(new File("."));
