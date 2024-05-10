@@ -13,13 +13,13 @@ public class UndoAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         ImageWidow current = (ImageWidow) MainFrame.getTabbedPane().getSelectedComponent();
-        BufferedImage image = current.getOriginalImage();
-        if(current.getSegmentedImage() == null){
+        BufferedImage image = current.getBfIOriginal();
+        if(current.getBfISegmented() == null){
             current.changePanel(ImageWidow.BASIC_PANEL);
         }
         else{
-            current.setSegmentedImage(null);
-            current.setImageLabel(image);
+            current.setBfISegmented(null);
+            current.setlImage(image);
         }
 
         JMenuItem item = (JMenuItem) e.getSource();

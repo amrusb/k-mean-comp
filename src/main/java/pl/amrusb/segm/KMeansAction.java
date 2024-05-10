@@ -33,7 +33,7 @@ public class KMeansAction implements ActionListener {
 
         ImageWidow current = (ImageWidow) MainFrame.getTabbedPane().getSelectedComponent();
         if (current.hasSegmentedImage()) {
-            current.setOriginalImage(current.getSegmentedImage());
+            current.setBfIOriginal(current.getBfISegmented());
         }
         ClusterInputDialog dialog = new ClusterInputDialog(
                 MainMenuBar.getOwner(),
@@ -51,10 +51,10 @@ public class KMeansAction implements ActionListener {
             AtomicReference<IKMeans> segmentation = new AtomicReference<>();
             Future<?> segmenationExec = executor.submit(()->{
                 if(original){
-                    segmentation.set(getAlgorithm(clusterNum,maxIter, current.getOriginalImage(), type));
+                    segmentation.set(getAlgorithm(clusterNum,maxIter, current.getBfIOriginal(), type));
                 }
                 else{
-                    segmentation.set(getAlgorithm(clusterNum,maxIter, current.getRescaledImage(), type));
+                    segmentation.set(getAlgorithm(clusterNum,maxIter, current.getBfIRescaled(), type));
                 }
                 segmentation.get().execute();
             });
@@ -64,8 +64,8 @@ public class KMeansAction implements ActionListener {
             try {
                 segmenationExec.get();
                 BufferedImage output = segmentation.get().getOutputImage();
-                current.setImageLabel(output);
-                current.setSegmentedImage(output);
+                current.setlImage(output);
+                current.setBfISegmented(output);
                 current.setIsEdited(true);
                 MainFrame.setTabTitle(current, true);
                 current.setCursor(Cursor.getDefaultCursor());

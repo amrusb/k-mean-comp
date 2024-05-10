@@ -59,17 +59,17 @@ public class CompareAction implements ActionListener {
             AtomicReference<IKMeans> adaptKMeansAlg = new AtomicReference<>();
 
             Future<?> impKMeans = segmentationExecutor.submit(() -> {
-                impKMeansAlg.set(new KMeans(clusterNum,maxIter, current.getOriginalImage()));
+                impKMeansAlg.set(new KMeans(clusterNum,maxIter, current.getBfIOriginal()));
                 impKMeansAlg.get().execute();
             });
 
             Future<?> adaptKMeans = segmentationExecutor.submit(()->{
-                adaptKMeansAlg.set(new AdaptiveKMeans(clusterNum,maxIter, current.getOriginalImage()));
+                adaptKMeansAlg.set(new AdaptiveKMeans(clusterNum,maxIter, current.getBfIOriginal()));
                 adaptKMeansAlg.get().execute();
             });
 
             Future<?> wekaKMeans = segmentationExecutor.submit(() -> {
-                wekaKMeansAlg.set(new WekaKMeans(clusterNum,maxIter, current.getOriginalImage()));
+                wekaKMeansAlg.set(new WekaKMeans(clusterNum,maxIter, current.getBfIOriginal()));
                 wekaKMeansAlg.get().execute();
             });
 
@@ -83,15 +83,15 @@ public class CompareAction implements ActionListener {
                 BufferedImage centerImage = adaptKMeansAlg.get().getOutputImage();
                 BufferedImage rightImage = wekaKMeansAlg.get().getOutputImage();
 
-                current.getComparePanel().setImageLabel(
+                current.getCwCompare().setImageLabel(
                         leftImage,
                         AlgorithmsMetrics.IMP
                 );
-                current.getComparePanel().setImageLabel(
+                current.getCwCompare().setImageLabel(
                         centerImage,
                         AlgorithmsMetrics.ADAPT
                 );
-                current.getComparePanel().setImageLabel(
+                current.getCwCompare().setImageLabel(
                         rightImage,
                         AlgorithmsMetrics.WEKA
                 );
@@ -138,14 +138,14 @@ public class CompareAction implements ActionListener {
                         stats.get(AlgorithmsMetrics.IMP),
                         stats.get(AlgorithmsMetrics.ADAPT),
                         stats.get(AlgorithmsMetrics.WEKA),
-                        current.getOriginalImage()
+                        current.getBfIOriginal()
                 );
 
-                current.getComparePanel().setJaccardValues(jaccardIdx);
-                current.getComparePanel().setDiceValues(sorenDiceCoef);
-                current.getComparePanel().setSilhouetteValues(silhouetteScore);
+                current.getCwCompare().setJaccardValues(jaccardIdx);
+                current.getCwCompare().setDiceValues(sorenDiceCoef);
+                current.getCwCompare().setSilhouetteValues(silhouetteScore);
 
-                current.getComparePanel().setPropertiesValues(
+                current.getCwCompare().setPropertiesValues(
                         current.getFileName(),
                         impAssign.length,
                         clusterNum,
@@ -160,12 +160,12 @@ public class CompareAction implements ActionListener {
 
 
 
-                current.getComparePanel().fillClustersTable(
+                current.getCwCompare().fillClustersTable(
                         impClusters,
                         adaptClusters,
                         wekaClusters
                 );
-                current.getComparePanel().fillInitialsTable(
+                current.getCwCompare().fillInitialsTable(
                         (ArrayList<Point3D>) stats.get(AlgorithmsMetrics.IMP).get(KMeansStats.INITIAL_START_POINTS),
                         (ArrayList<Point3D>) stats.get(AlgorithmsMetrics.ADAPT).get(KMeansStats.INITIAL_START_POINTS),
                         (ArrayList<Point3D>) stats.get(AlgorithmsMetrics.WEKA).get(KMeansStats.INITIAL_START_POINTS)
@@ -174,16 +174,16 @@ public class CompareAction implements ActionListener {
                         stats.get(AlgorithmsMetrics.IMP),
                         stats.get(AlgorithmsMetrics.ADAPT),
                         stats.get(AlgorithmsMetrics.WEKA),
-                        current.getOriginalImage());
-                current.getComparePanel().fillClustersMetricTable(metrics);
+                        current.getBfIOriginal());
+                current.getCwCompare().fillClustersMetricTable(metrics);
 
                 JFreeChart sizesChart = ClusterSizesBarChart.create(impClusters, adaptClusters, wekaClusters);
-                current.getComparePanel().setSizesChart(sizesChart);
+                current.getCwCompare().setSizesChart(sizesChart);
 
                 JFreeChart chMertrics = MetricsBarChart.create(jaccardIdx, sorenDiceCoef);
-                current.getComparePanel().setChMetrics(chMertrics);
+                current.getCwCompare().setChMetrics(chMertrics);
                 JFreeChart chSilhouette = MetricsBarChart.create(silhouetteScore);
-                current.getComparePanel().setChSilhouette(chSilhouette);
+                current.getCwCompare().setChSilhouette(chSilhouette);
 
                 JFreeChart chClustersSilhouette = MetricsBarChart.create(
                         (Map<AlgorithmsMetrics, ArrayList<Double>>)metrics.get(MetricsTypes.SIHLOUETTE),
@@ -199,7 +199,7 @@ public class CompareAction implements ActionListener {
                         MetricsTypes.DICE.getValue(),
                         impClusters);
 
-                current.getComparePanel().setChClustersMetrics(chClustersSilhouette,chClustersJaccard,chClustersDice);
+                current.getCwCompare().setChClustersMetrics(chClustersSilhouette,chClustersJaccard,chClustersDice);
                 MainMenuBar.enableUndo(true);
                 MainMenuBar.enableAlgorithms(false);
             }
@@ -210,8 +210,8 @@ public class CompareAction implements ActionListener {
             segmentationExecutor.shutdown();
 
 
-            JFreeChart histogram = RGBHistogram.create(current.getOriginalImage());
-            current.getComparePanel().setHistogram(histogram);
+            JFreeChart histogram = RGBHistogram.create(current.getBfIOriginal());
+            current.getCwCompare().setHistogram(histogram);
 
             current.changePanel(ImageWidow.COMPARE_PANEL);
             current.setIsEdited(true);

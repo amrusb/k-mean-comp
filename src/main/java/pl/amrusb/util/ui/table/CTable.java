@@ -6,8 +6,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class CTable extends JTable {
-    private final DefaultTableModel model;
-    private final DefaultTableCellRenderer renderer;
+    private final CTableModel model;
+    private final ColorTableCellRenderer renderer;
 
     public CTable(){
         model = new CTableModel();

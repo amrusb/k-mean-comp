@@ -66,7 +66,7 @@ public class SaveAction implements ActionListener {
         }
 
         try {
-            if(current.getSegmentedImage() == null){
+            if(current.getBfISegmented() == null){
                 String rootPath = filePath.substring(0, filePath.lastIndexOf('\\'));
                 String name = fileName.substring(0, fileName.indexOf('.'));
                 String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
@@ -82,14 +82,14 @@ public class SaveAction implements ActionListener {
                     File adaptFile = new File(dirPath + "\\" + name + ADAPT_SUFIX + formatName);
                     File wekaFile = new File(dirPath + "\\" + name + WEKA_SUFIX + formatName);
 
-                    Map<AlgorithmsMetrics, BufferedImage> images = current.getComparePanel().getOutputImages();
+                    Map<AlgorithmsMetrics, BufferedImage> images = current.getCwCompare().getOutputImages();
 
                     ImageIO.write(images.get(AlgorithmsMetrics.IMP), formatName, impFile);
                     ImageIO.write(images.get(AlgorithmsMetrics.ADAPT), formatName, adaptFile);
                     ImageIO.write(images.get(AlgorithmsMetrics.WEKA), formatName, wekaFile);
 
 
-                    CompareWindow comparePanel = current.getComparePanel();
+                    CompareWindow comparePanel = current.getCwCompare();
                     FileWriter csvFileWriter = new FileWriter(dirPath + "\\" + name + INFO_SUFIX);
                     byte[] bom = { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
                     csvFileWriter.write(new String(bom));
@@ -136,10 +136,10 @@ public class SaveAction implements ActionListener {
                 File output = new File(filePath);
                 BufferedImage image;
                 if(current.hasSegmentedImage()) {
-                    image = current.getSegmentedImage();
+                    image = current.getBfISegmented();
                 }
                 else{
-                    image = current.getOriginalImage();
+                    image = current.getBfIOriginal();
                 }
 
                 ImageIO.write(image, formatName, output);

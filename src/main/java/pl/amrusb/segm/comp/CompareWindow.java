@@ -27,17 +27,17 @@ import java.util.Map;
 public class CompareWindow extends JPanel {
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    private JPanel bottomPanel;
+    private JPanel pBottom;
 
     private ImageViewPanel ivpImp;
     private ImageViewPanel ivpAdapt;
     private ImageViewPanel ivpWeka;
 
-    private JPanel chartsPanel;
-    private CardLayout chartsCardLayout;
+    private JPanel pCharts;
+    private CardLayout clCharts;
     private ImageViewPanel ivpOriginal;
-    private CChartPanel histogramPanel;
-    private CChartPanel sizesChartPanel;
+    private CChartPanel chpHistogram;
+    private CChartPanel chpClusterSizes;
     private CChartPanel chpSilhouette;
     private CChartPanel chpMetrics;
     private CChartPanel chpClustersSilhouette;
@@ -45,8 +45,8 @@ public class CompareWindow extends JPanel {
     private CChartPanel chpClustersDice;
 
 
-    private JPanel statsPanel;
-    private CardLayout statsCardLayout;
+    private JPanel pStats;
+    private CardLayout clStats;
     private MetricsPanel pMetrics;
     private PropertiesPanel pProperties;
     private InitialCentroidPanel pInitCentroid;
@@ -70,7 +70,7 @@ public class CompareWindow extends JPanel {
         imagePanel.add(ivpAdapt);
         imagePanel.add(ivpWeka);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, imagePanel, bottomPanel);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, imagePanel, pBottom);
         splitPane.setResizeWeight(0.7);
         splitPane.setDividerSize(5);
 
@@ -85,14 +85,14 @@ public class CompareWindow extends JPanel {
     }
 
     private void createBottomPanel(){
-        bottomPanel = new JPanel();
-        bottomPanel.setPreferredSize(
+        pBottom = new JPanel();
+        pBottom.setPreferredSize(
                 new Dimension(
                         MainFrame.getFrameWidth(),
                         MainFrame.getFrameHeight() / 3
                 )
         );
-        bottomPanel.setLayout(new GridLayout(1,2));
+        pBottom.setLayout(new GridLayout(1,2));
         createLeftBottomPanel();
 
         JPanel cbRow = new JPanel();
@@ -103,18 +103,18 @@ public class CompareWindow extends JPanel {
 
         JComboBox<String> comboBox =  StatsComboBox.getJComboBox();
         comboBox.addItemListener(e-> {
-            statsCardLayout.show(statsPanel, e.getItem().toString());
-            chartsCardLayout.show(chartsPanel, e.getItem().toString());
+            clStats.show(pStats, e.getItem().toString());
+            clCharts.show(pCharts, e.getItem().toString());
         });
         cbRow.add(comboBox);
         rightBottomPanel.add(cbRow, BorderLayout.NORTH);
 
         createStatsPanel();
-        rightBottomPanel.add(statsPanel, BorderLayout.CENTER);
+        rightBottomPanel.add(pStats, BorderLayout.CENTER);
 
 
-        bottomPanel.add(chartsPanel);
-        bottomPanel.add(rightBottomPanel);
+        pBottom.add(pCharts);
+        pBottom.add(rightBottomPanel);
     }
     public void setOriginalImage(BufferedImage image){
         double frameWidth = MainFrame.getFrameWidth() / 4.0;
@@ -143,23 +143,23 @@ public class CompareWindow extends JPanel {
         ivpOriginal.setImage(htmlString);
     }
     private void createLeftBottomPanel(){
-        chartsCardLayout = new CardLayout();
-        chartsPanel = new JPanel();
-        chartsPanel.setLayout(chartsCardLayout);
+        clCharts = new CardLayout();
+        pCharts = new JPanel();
+        pCharts.setLayout(clCharts);
 
         JPanel propertiesPanel = new JPanel();
         propertiesPanel.setLayout(new GridLayout(0,2));
-        histogramPanel = new CChartPanel();
+        chpHistogram = new CChartPanel();
         ivpOriginal = new ImageViewPanel("Oryginalny");
 
-        propertiesPanel.add(histogramPanel);
+        propertiesPanel.add(chpHistogram);
         propertiesPanel.add(ivpOriginal);
         JPanel clustersPanel = new JPanel();
         clustersPanel.setLayout(new BorderLayout());
 
-        sizesChartPanel = new CChartPanel();
+        chpClusterSizes = new CChartPanel();
 
-        clustersPanel.add(sizesChartPanel, BorderLayout.CENTER);
+        clustersPanel.add(chpClusterSizes, BorderLayout.CENTER);
 
         JPanel metricsPanel = new JPanel();
         metricsPanel.setLayout(new GridLayout(0,2));
@@ -180,17 +180,17 @@ public class CompareWindow extends JPanel {
         clusterMetricsPanel.add(chpClustersJaccard);
         clusterMetricsPanel.add(chpClustersDice);
 
-        chartsPanel.add(propertiesPanel, StatsComboBox.PROPERTIES.value);
-        chartsPanel.add(clustersPanel, StatsComboBox.CLUSTERS.value);
-        chartsPanel.add(metricsPanel, StatsComboBox.METRICS.value);
-        chartsPanel.add(clusterMetricsPanel, StatsComboBox.CLUSTER_METRICS.value);
+        pCharts.add(propertiesPanel, StatsComboBox.PROPERTIES.value);
+        pCharts.add(clustersPanel, StatsComboBox.CLUSTERS.value);
+        pCharts.add(metricsPanel, StatsComboBox.METRICS.value);
+        pCharts.add(clusterMetricsPanel, StatsComboBox.CLUSTER_METRICS.value);
 
 
     }
     private void createStatsPanel(){
-        statsCardLayout = new CardLayout();
-        statsPanel = new JPanel();
-        statsPanel.setLayout(statsCardLayout);
+        clStats = new CardLayout();
+        pStats = new JPanel();
+        pStats.setLayout(clStats);
 
         pMetrics = new MetricsPanel();
         pProperties = new PropertiesPanel();
@@ -198,11 +198,11 @@ public class CompareWindow extends JPanel {
         pClusters = new ClusterPanel();
         pInitCentroid = new InitialCentroidPanel();
 
-        statsPanel.add(pProperties, StatsComboBox.PROPERTIES.value);
-        statsPanel.add(new JScrollPane(pClusters), StatsComboBox.CLUSTERS.value);
-        statsPanel.add(pMetrics, StatsComboBox.METRICS.value);
-        statsPanel.add(new JScrollPane(pClustersMetrics), StatsComboBox.CLUSTER_METRICS.value);
-        statsPanel.add(new JScrollPane(pInitCentroid), StatsComboBox.INITIAL.value);
+        pStats.add(pProperties, StatsComboBox.PROPERTIES.value);
+        pStats.add(new JScrollPane(pClusters), StatsComboBox.CLUSTERS.value);
+        pStats.add(pMetrics, StatsComboBox.METRICS.value);
+        pStats.add(new JScrollPane(pClustersMetrics), StatsComboBox.CLUSTER_METRICS.value);
+        pStats.add(new JScrollPane(pInitCentroid), StatsComboBox.INITIAL.value);
 
     }
     public void fillInitialsTable(ArrayList<Point3D> dataSet1, ArrayList<Point3D> dataSet2, ArrayList<Point3D> dataSet3){
@@ -283,11 +283,11 @@ public class CompareWindow extends JPanel {
     }
 
     public void setHistogram(JFreeChart chart){
-        histogramPanel.setChart(chart);
+        chpHistogram.setChart(chart);
     }
 
     public void setSizesChart(JFreeChart chart){
-        sizesChartPanel.setChart(chart);
+        chpClusterSizes.setChart(chart);
     }
 
     public void setChMetrics(JFreeChart chart){

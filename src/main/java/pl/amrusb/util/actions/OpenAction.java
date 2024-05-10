@@ -34,9 +34,9 @@ public class OpenAction implements ActionListener {
             String filePath = imageChooser.getSelectedFile().getAbsolutePath();
             panel.setFilePath(filePath);
             ImageReader.setFilePath(filePath);
-            panel.setOriginalImage(ImageReader.readImage());
+            panel.setBfIOriginal(ImageReader.readImage());
 
-            panel.setImageLabel(ImageReader.readImage());
+            panel.setlImage(ImageReader.readImage());
             MainFrame.addTab(panel);
             MainFrame.changePanel();
             MainMenuBar.reload();

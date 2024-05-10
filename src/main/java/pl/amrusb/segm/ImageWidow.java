@@ -26,15 +26,15 @@ public class ImageWidow extends JPanel {
     public static final String COMPARE_PANEL = "comparePanel";
     private Boolean isEdited;
 
-    private final JLabel imageLabel = new JLabel();
-    private BufferedImage originalImage = null;
-    private BufferedImage rescaledImage = null;
-    private BufferedImage segmentedImage = null;
+    private final JLabel lImage = new JLabel();
+    private BufferedImage bfIOriginal = null;
+    private BufferedImage bfIRescaled = null;
+    private BufferedImage bfISegmented = null;
     private String fileName;
     private String filePath;
 
-    private JPanel basicPanel;
-    private CompareWindow comparePanel;
+    private JPanel pBasics;
+    private CompareWindow cwCompare;
     private static CardLayout cardLayout = null;
 
     public ImageWidow(){
@@ -43,25 +43,25 @@ public class ImageWidow extends JPanel {
         this.setLayout(cardLayout);
 
         createBasicPanel();
-        comparePanel = new CompareWindow();
+        cwCompare = new CompareWindow();
 
-        this.add(basicPanel, BASIC_PANEL);
-        this.add(comparePanel, COMPARE_PANEL);
+        this.add(pBasics, BASIC_PANEL);
+        this.add(cwCompare, COMPARE_PANEL);
         this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
     }
 
     private void createBasicPanel(){
-        basicPanel  = new JPanel();
-        basicPanel.setLayout(new BorderLayout());
-        imageLabel.setVerticalAlignment(SwingConstants.CENTER);
-        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        basicPanel.add(imageLabel, BorderLayout.CENTER);
+        pBasics = new JPanel();
+        pBasics.setLayout(new BorderLayout());
+        lImage.setVerticalAlignment(SwingConstants.CENTER);
+        lImage.setHorizontalAlignment(SwingConstants.CENTER);
+        pBasics.add(lImage, BorderLayout.CENTER);
     }
 
     public void changePanel(String panel){
         cardLayout.show(this, panel);
         if(panel.equals(COMPARE_PANEL)){
-            comparePanel.setOriginalImage(originalImage);
+            cwCompare.setOriginalImage(bfIOriginal);
         }
     }
     /**
@@ -69,7 +69,7 @@ public class ImageWidow extends JPanel {
      * Jeżeli obraz jest za duży, zostaje przeskalowany do odpowiednich wymiarów
      * @param image obraz do ustawienia jako ikona etykiety
      */
-    public void setImageLabel(BufferedImage image){
+    public void setlImage(BufferedImage image){
         int frameWidth = MainFrame.getFrameWidth();
         int frameHeight = MainFrame.getFrameHeight();
 
@@ -90,7 +90,7 @@ public class ImageWidow extends JPanel {
 
             try {
                 future.get();
-                rescaledImage = displayImage.get();
+                bfIRescaled = displayImage.get();
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
@@ -105,7 +105,7 @@ public class ImageWidow extends JPanel {
         }
 
         htmlString = String.format(htmlString, stream, width, height);
-        imageLabel.setText(htmlString);
+        lImage.setText(htmlString);
     }
 
     /**
@@ -115,7 +115,7 @@ public class ImageWidow extends JPanel {
      *     <li>false w przeciwnym wypadku</li>
      * </ol>*/
     public boolean hasRescaledImage(){
-        return rescaledImage != null;
+        return bfIRescaled != null;
     }
     /**
      * Zwraca informację o przechowywaniu obrazu po zastosowaniu algorytmu segmentacji
@@ -123,5 +123,5 @@ public class ImageWidow extends JPanel {
      *     <li>true wtw, gdy obiekt image po zastosowaniu algorytmu segmentacji</li>
      *     <li>false w przeciwnym wypadku</li>
      * </ol>*/
-    public boolean hasSegmentedImage() {return segmentedImage != null; }
+    public boolean hasSegmentedImage() {return bfISegmented != null; }
 }

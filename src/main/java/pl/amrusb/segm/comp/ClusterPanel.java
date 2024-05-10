@@ -10,30 +10,30 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class ClusterPanel extends JPanel {
-    private final CTable ownCTable;
-    private final CTable adaptCTable;
-    private final CTable wekaCTable;
+    private final CTable tOwn;
+    private final CTable tAdapt;
+    private final CTable tWeka;
 
     public ClusterPanel(){
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        ownCTable = new CTable();
+        tOwn = new CTable();
 
-        ownCTable.addColumn("Lp.", "Współrzędne","Rozmiar","Kolor");
-        ownCTable.setColumnWidth("30,100,100,50");
+        tOwn.addColumn("Lp.", "Współrzędne","Rozmiar","Kolor");
+        tOwn.setColumnWidth("30,100,100,50");
 
-        adaptCTable = new CTable();
-        adaptCTable.addColumn("Lp.", "Współrzędne","Rozmiar","Kolor");
-        adaptCTable.setColumnWidth("30,100,100,50");
+        tAdapt = new CTable();
+        tAdapt.addColumn("Lp.", "Współrzędne","Rozmiar","Kolor");
+        tAdapt.setColumnWidth("30,100,100,50");
 
-        wekaCTable = new CTable();
+        tWeka = new CTable();
 
-        wekaCTable.addColumn("Lp.","Współrzędne","Rozmiar","Kolor");
-        wekaCTable.setColumnWidth("30,100,100,50");
+        tWeka.addColumn("Lp.","Współrzędne","Rozmiar","Kolor");
+        tWeka.setColumnWidth("30,100,100,50");
 
-        TablePane tpOwnC = new TablePane(AlgorithmsMetrics.IMP.getValue(), ownCTable);
-        TablePane tpAdaptC = new TablePane(AlgorithmsMetrics.ADAPT.getValue(), adaptCTable);
-        TablePane tpWekaC = new TablePane(AlgorithmsMetrics.WEKA.getValue(), wekaCTable);
+        TablePane tpOwnC = new TablePane(AlgorithmsMetrics.IMP.getValue(), tOwn);
+        TablePane tpAdaptC = new TablePane(AlgorithmsMetrics.ADAPT.getValue(), tAdapt);
+        TablePane tpWekaC = new TablePane(AlgorithmsMetrics.WEKA.getValue(), tWeka);
 
         this.add(tpOwnC);
         this.add(tpAdaptC);
@@ -46,19 +46,19 @@ public class ClusterPanel extends JPanel {
             Cluster ds2C = dataSet2.get(i);
             Cluster ds3C = dataSet3.get(i);
 
-            ownCTable.addRow(new Object[]{
+            tOwn.addRow(new Object[]{
                     i + 1,
                     ds1C.toString(),
                     ds1C.getSize(),
                     new Color(ds1C.getX(), ds1C.getY(), ds1C.getZ())
             });
-            adaptCTable.addRow(new Object[]{
+            tAdapt.addRow(new Object[]{
                     i + 1,
                     ds2C.toString(),
                     ds2C.getSize(),
                     new Color(ds2C.getX(), ds2C.getY(), ds2C.getZ())
             });
-            wekaCTable.addRow(new Object[]{
+            tWeka.addRow(new Object[]{
                     i + 1,
                     ds3C.toString(),
                     ds3C.getSize(),
@@ -66,8 +66,8 @@ public class ClusterPanel extends JPanel {
             });
         }
 
-        ownCTable.setRenderer();
-        adaptCTable.setRenderer();
-        wekaCTable.setRenderer();
+        tOwn.setRenderer();
+        tAdapt.setRenderer();
+        tWeka.setRenderer();
     }
 }
