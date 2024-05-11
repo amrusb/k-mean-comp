@@ -3,6 +3,7 @@ package pl.amrusb.segm.comp;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.jfree.chart.JFreeChart;
 import pl.amrusb.util.constants.AlgorithmsMetrics;
 import pl.amrusb.util.constants.MetricsTypes;
@@ -17,7 +18,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -116,6 +116,7 @@ public class CompareWindow extends JPanel {
         pBottom.add(pCharts);
         pBottom.add(rightBottomPanel);
     }
+    @SneakyThrows
     public void setOriginalImage(BufferedImage image){
         double frameWidth = MainFrame.getFrameWidth() / 4.0;
         double frameHeight = MainFrame.getFrameHeight() * 0.3;
@@ -131,15 +132,11 @@ public class CompareWindow extends JPanel {
         }
 
         File stream;
-        try {
-            stream = File.createTempFile("show-img", ".jpg");
-            ImageIO.write(image, "jpg", stream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        stream = File.createTempFile("show-img", ".jpg");
+        ImageIO.write(image, "jpg", stream);
 
         htmlString = String.format(htmlString, stream , width, height);
-
+        ivpOriginal.setImage(image);
         ivpOriginal.setImage(htmlString);
     }
     private void createLeftBottomPanel(){
@@ -242,6 +239,7 @@ public class CompareWindow extends JPanel {
     public void setSilhouetteValues(ArrayList<Double>  silhouette){
         pMetrics.setSilhouetteValues(silhouette.get(0),silhouette.get(1),silhouette.get(2));
     }
+    @SneakyThrows
     public void setImageLabel(BufferedImage image, AlgorithmsMetrics position){
         double frameWidth = MainFrame.getFrameWidth() / 3.0;
         double frameHeight = MainFrame.getFrameHeight() * 2.0 / 3;
@@ -257,12 +255,8 @@ public class CompareWindow extends JPanel {
         }
 
         File stream;
-        try {
-            stream = File.createTempFile("show-img", ".jpg");
-            ImageIO.write(image, "jpg", stream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        stream = File.createTempFile("show-img", ".jpg");
+        ImageIO.write(image, "jpg", stream);
 
         htmlString = String.format(htmlString, stream , width, height);
 

@@ -5,22 +5,23 @@ import pl.amrusb.ui.MainMenuBar;
 import javax.swing.*;
 import java.awt.*;
 
-public class ExceptionDialog extends JDialog {
+import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
+
+public class ExceptionDialog {
     private static final int WIDTH = 640;
     private static final int HEIGHT = 120;
     private static final int SP_HEIGHT = 350;
 
-    public ExceptionDialog(JFrame parent, String title, String message, StackTraceElement[] stackTrace){
-        super(parent, title, true);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setSize(WIDTH, HEIGHT);
-        setLocationRelativeTo(parent);
-        setResizable(false);
+    public static void show(JFrame parent, String title, String message, StackTraceElement[] stackTrace){
+        JDialog dMain = new JDialog(parent, title, true);
+        dMain.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        dMain.setSize(WIDTH, HEIGHT);
+        dMain.setLocationRelativeTo(parent);
+        dMain.setResizable(false);
 
         MainMenuBar.getOwner().setCursor(Cursor.getDefaultCursor());
 
         Icon errorIcon = UIManager.getIcon("OptionPane.errorIcon");
-
         JPanel messagePanel = new JPanel();
         JLabel messageLabel = new JLabel();
         messageLabel.setText(message);
@@ -32,7 +33,7 @@ public class ExceptionDialog extends JDialog {
         JButton showButton = new JButton("Pokaż więcej");
         JButton exitButton = new JButton("Ok");
 
-        exitButton.addActionListener(e-> dispose());
+        exitButton.addActionListener(e-> dMain.dispose());
 
         JTextArea stackTraceArea = new JTextArea();
 
@@ -48,14 +49,14 @@ public class ExceptionDialog extends JDialog {
             sp.setVisible(!sp.isVisible());
             sp.getVerticalScrollBar().setValue(0);
             if(sp.isVisible()){
-                setSize(WIDTH, HEIGHT + SP_HEIGHT);
+                dMain.setSize(WIDTH, HEIGHT + SP_HEIGHT);
                 showButton.setText("Pokaż mniej");
             }
             else {
                 showButton.setText("Pokaż więcej");
-                setSize(WIDTH, HEIGHT);
+                dMain.setSize(WIDTH, HEIGHT);
             }
-            this.revalidate();
+            dMain.revalidate();
         });
 
         for (StackTraceElement stackTraceElement : stackTrace) {
@@ -87,8 +88,8 @@ public class ExceptionDialog extends JDialog {
         stackTracePanel.add(buttonPanel, BorderLayout.NORTH);
         stackTracePanel.add(sp, BorderLayout.CENTER);
 
-        add(messagePanel,BorderLayout.CENTER);
-        add(stackTracePanel,BorderLayout.SOUTH);
-        setVisible(true);
+        dMain.add(messagePanel,BorderLayout.CENTER);
+        dMain.add(stackTracePanel,BorderLayout.SOUTH);
+        dMain.setVisible(true);
     }
 }
