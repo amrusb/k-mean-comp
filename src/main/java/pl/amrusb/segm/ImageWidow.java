@@ -33,9 +33,10 @@ public class ImageWidow extends JPanel {
     private String fileName;
     private String filePath;
 
+
     private JPanel pBasics;
     private CompareWindow cwCompare;
-    private static CardLayout cardLayout = null;
+    private CardLayout cardLayout = null;
 
     public ImageWidow(){
         isEdited = false;
