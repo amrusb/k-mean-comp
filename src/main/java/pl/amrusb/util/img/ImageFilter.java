@@ -4,13 +4,9 @@ package pl.amrusb.util.img;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
 
-public class ImageFilter extends FileFilter {
-        public final static String JPEG = "jpeg";
-        public final static String JPG = "jpg";
-        public final static String TIFF = "tiff";
-        public final static String TIF = "tif";
-        public final static String PNG = "png";
+import static pl.amrusb.util.constants.FileType.*;
 
+public class ImageFilter extends FileFilter {
         @Override
         public boolean accept(File f) {
             if (f.isDirectory()) {
@@ -19,11 +15,11 @@ public class ImageFilter extends FileFilter {
 
             String extension = getExtension(f);
             if (extension != null) {
-                return extension.equals(TIFF) ||
-                        extension.equals(TIF) ||
-                        extension.equals(JPEG) ||
-                        extension.equals(JPG) ||
-                        extension.equals(PNG);
+                return extension.equals(TIFF.getValue()) ||
+                        extension.equals(TIF.getValue()) ||
+                        extension.equals(JPEG.getValue()) ||
+                        extension.equals(JPG.getValue()) ||
+                        extension.equals(PNG.getValue());
             }
             return false;
         }

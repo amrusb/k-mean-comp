@@ -3,6 +3,7 @@ package pl.amrusb.segm;
 import lombok.Getter;
 import lombok.Setter;
 import pl.amrusb.segm.comp.CompareWindow;
+import pl.amrusb.util.constants.FileType;
 import pl.amrusb.util.img.ImageRescaler;
 import pl.amrusb.ui.MainFrame;
 
@@ -32,6 +33,7 @@ public class ImageWidow extends JPanel {
     private BufferedImage bfISegmented = null;
     private String fileName;
     private String filePath;
+    private FileType fileExt;
 
 
     private JPanel pBasics;
@@ -109,8 +111,8 @@ public class ImageWidow extends JPanel {
 
         File stream;
         try {
-            stream = File.createTempFile("show-img", ".jpg");
-            ImageIO.write(image, "jpg", stream);
+            stream = File.createTempFile("show-img", fileExt.getSuffix());
+            ImageIO.write(image, fileExt.getValue(), stream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -1,37 +1,51 @@
 package pl.amrusb.util.img;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import pl.amrusb.util.constants.FileType;
 import pl.amrusb.util.models.Pixel;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ImageReader {
-    private static String filePath;
-    /**
-     * Ustawia ścieżkę do pliku, z którego zostanie odczytany obraz.
-     * @param filePath ścieżka do pliku
-     */
+import static pl.amrusb.util.constants.FileType.JPG;
+import static pl.amrusb.util.constants.FileType.PNG;
 
-    public static void setFilePath(String filePath) {
-        ImageReader.filePath = filePath;
-    }
-    /**
-     * Odczytuje obraz z pliku i zwraca go jako obiekt BufferedImage.
-     * @return obiekt BufferedImage reprezentujący odczytany obraz
-     */
-    public static BufferedImage readImage() throws RuntimeException{
-        File file;
-        BufferedImage image;
-        try{
-            file = new File(filePath);
-            image = ImageIO.read(file);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+@RequiredArgsConstructor
+public class ImageReader {
+    private final String filePath;
+    private File file;
+    private BufferedImage image;
+
+    @SneakyThrows
+    public BufferedImage readImage(){
+        file = new File(filePath);
+        image = ImageIO.read(file);
         return image;
+    }
+
+    @SneakyThrows
+    public FileType getFileType(){
+        byte[] magicNumbers = new byte[4];
+        FileInputStream is = new FileInputStream(file);
+        if(is.read(magicNumbers) == -1){
+            throw new RuntimeException("Błąd w odczycie typu pliku.");
+        }
+
+        if(magicNumbers[0] == (byte) 0xFF && magicNumbers[1] == (byte) 0xD8 &&
+                magicNumbers[2] == (byte) 0xFF && magicNumbers[3] == (byte) 0xE0){
+            return JPG;
+        }
+        else if(magicNumbers[0] == (byte) 0x89 && magicNumbers[1] == (byte) 0x50 &&
+                magicNumbers[2] == (byte) 0x4E && magicNumbers[3] == (byte) 0x47){
+            return PNG;
+        }
+        else throw new RuntimeException("Nieobsługiwany format!");
     }
 
     /**
@@ -50,4 +64,5 @@ public class ImageReader {
         }
         return array;
     }
+
 }
