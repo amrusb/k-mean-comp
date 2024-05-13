@@ -6,7 +6,7 @@ import pl.amrusb.Main;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
-import java.io.FileInputStream;
+import java.io.InputStream;
 
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
@@ -26,8 +26,7 @@ public class AboutDialog{
         dMain.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
-        String path = Main.getROOT_PATH() + Main.getProperties().getProperty("app.about.text");
-        FileInputStream f = new FileInputStream(path);
+        InputStream f = Main.class.getResourceAsStream(Main.getProperties().getProperty("app.about.text"));
         String content = new String(f.readAllBytes());
 
         pHtml.setContentType("text/html");

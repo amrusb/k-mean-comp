@@ -13,14 +13,12 @@ import java.util.Properties;
 public class Main {
     @Getter
     private static final Properties properties = new Properties();
-    @Getter
-    private static final String ROOT_PATH = Thread.currentThread().getContextClassLoader().getResource("").getPath();
 
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
-        String propPath = ROOT_PATH + "application.properties";
         try{
-            properties.load(new FileInputStream(propPath));
+
+            properties.load(Main.class.getResourceAsStream("/application.properties"));
             final MainFrame frame = new MainFrame();
             EventQueue.invokeLater(()->{
                 frame.setVisible(true);
