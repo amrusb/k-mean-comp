@@ -1,4 +1,4 @@
-package pl.amrusb.util;
+package pl.amrusb.util.img;
 
 
 import javax.swing.filechooser.FileFilter;

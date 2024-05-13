@@ -1,7 +1,8 @@
 package pl.amrusb;
 
 import lombok.Getter;
-import pl.amrusb.util.ui.MainFrame;
+import pl.amrusb.ui.MainFrame;
+import pl.amrusb.util.except.ExceptionHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,25 +17,20 @@ public class Main {
     private static final String ROOT_PATH = Thread.currentThread().getContextClassLoader().getResource("").getPath();
 
     public static void main(String[] args) {
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         String propPath = ROOT_PATH + "application.properties";
         try{
             properties.load(new FileInputStream(propPath));
-
+            final MainFrame frame = new MainFrame();
+            EventQueue.invokeLater(()->{
+                frame.setVisible(true);
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            });
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(
-                    null,
-                    e.getMessage(),
-                    "Błąd",
-                    JOptionPane.ERROR_MESSAGE
-            );
-            System.exit(1);
+            throw new RuntimeException(e);
         }
 
-        final MainFrame frame = new MainFrame();
-        EventQueue.invokeLater(()->{
-            frame.setVisible(true);
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        });
+
     }
 }

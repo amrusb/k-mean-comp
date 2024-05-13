@@ -1,4 +1,4 @@
-package pl.amrusb.util.actions;
+package pl.amrusb.segm;
 
 import pl.amrusb.algs.seg.AKMeans;
 import pl.amrusb.algs.seg.IKMeans;
@@ -6,10 +6,9 @@ import pl.amrusb.algs.seg.imp.AdaptiveKMeans;
 import pl.amrusb.algs.seg.imp.KMeans;
 import pl.amrusb.algs.seg.weka.WekaKMeans;
 import pl.amrusb.util.constants.AlgorithmsMetrics;
-import pl.amrusb.util.ui.ClusterInputDialog;
-import pl.amrusb.util.ui.MainFrame;
-import pl.amrusb.util.ui.MainMenuBar;
-import pl.amrusb.util.ui.panels.ImagePanel;
+import pl.amrusb.ui.ClusterInputDialog;
+import pl.amrusb.ui.MainFrame;
+import pl.amrusb.ui.MainMenuBar;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -32,9 +31,9 @@ public class KMeansAction implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        ImagePanel current = (ImagePanel) MainFrame.getTabbedPane().getSelectedComponent();
+        ImageWidow current = (ImageWidow) MainFrame.getTabbedPane().getSelectedComponent();
         if (current.hasSegmentedImage()) {
-            current.setOriginalImage(current.getSegmentedImage());
+            current.setBfIOriginal(current.getBfISegmented());
         }
         ClusterInputDialog dialog = new ClusterInputDialog(
                 MainMenuBar.getOwner(),
@@ -52,10 +51,10 @@ public class KMeansAction implements ActionListener {
             AtomicReference<IKMeans> segmentation = new AtomicReference<>();
             Future<?> segmenationExec = executor.submit(()->{
                 if(original){
-                    segmentation.set(getAlgorithm(clusterNum,maxIter, current.getOriginalImage(), type));
+                    segmentation.set(getAlgorithm(clusterNum,maxIter, current.getBfIOriginal(), type));
                 }
                 else{
-                    segmentation.set(getAlgorithm(clusterNum,maxIter, current.getRescaledImage(), type));
+                    segmentation.set(getAlgorithm(clusterNum,maxIter, current.getBfIRescaled(), type));
                 }
                 segmentation.get().execute();
             });
@@ -65,8 +64,8 @@ public class KMeansAction implements ActionListener {
             try {
                 segmenationExec.get();
                 BufferedImage output = segmentation.get().getOutputImage();
-                current.setImageLabel(output);
-                current.setSegmentedImage(output);
+                current.setlImage(output);
+                current.setBfISegmented(output);
                 current.setIsEdited(true);
                 MainFrame.setTabTitle(current, true);
                 current.setCursor(Cursor.getDefaultCursor());

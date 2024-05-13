@@ -1,33 +1,34 @@
-package pl.amrusb.util.ui;
+package pl.amrusb.ui;
 
 import lombok.Getter;
-import pl.amrusb.util.ui.panels.MainPanel;
-import pl.amrusb.util.ui.panels.ImagePanel;
+import pl.amrusb.segm.ImageWidow;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 
 
 public class MainFrame extends JFrame {
     private static final String MAIN_PANEL = "mainPanel";
     private static final String TABBED_PANEL = "tabbedPanel";
-    private static final Double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-    private static final Double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+    private static Double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+    private static Double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 
     @Getter
     private static final JTabbedPane tabbedPane = new JTabbedPane();
     private static JPanel body = null;
     private static CardLayout cardLayout = null;
 
-    private static final ArrayList<ImagePanel> imagePanels = new ArrayList<>();
+    private static final ArrayList<ImageWidow> imagePanels = new ArrayList<>();
 
     public MainFrame(){
         setTitle("Segmentacja obrazu");
         int width = (int)(SCREEN_WIDTH * 4 / 5);
         int height = (int)(SCREEN_HEIGHT * 4 / 5);
-        int x = (int)(SCREEN_WIDTH - width) / 2;
-        int y = (int)(SCREEN_HEIGHT - height) / 2;
+        int x = (int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth() - width) / 2;
+        int y = (int)(Toolkit.getDefaultToolkit().getScreenSize().getHeight() - height) / 2;
 
         setBounds(x, y, width, height);
         getContentPane().setLayout(new BorderLayout());
@@ -46,13 +47,27 @@ public class MainFrame extends JFrame {
         changePanel();
 
         tabbedPane.addChangeListener((l)->{
-            ImagePanel current = (ImagePanel) tabbedPane.getSelectedComponent();
+            ImageWidow current = (ImageWidow) tabbedPane.getSelectedComponent();
             if(current != null) {
                 Boolean isEdited = current.getIsEdited();
 
                 MainMenuBar.enableUndo(isEdited);
                 MainMenuBar.enableAlgorithms(!isEdited);
                 MainMenuBar.enableSave(isEdited);
+            }
+        });
+
+        this.getRootPane().addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                SCREEN_WIDTH = e.getComponent().getWidth() * 1.0;
+                SCREEN_HEIGHT = e.getComponent().getHeight() * 1.0;
+
+                for (ImageWidow window :
+                        imagePanels) {
+                    if(window != null){
+                        window.reload();
+                    }
+                }
             }
         });
     }
@@ -65,7 +80,7 @@ public class MainFrame extends JFrame {
         }
         MainMenuBar.reload();
     }
-    public static void addTab(ImagePanel panel){
+    public static void addTab(ImageWidow panel){
         imagePanels.add(panel);
         int panelIdx = imagePanels.indexOf(panel);
 
@@ -105,7 +120,7 @@ public class MainFrame extends JFrame {
 
             int result = 0;
 
-            if(((ImagePanel) tabbedPane.getSelectedComponent()).getIsEdited()){
+            if(((ImageWidow) tabbedPane.getSelectedComponent()).getIsEdited()){
                 result = JOptionPane.showConfirmDialog(
                         null,
                         "Czy na pewno chcesz zamknąć bez zapisywania?",
@@ -124,7 +139,7 @@ public class MainFrame extends JFrame {
 
     public static void setTabTitle(JPanel component, boolean edited){
         int index = tabbedPane.indexOfComponent(component);
-        ImagePanel tab = (ImagePanel) tabbedPane.getComponentAt(index);
+        ImageWidow tab = (ImageWidow) tabbedPane.getComponentAt(index);
 
         String title = tab.getFileName();
 

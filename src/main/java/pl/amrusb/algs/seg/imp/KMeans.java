@@ -1,8 +1,7 @@
 package pl.amrusb.algs.seg.imp;
 
 import pl.amrusb.algs.seg.AKMeans;
-import pl.amrusb.util.ClusterComparator;
-import pl.amrusb.util.Statistics;
+import pl.amrusb.util.models.Statistics;
 import pl.amrusb.util.constants.KMeansStats;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.img.ImageReader;
@@ -29,9 +28,7 @@ public class KMeans extends AKMeans {
             ArrayList<Cluster> clusters = init.execute();
             setClusterNum(clusters.size());
             ArrayList<Cluster> initialClusters = new ArrayList<>(clusters.size());
-            clusters.forEach(e -> {
-                initialClusters.add(e.clone());
-            });
+            clusters.forEach(e -> initialClusters.add(e.clone()));
 
             stats.put(KMeansStats.INITIAL_START_POINTS, initialClusters);
 

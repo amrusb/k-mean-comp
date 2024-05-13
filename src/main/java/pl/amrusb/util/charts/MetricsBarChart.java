@@ -22,17 +22,6 @@ public class MetricsBarChart {
     private static final String[] ALGS = {"Impementacja", "Adaptive", "Weka"};
     private static final String[] ALGS_C = {"Implementacja - Adaptive", "Implementacja - Weka", "Adaptive - Weka"};
 
-    private static DefaultCategoryDataset createDataset(double[] jaccard, double[] dice){
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        int k = jaccard.length;
-        for (int i = 0; i < k; i++) {
-            dataset.addValue(jaccard[i], Integer.toString(i + 1), JACCARD_LBL);
-            dataset.addValue(dice[i], Integer.toString(i + 1), DICE_LBL);
-        }
-
-        return dataset;
-    }
-
     private static DefaultCategoryDataset createDataset(ArrayList<Double> jaccard, ArrayList<Double> dice){
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
@@ -52,21 +41,6 @@ public class MetricsBarChart {
         return dataset;
     }
 
-    private static void customizeChart(JFreeChart chart, ArrayList<Cluster> c1, ArrayList<Cluster> c2){
-        CategoryPlot plot = (CategoryPlot) chart.getPlot();
-        int k = c1.size();
-        for (int i = 0; i < k; i++) {
-            int r = (c1.get(i).getX() + c2.get(i).getX()) / 2;
-            int g = (c1.get(i).getY() + c2.get(i).getY()) / 2;
-            int b = (c1.get(i).getZ() + c2.get(i).getZ()) / 2;
-
-            plot.getRenderer().setSeriesPaint(i, new Color(r,g,b));
-        }
-
-        TextTitle title = new TextTitle(TITLE, new Font("SansSerif", Font.BOLD, 14));
-        chart.setTitle(title);
-    }
-
     private static void customizeChart(JFreeChart chart){
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
 
@@ -75,23 +49,6 @@ public class MetricsBarChart {
 
         TextTitle title = new TextTitle(TITLE, new Font("SansSerif", Font.BOLD, 14));
         chart.setTitle(title);
-    }
-
-    public static JFreeChart create(double[] jaccard, double[] dice, ArrayList<Cluster> c1, ArrayList<Cluster> c2){
-        DefaultCategoryDataset dataset =  createDataset(jaccard, dice);
-
-        JFreeChart chart = ChartFactory.createBarChart(
-                TITLE,
-                null,
-                null,
-                dataset,
-                PlotOrientation.VERTICAL,
-                true,
-                true,
-                false
-        );
-        customizeChart(chart, c1, c2);
-        return chart;
     }
 
     private static DefaultCategoryDataset createDataset(Map<AlgorithmsMetrics, ArrayList<Double>> data){

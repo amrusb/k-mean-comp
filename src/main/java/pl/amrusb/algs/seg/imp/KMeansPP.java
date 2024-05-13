@@ -1,7 +1,7 @@
 package pl.amrusb.algs.seg.imp;
 
 import pl.amrusb.algs.rand.LCGenerator;
-import pl.amrusb.util.Calculations;
+import pl.amrusb.util.math.Calculations;
 import pl.amrusb.util.models.Cluster;
 import pl.amrusb.util.models.Pixel;
 

@@ -1,10 +1,11 @@
 package pl.amrusb.util.actions;
 
+import lombok.SneakyThrows;
 import pl.amrusb.util.img.ImageReader;
-import pl.amrusb.util.ui.MainFrame;
-import pl.amrusb.util.ui.MainMenuBar;
-import pl.amrusb.util.ImageFilter;
-import pl.amrusb.util.ui.panels.ImagePanel;
+import pl.amrusb.ui.MainFrame;
+import pl.amrusb.ui.MainMenuBar;
+import pl.amrusb.util.img.ImageFilter;
+import pl.amrusb.segm.ImageWidow;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,9 +14,10 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 public class OpenAction implements ActionListener {
+    @SneakyThrows
     @Override
     public void actionPerformed(ActionEvent e) {
-        ImagePanel panel = new ImagePanel();
+        ImageWidow panel = new ImageWidow();
 
         JFileChooser imageChooser = new JFileChooser();
         imageChooser.setCurrentDirectory(new File("."));
@@ -32,9 +34,9 @@ public class OpenAction implements ActionListener {
             String filePath = imageChooser.getSelectedFile().getAbsolutePath();
             panel.setFilePath(filePath);
             ImageReader.setFilePath(filePath);
-            panel.setOriginalImage(ImageReader.readImage());
+            panel.setBfIOriginal(ImageReader.readImage());
 
-            panel.setImageLabel(ImageReader.readImage());
+            panel.setlImage(ImageReader.readImage());
             MainFrame.addTab(panel);
             MainFrame.changePanel();
             MainMenuBar.reload();

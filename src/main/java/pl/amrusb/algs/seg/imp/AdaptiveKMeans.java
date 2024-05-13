@@ -2,9 +2,8 @@ package pl.amrusb.algs.seg.imp;
 
 import lombok.Getter;
 import pl.amrusb.algs.seg.AKMeans;
-import pl.amrusb.util.Calculations;
-import pl.amrusb.util.ClusterComparator;
-import pl.amrusb.util.Statistics;
+import pl.amrusb.util.math.Calculations;
+import pl.amrusb.util.models.Statistics;
 import pl.amrusb.util.constants.KMeansStats;
 import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.util.models.Cluster;
@@ -12,7 +11,6 @@ import pl.amrusb.util.models.Pair;
 import pl.amrusb.util.models.Pixel;
 import pl.amrusb.util.timer.Timer;
 
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,9 +45,7 @@ public class AdaptiveKMeans extends AKMeans {
             clusters = init.execute();
             setClusterNum(clusters.size());
             ArrayList<Cluster> initialClusters = new ArrayList<>(clusters.size());
-            clusters.forEach(e -> {
-                initialClusters.add(e.clone());
-            });
+            clusters.forEach(e -> initialClusters.add(e.clone()));
 
             stats.put(KMeansStats.INITIAL_START_POINTS, initialClusters);
 
@@ -67,12 +63,7 @@ public class AdaptiveKMeans extends AKMeans {
 
             super.setStatistics(stats);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(
-                    null,
-                    e.getMessage(),
-                    "Błąd",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            throw new RuntimeException(e);
 
         }
 

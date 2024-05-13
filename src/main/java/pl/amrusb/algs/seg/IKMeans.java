@@ -1,6 +1,6 @@
 package pl.amrusb.algs.seg;
 
-import pl.amrusb.util.Statistics;
+import pl.amrusb.util.models.Statistics;
 
 import java.awt.image.BufferedImage;
 

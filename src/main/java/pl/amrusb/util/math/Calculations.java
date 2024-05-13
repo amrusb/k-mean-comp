@@ -1,0 +1,43 @@
+package pl.amrusb.util.math;
+
+import pl.amrusb.util.models.Point3D;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+public class Calculations {
+    /**
+     * Oblicza kwadrat odległości euklidesowej między dwoma punktami w trójwymiarowej przestrzeni.
+     *
+     * @param p1 pierwszy punkt
+     * @param p2 drugi punkt
+     * @return kwadrat odległości między punktami
+     */
+    public static double calculateDistanceSquared(Point3D p1, Point3D p2){
+        int d_x = p1.getX() - p2.getX();
+        int d_y = p1.getY() - p2.getY();
+        int d_z = p1.getZ() - p2.getZ();
+
+        return d_x*d_x+d_y*d_y+d_z*d_z;
+    }
+    /**
+     * Oblicza odległość euklidesową między dwoma punktami w trójwymiarowej przestrzeni.
+     *
+     * @param p1 pierwszy punkt
+     * @param p2 drugi punkt
+     * @return odległość między punktami
+     */
+    public static double calculateDistance(Point3D p1, Point3D p2){
+        int d_x = p1.getX() - p2.getX();
+        int d_y = p1.getY() - p2.getY();
+        int d_z = p1.getZ() - p2.getZ();
+
+        return Math.sqrt(d_x*d_x+d_y*d_y+d_z*d_z);
+    }
+
+    public static double round(double value, int position){
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(position, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+}

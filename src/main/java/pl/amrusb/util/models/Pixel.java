@@ -34,15 +34,9 @@ public class Pixel extends Point3D {
         super.setZ(b);
     }
 
-
     public int getR() { return super.getX(); }
-
-    public void setR(int r) {super.setX(r);}
-
     public int getG() { return super.getY(); }
-    public void setG(int g) {super.setX(g);}
     public int getB() { return super.getZ(); }
-    public void setB(int b) {super.setX(b);}
 
     public String toString() {
         return A + "/" + super.toString();

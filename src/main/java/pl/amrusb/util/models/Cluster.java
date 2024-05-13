@@ -2,7 +2,6 @@ package pl.amrusb.util.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
@@ -40,14 +39,6 @@ public class Cluster extends Point3D {
      */
     public void decreaseSize(){
         size--;
-    }
-    /**
-     * Zwraca rozmiar klastra.
-     *
-     * @return rozmiar klastra
-     */
-    public int getSize(){
-        return size;
     }
 
     @Override

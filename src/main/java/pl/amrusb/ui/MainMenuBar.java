@@ -1,7 +1,9 @@
-package pl.amrusb.util.ui;
+package pl.amrusb.ui;
 
 
 import lombok.Getter;
+import pl.amrusb.segm.KMeansAction;
+import pl.amrusb.segm.comp.CompareAction;
 import pl.amrusb.util.actions.*;
 import pl.amrusb.util.constants.AlgorithmsMetrics;
 
@@ -13,6 +15,7 @@ import java.awt.event.KeyEvent;
 
 public class MainMenuBar extends JMenuBar {
     private static final JMenu programMenu = new JMenu("Program");
+    private static final JMenuItem aboutItem = new JMenuItem("O programie");
     private static final JMenuItem exitItem = new JMenuItem("Wyjście");
     private static final JMenu imageMenu = new JMenu("Plik");
     private static final JMenuItem openItem = new JMenuItem("Otwórz");
@@ -66,6 +69,8 @@ public class MainMenuBar extends JMenuBar {
 
         add(segmentationMenu);
 
+        programMenu.add(aboutItem);
+        aboutItem.addActionListener(e-> AboutDialog.show());
         programMenu.add(exitItem);
         exitItem.addActionListener(e-> System.exit(0));
         add(programMenu);

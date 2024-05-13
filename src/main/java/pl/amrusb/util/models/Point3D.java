@@ -22,17 +22,8 @@ public class Point3D {
         return "(" + X+", "+Y+", "+Z +")";
     }
 
-    public String toHex(){
-        return String.format("#%02X%02X%02X", X, Y, Z);
-    }
-
     @Override
-    protected Object clone() throws CloneNotSupportedException {
-        Point3D clone = (Point3D)super.clone();
-        clone.X = X;
-        clone.Y = Y;
-        clone.Z = Z;
-
+    protected Object clone()  {
         return new Point3D(X,Y,Z);
     }
 }

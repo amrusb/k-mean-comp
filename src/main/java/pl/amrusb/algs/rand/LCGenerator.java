@@ -18,7 +18,7 @@ public class LCGenerator {
     /**
      * Generuje kolejną losową liczbę z rozkładu jednorodnego.
      *
-     * @return wygenerowana liczba losowa z zakresu [0, 1)
+     * @return wygenerowana liczba losowa z zakresu [0,1)
      */
     public double nextDouble(){
         value = (a * value + c) % m;

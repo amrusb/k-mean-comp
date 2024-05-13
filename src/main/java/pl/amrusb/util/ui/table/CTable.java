@@ -6,8 +6,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class CTable extends JTable {
-    private final DefaultTableModel model;
-    private final DefaultTableCellRenderer renderer;
+    private final CTableModel model;
+    private final ColorTableCellRenderer renderer;
 
     public CTable(){
         model = new CTableModel();
@@ -24,36 +24,11 @@ public class CTable extends JTable {
         this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
-    public CTable(int rowHeight, int resizeMode){
-        model = new CTableModel();
-        this.setModel(model);
-        renderer = new ColorTableCellRenderer();
-        renderer.setHorizontalAlignment(JLabel.CENTER);
-
-        this.setAutoCreateRowSorter(true);
-        this.setAutoResizeMode(resizeMode);
-        this.setRowHeight(rowHeight);
-
-        this.getTableHeader().setResizingAllowed(false);
-        this.setDefaultRenderer(Color.class, renderer);
-        this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    }
-
-    public void addColumn(String columnName){
-        model.addColumn(columnName);
-    }
-    
     public void addColumn(String...columnsNames){
         for (String columnName :
                 columnsNames) {
             model.addColumn(columnName);
         }
-    }
-
-    public void setColumnWidth(Integer columnIndex, Integer columnWidth){
-        this.getColumnModel()
-                .getColumn(columnIndex)
-                .setPreferredWidth(columnWidth);
     }
 
     public void setColumnWidth(String columnWidth){

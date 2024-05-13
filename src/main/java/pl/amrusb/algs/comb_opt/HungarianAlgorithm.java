@@ -1,4 +1,4 @@
-package pl.amrusb.util;
+package pl.amrusb.algs.comb_opt;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -19,14 +19,9 @@ public class HungarianAlgorithm {
     // markers in the matrix
     int[] squareInRow, squareInCol, rowIsCovered, colIsCovered, staredZeroesInRow;
 
-    public HungarianAlgorithm(double[][] matrix) {
+    public HungarianAlgorithm(double[][] matrix) throws IllegalAccessException {
         if (matrix.length != matrix[0].length) {
-            try {
-                throw new IllegalAccessException("The matrix is not square!");
-            } catch (IllegalAccessException ex) {
-                System.err.println(ex);
-                System.exit(1);
-            }
+           throw new IllegalAccessException("The matrix is not square!");
         }
 
         this.matrix = matrix;

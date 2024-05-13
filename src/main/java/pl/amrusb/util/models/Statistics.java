@@ -1,4 +1,4 @@
-package pl.amrusb.util;
+package pl.amrusb.util.models;
 
 import pl.amrusb.util.constants.KMeansStats;
 

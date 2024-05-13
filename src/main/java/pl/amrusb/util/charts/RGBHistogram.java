@@ -1,7 +1,6 @@
 package pl.amrusb.util.charts;
 
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -13,11 +12,8 @@ import org.jfree.data.xy.XYSeriesCollection;
 import pl.amrusb.util.img.ImageReader;
 import pl.amrusb.util.models.Pixel;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class RGBHistogram {
@@ -95,32 +91,5 @@ public class RGBHistogram {
         customizeChart(chart);
 
         return chart;
-    }
-
-    public static void createImage(BufferedImage image, String fileName){
-        ArrayList<Pixel> pixels = ImageReader.getPixelArray(image);
-        XYDataset dataset = createDataset(pixels);
-
-        JFreeChart chart = ChartFactory.createXYLineChart(
-                "RGB Histogram",
-                null,
-                null,
-                dataset,
-                PlotOrientation.VERTICAL,
-                true,
-                false,
-                false
-        );
-
-        customizeChart(chart);
-
-        fileName = fileName.substring(0, fileName.indexOf('.'));
-
-        try {
-            ChartUtilities.saveChartAsPNG(new File("histogram-" + fileName + ".png"), chart, 800, 600);
-            JOptionPane.showMessageDialog(null,"Ok", "Ok", JOptionPane.INFORMATION_MESSAGE);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null,e.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
-        }
     }
 }
