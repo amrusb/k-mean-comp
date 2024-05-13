@@ -23,6 +23,7 @@ public class ImageViewPanel extends JPanel {
     @Getter
     private BufferedImage image;
     private final JLabel lImage;
+    private static final String PATTERN = "<html><img src=\"file:%s\" width=\"%s\" height=\"%s\"></html>";
 
     public ImageViewPanel(AlgorithmsMetrics name){
         this.setLayout(new BorderLayout());
@@ -99,6 +100,25 @@ public class ImageViewPanel extends JPanel {
         this.image = image;
     }
 
+    @SneakyThrows
+    public void reload(double frameWidth, double frameHeight){
+        if(image != null){
+            File stream;
+            stream = File.createTempFile("show-img", ".jpg");
+            ImageIO.write(image, "jpg", stream);
+
+            int width = image.getWidth();
+            int height = image.getHeight();
+
+            if (width >= frameWidth || height >= frameHeight) {
+                double scale = Math.min(frameWidth / (width), frameHeight / (height));
+                width = (int)(width * scale);
+                height = (int)(height * scale);
+            }
+
+            lImage.setText(String.format(PATTERN, stream , width, height));
+        }
+    }
 
     private class ImagePreviewer{
         @SneakyThrows

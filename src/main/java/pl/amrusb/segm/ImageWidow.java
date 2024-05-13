@@ -65,6 +65,16 @@ public class ImageWidow extends JPanel {
             cwCompare.setOriginalImage(bfIOriginal);
         }
     }
+
+    public void reload(){
+        if(bfISegmented != null){
+            this.setlImage(bfISegmented);
+        }
+        else {
+            this.setlImage(bfIOriginal);
+            cwCompare.reload();
+        }
+    }
     /**
      * Ustawia obraz jako ikonę etykiety w scrollPane.
      * Jeżeli obraz jest za duży, zostaje przeskalowany do odpowiednich wymiarów

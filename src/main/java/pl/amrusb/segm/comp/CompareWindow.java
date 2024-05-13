@@ -306,6 +306,19 @@ public class CompareWindow extends JPanel {
 
         return output;
     }
+
+    public void reload(){
+        double width = MainFrame.getFrameWidth() / 4.0;
+        double height = MainFrame.getFrameHeight() * 0.3;
+
+        ivpOriginal.reload(width,height);
+        width = MainFrame.getFrameWidth() / 3.0;
+        height = MainFrame.getFrameHeight() * 2.0 / 3;
+        ivpAdapt.reload(width,height);
+        ivpImp.reload(width,height);
+        ivpWeka.reload(width,height);
+
+    }
     private enum StatsComboBox{
         PROPERTIES("Właściwości"),
         CLUSTERS("Klastry"),

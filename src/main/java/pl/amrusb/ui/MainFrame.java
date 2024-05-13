@@ -5,14 +5,16 @@ import pl.amrusb.segm.ImageWidow;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 
 
 public class MainFrame extends JFrame {
     private static final String MAIN_PANEL = "mainPanel";
     private static final String TABBED_PANEL = "tabbedPanel";
-    private static final Double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-    private static final Double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+    private static Double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+    private static Double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 
     @Getter
     private static final JTabbedPane tabbedPane = new JTabbedPane();
@@ -25,8 +27,8 @@ public class MainFrame extends JFrame {
         setTitle("Segmentacja obrazu");
         int width = (int)(SCREEN_WIDTH * 4 / 5);
         int height = (int)(SCREEN_HEIGHT * 4 / 5);
-        int x = (int)(SCREEN_WIDTH - width) / 2;
-        int y = (int)(SCREEN_HEIGHT - height) / 2;
+        int x = (int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth() - width) / 2;
+        int y = (int)(Toolkit.getDefaultToolkit().getScreenSize().getHeight() - height) / 2;
 
         setBounds(x, y, width, height);
         getContentPane().setLayout(new BorderLayout());
@@ -52,6 +54,20 @@ public class MainFrame extends JFrame {
                 MainMenuBar.enableUndo(isEdited);
                 MainMenuBar.enableAlgorithms(!isEdited);
                 MainMenuBar.enableSave(isEdited);
+            }
+        });
+
+        this.getRootPane().addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                SCREEN_WIDTH = e.getComponent().getWidth() * 1.0;
+                SCREEN_HEIGHT = e.getComponent().getHeight() * 1.0;
+
+                for (ImageWidow window :
+                        imagePanels) {
+                    if(window != null){
+                        window.reload();
+                    }
+                }
             }
         });
     }
