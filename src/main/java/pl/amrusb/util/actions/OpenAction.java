@@ -22,7 +22,8 @@ public class OpenAction implements ActionListener {
         ImageWidow panel = new ImageWidow();
 
         JFileChooser imageChooser = new JFileChooser();
-        imageChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "/Desktop"));
+//        imageChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "/Desktop"));
+        imageChooser.setCurrentDirectory(new File("C:\\Users\\barto\\OneDrive\\Obrazy\\data-ser"));
         imageChooser.addChoosableFileFilter(new ImageFilter());
         imageChooser.setAcceptAllFileFilterUsed(false);
 

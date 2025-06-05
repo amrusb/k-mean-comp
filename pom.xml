@@ -73,6 +73,11 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.appland</groupId>
+                <artifactId>appmap-maven-plugin</artifactId>
+                <version>1.3.0</version>
+            </plugin>
         </plugins>
     </build>
 </project>

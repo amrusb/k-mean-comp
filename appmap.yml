@@ -1,0 +1,4 @@
+name: "k-means-comp"
+packages:
+- path: "pl.amrusb"
+appmap_dir: "tmp/appmap"

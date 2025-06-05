@@ -129,7 +129,7 @@ public class MainFrame extends JFrame {
                 );
             }
             if (index != -1 && result == JOptionPane.OK_OPTION) {
-                tabbedPane.remove(index);
+                tabbedPane.removeTabAt(index);
                 imagePanels.set(index, null);
             }
             MainFrame.changePanel();

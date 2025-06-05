@@ -39,6 +39,7 @@ public class SaveAction implements ActionListener {
         MainMenuBar.getOwner().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         String filePath = current.getFilePath();
         String fileName = current.getFileName();
+        String originalFileName = current.getFileName();
         String formatName = fileName.substring(fileName.indexOf('.') + 1 );
 
         if(saveAs){
@@ -93,7 +94,7 @@ public class SaveAction implements ActionListener {
                     FileWriter csvFileWriter = new FileWriter(dirPath + "\\" + name + INFO_SUFIX);
                     byte[] bom = { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
                     csvFileWriter.write(new String(bom));
-                    csvFileWriter.write("Nazwa pliku:;" + fileName + "\n");
+                    csvFileWriter.write("Nazwa pliku:;" + originalFileName + "\n");
                     csvFileWriter.write("Liczba klastrów:;" );
                     csvFileWriter.write(comparePanel.getPProperties().getVlClusterCount().getText() + "\n");
                     csvFileWriter.write("Maksymalna liczba iteracji:;");
